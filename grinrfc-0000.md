@@ -1,5 +1,12 @@
-- Feature Name: Grin RFC Template
-- Start Date: June 21st, 2019
+# GRIN-RFC-0000 Grin RFC Template
+
+```
+- Number: GRIN-RFC-0000
+- Title: Grin RFC Template
+- Status: Draft
+- Authors: joltz (email)
+- Created : June 21st, 2019
+```
 
 # Summary
 [summary]: #summary
@@ -91,3 +98,8 @@ Note that having something written down in the future-possibilities section
 is not a reason to accept the current or a future RFC; such notes should be
 in the section on motivation or rationale in this or subsequent RFCs.
 The section merely provides additional information.
+
+# References
+[references]: #references
+
+This is a sections for references such as links to other documents or reference implementations

@@ -49,19 +49,18 @@ language is evolving in.
   on what part of the ecosystem you are proposing to change, but may include the
   following.
 
-    - Any semantic or syntactic change to the wallet, node, miner or library that is not a bugfix.
-    - Major changes in ecosystem content such as the docs, site or explorer
-    - Removing Grin features, including those that are feature-gated. 
+  - Any user-facing changes or changes that affect upstream developers (e.g. Wallet command line, Wallet APIs, Node APIs)
+  - Major changes in ecosystem content such as the docs, site or explorer
+  - Removing Grin features, including those that are feature-gated.
 
   Some changes do not require an RFC:
 
-    - Rephrasing, reorganizing, refactoring, or otherwise "changing shape does
-      not change meaning".
-    - Additions that strictly improve objective, numerical quality criteria
-      (warning removal, speedup, better platform coverage, more parallelism, trap
-      more errors, etc.)
-    - Additions only likely to be _noticed by_ other developers-of-grin,
-      invisible to users-of-grin.
+  - Rephrasing, reorganizing, refactoring, or otherwise "changing shape does not change meaning".
+  - Additions that strictly improve objective, numerical quality criteria
+    (warning removal, speedup, better platform coverage, more parallelism, trap
+    more errors, etc.)
+  - Additions that are only likely to be _noticed by_ other grin developers but are otherwise
+    invisible to users.
 
   If you submit a pull request to implement a new feature without going through
   the RFC process, it may be closed with a polite request to submit an RFC first.
@@ -100,8 +99,8 @@ In short, to get a major feature added to Grin, one must first get the RFC
 merged into the RFC repository as a markdown file. At that point the RFC is
 "active" and may be implemented with the goal of eventual inclusion into Grin.
 
-  - Fork the RFC repo [RFC repository]
-  - Copy `0000-template.md` to `text/0000-my-feature.md` (where "my-feature" is
+  - Fork this repository
+  - Copy `grinrfc-0000.md` to `grinrfc-0000-my-feature.md` (where "my-feature" is
     descriptive. don't assign an RFC number yet).
   - Fill in the RFC. Put care into the details: RFCs that do not present
     convincing motivation, demonstrate understanding of the impact of the

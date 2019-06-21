@@ -1,5 +1,12 @@
-- Feature Name: Grin Governance Structure
-- Start Date: June 21st, 2019
+# GRIN-RFC-0001 Grin Governance
+
+```
+- Number: GRIN-RFC-0001
+- Title: Grin Governance
+- Status: Draft
+- Authors: 
+- Created : June 21st, 2019
+```
 
 # Summary
 [summary]: #summary
@@ -46,3 +53,7 @@ TBD
 
 TBD
 
+# References
+[references]: #references
+
+TBD
