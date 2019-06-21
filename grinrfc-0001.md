@@ -142,5 +142,7 @@ processes and life-cycles for the Grin ecosystem.
 [references]: #references
 
 https://github.com/rust-lang/rfcs
+
 https://github.com/bitcoin/bips/blob/master/bip-0001.mediawiki
+
 https://www.python.org/dev/peps/pep-0001/
