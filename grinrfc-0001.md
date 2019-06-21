@@ -137,3 +137,10 @@ wide ranging impacts on the ecosystem as a whole.
 Just as it is important to hone the language to support the development process
 and life-cycle it is also important to sharpen the language to support governance
 processes and life-cycles for the Grin ecosystem.
+
+# References
+[references]: #references
+
+https://github.com/rust-lang/rfcs
+https://github.com/bitcoin/bips/blob/master/bip-0001.mediawiki
+https://www.python.org/dev/peps/pep-0001/
