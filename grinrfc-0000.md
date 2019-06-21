@@ -4,7 +4,7 @@
 - Number: GRIN-RFC-0000
 - Title: Grin RFC Template
 - Status: Draft
-- Authors: joltz (email)
+- Authors: joltz (joltz@protonmail.com)
 - Created : June 21st, 2019
 ```
 
