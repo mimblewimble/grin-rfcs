@@ -6,6 +6,8 @@
 - Status: Draft
 - Authors: joltz (joltz@protonmail.com)
 - Created : June 21st, 2019
+
+NB: The structure of this template is provided as a guideline for how your RFC should be structured. Not all RFCs will necessarily fit this format, so feel free to add or remove sections as appropriate.
 ```
 
 # Summary
@@ -21,7 +23,7 @@ Why are we doing this? What use cases does it support? What is the expected outc
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-Explain the proposal as if it was already included in the Grin ecosystem and you were teaching it to another Grin community member. That generally means:
+Explain the proposal as if it were already included in the Grin ecosystem and you were teaching it to another Grin community member. That generally means:
 
 - Introducing new named concepts.
 - Explaining the feature largely in terms of examples.
