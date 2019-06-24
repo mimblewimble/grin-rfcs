@@ -5,38 +5,42 @@
 - Title: Grin RFC Process
 - Status: Draft
 - Authors: joltz (joltz@protonmail.com)
+           yeastplume (yeastplume@protonmail.com)
 - Created : June 21st, 2019
 ```
 
 # Summary
 [summary]: #summary
 
-The "RFC" (request for comments) process is intended to provide a consistent and controlled path for new features to enter the Grin codebase and governance structure, so that all stakeholders can be confident about the direction the project is evolving in.
+The "RFC" (request for comments) process is intended to provide a consistent and controlled path for new features to enter the Grin codebase and governance structure.
 
 # Motivation
 [motivation]: #motivation
 
-The previous way of adding new features to Grin has been good for early development, but for Grin to become a mature project and ecosystem it needs structure and transparency when it comes to changing the system. This is a proposal for a more principled RFC process to make it a more integral part of the overall development and governance processes, and one that is followed consistently to introduce features to Grin.
+The previous "ad-hoc" method of adding new features to Grin was suitable for early development, but as Grin and its ecosystem matures it needs a more controlled process to keep development focused,
+help provide the community with a reasonable overview of Grin's future plans, and provide a platform for focused discussion of new features. This is a proposal for a structured RFC process, with
+the intent being that it will be closely followed as part of Grin's development.
 
 # Guide-level explanation
 [guide-level-explanation]: #guide-level-explanation
 
-To add a major feature to Grin, one must first get the RFC merged into the RFC repo as a markdown file. At that point the RFC is 'active' and may be implemented with the goal of eventual inclusion into Grin.
+To add a major feature to Grin or make a change to Grin's governance structure, one must first get the RFC merged into the RFC repo as a markdown file. 
+At that point the RFC is 'active' and may be implemented with the goal of eventual inclusion into the Grin codebase or Governance procedures.
 
 ## When you need to follow this process
 
 You need to follow this process if you intend to make "substantial"
 changes to the Grin codebase or governance process. What constitutes a "substantial"
-change is evolving based on community norms, but may include the following.
+change may evolve based on community norms, but may include the following.
 
-   - Any semantic or syntactic change to the wallet, node, miner or crypto library that is not a bugfix.
+   - Any semantic or syntactic change to the wallet, node, miner or underlying crypto libraries that is not a bugfix.
    - Major changes in ecosystem content such as the docs, site or explorer
    - Removing Grin features, including those that are feature-gated.
 
 Some changes do not require an RFC:
 
-   - Rephrasing, reorganizing, refactoring, or otherwise "changing shape
-does not change meaning".
+   - Rephrasing, reorganizing, refactoring, or changes that are not
+ visible to Grin's users.
    - Additions that strictly improve objective, numerical quality
 criteria (warning removal, speedup, better platform coverage, more
 parallelism, trap more errors, etc.)
@@ -55,38 +59,42 @@ submit an RFC first.
 * Copy `grinrfc-0000.md` to `grinrfc-0000-my-feature.md` (where
 'my-feature' is descriptive. don't assign an RFC number yet).
 * Fill in the RFC
-* Submit a pull request. The pull request is the time to get review of
-the design from the larger community.
-* Build consensus and integrate feedback. RFCs that have broad support
-are much more likely to make progress than those that don't receive any
-comments.
+* Submit a pull request.
+* The relevant community organization (relevant subteam or central council)
+will perform an initial review of the PR, and decide whether the RFC should
+be merged into the repository as a Draft PR.
 
-Eventually, somebody on the assigned subteam will either accept the RFC by
-merging the pull request, at which point the RFC is 'active', or
-reject it by closing the pull request.
+Once the PR is accepted into the repository, it will be given 'Draft'
+status. This does not mean the RFC has been accepted, only that is has been
+selected by the community for further discussion, feedback and refinement.
 
-Whomever merges the RFC should do the following:
-
+At this point, whoever merges the PR should:
 * Assign an id, using the PR number of the RFC pull request. (If the RFC
   has multiple pull requests associated with it, choose one PR number,
   preferably the minimal one.)
-* Add the file in the `text/` directory.
-* Create a corresponding issue on [Grin-PM repo](https://github.com/mimblewimble/grin-pm)
-* Fill in the remaining metadata in the RFC header, including links for
-  the original pull request(s) and the newly created Grin-PM issue.
-* Add an entry in the Active RFC List of the root `README.md`.
-* Commit everything.
+* Rename the file to `grin-rfc-xxxx.md` and merge into root of this repository. (where
+xxxx is the RFC ID)
+* Fill in the remaining metadata in the RFC header.
+* Add an entry in the RFC List in `README.md`, with a status of Draft.
+
+When the RFC is in 'Draft' stage, it is important to refine details,
+build consensus among the community for the RFC and integrate useful
+feedback. RFCs that have broad support are much more likely to make progress 
+than those that don't receive any comments.
+
+Eventually, the relevant community organization will either accept the RFC by
+changing its status to 'Accepted' or reject it by setting it to 'Rejected'.
 
 Once an RFC becomes active then authors may implement it and submit the
-feature as a pull request to the relevant Grin repo. An 'active' is not a rubber
+feature as a pull request to the relevant Grin repo. An 'Accepted' status is not a rubber
 stamp, and in particular still does not mean the feature will ultimately
 be merged; it does mean that in principle all the major stakeholders
 have agreed to the feature and are amenable to merging it.
 
-Modifications to active RFC's can be done in followup PR's. An RFC that
+Modifications to Accepted RFC's can be done in followup PR's. An RFC that
 makes it through the entire process to implementation is considered
-'complete' and is removed from the [Active RFC List]; an RFC that fails
-after becoming active is 'inactive' and moves to the 'inactive' folder.
+'Active'; an RFC that fails after becoming active is 'Inactive' and is relabelled 
+as such.
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -107,6 +115,7 @@ designed to improve over the informal process in the following ways:
 * Improve transparency for how new features are added to Grin
 * Give confidence to those with a stake in Grin's development that they
 understand why new features are being merged
+* Assist the Grin community with feature and release planning.
 
 As an alternative, we could adopt an even stricter RFC process than the one proposed here. If desired, we should likely look to Bitcoin's BIP or Python's PEP process for inspiration.
 
@@ -123,8 +132,8 @@ Bitcoin uses BIPs which are an adaptation of Python's PEPs. These processes are 
 1. Does this RFC strike a favorable balance between formality and agility?
 2. Does this RFC successfully address the aforementioned issues with the current
    informal process?
-3. Should we retain rejected RFCs in the archive?
-4. Should RFC issues be opened in their respective repos (wallet RFC in wallet repo etc.) or should they all be opened in grin-pm repo?
+3. Should we retain rejected RFCs in the archive?  (YP: I think yes, so it's apparent to new submitters if their idea has already been considered and rejected)
+4. Should RFC issues be opened in their respective repos (wallet RFC in wallet repo etc.) or should they all be opened in grin-pm repo? (YP: I think 1 repository dedicated to Grin RFCs is fine)
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
