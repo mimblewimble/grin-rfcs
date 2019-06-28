@@ -1,13 +1,9 @@
-# GRIN-RFC-0000 Grin RFC Template
-
 ```
-- Number: GRIN-RFC-0000
-- Title: Grin RFC Template
+- Title: [give this RFC a unique indented title like so: `my-awesome-proposal`]
 - Status: Draft
-- Authors: joltz (joltz@protonmail.com)
-- Created : June 21st, 2019
-
-NB: The structure of this template is provided as a guideline for how your RFC should be structured. Not all RFCs will necessarily fit this format, so feel free to add or remove sections as appropriate.
+- Authors: [Yourname (your@email.com)]
+- Start date : [the day work begun, i.e. `Jan 15, 2019`]
+- Related issue: [URL to any related github issue]
 ```
 
 # Summary
