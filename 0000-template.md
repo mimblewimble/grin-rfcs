@@ -9,7 +9,7 @@
 # Summary
 [summary]: #summary
 
-One paragraph explanation of the feature.
+One paragraph explanation of the improvement.
 
 # Motivation
 [motivation]: #motivation
@@ -19,11 +19,11 @@ Why are we doing this? What use cases does it support? What is the expected outc
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-Explain the proposal as if it were already included in the Grin ecosystem and you were teaching it to another Grin community member. That generally means:
+Explain the proposal as if it were already introduced into the Grin ecosystem and you were teaching it to another community member. That generally means:
 
 - Introducing new named concepts.
 - Explaining the feature largely in terms of examples.
-- Explaining how Grin community members should *think* about the feature, and how it should impact the way they use Grin. It should explain the impact as concretely as possible.
+- Explaining how Grin community members should *think* about the improvement, and how it should impact the way they interact with Grin. It should explain the impact as concretely as possible.
 - If applicable, provide sample error messages, deprecation warnings, or migration guidance.
 - If applicable, describe the differences between teaching this to existing Grin community members and new Grin community members.
 
@@ -63,8 +63,7 @@ A few examples of what this can include are:
 - For other teams: What lessons can we learn from what other communities have done here?
 - Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
 
-This section is intended to encourage you as an author to think about the lessons from other languages, provide readers of your RFC with a fuller picture.
-If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other projects.
+This section is intended to encourage you as an author to think about the lessons from other languages, provide readers of your RFC with a fuller picture. If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other projects.
 
 Note that while precedent set by other projects is some motivation, it does not on its own motivate an RFC.
 Please also take into consideration that Grin sometimes intentionally diverges from common project features.
@@ -79,25 +78,15 @@ Please also take into consideration that Grin sometimes intentionally diverges f
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-Think about what the natural extension and evolution of your proposal would
-be and how it would affect the project and ecosystem as a whole in a holistic
-way. Try to use this section as a tool to more fully consider all possible
-interactions with the project and language in your proposal.
-Also consider how the this all fits into the roadmap for the project
-and of the relevant sub-team.
+Think about what the natural extension and evolution of your proposal would be and how it would affect the project and ecosystem as a whole in a holistic way. Try to use this section as a tool to more fully consider all possible interactions with the project and language in your proposal. Also consider how it fits into the road-map of the project and of the relevant sub-team.
 
-This is also a good place to "dump ideas", if they are out of scope for the
-RFC you are writing but otherwise related.
+This is also a good place to "dump ideas", if they are out of scope for the RFC you are writing but otherwise related.
 
-If you have tried and cannot think of any future possibilities,
-you may simply state that you cannot think of anything.
+If you have tried and cannot think of any future possibilities, you may simply state that you cannot think of anything.
 
-Note that having something written down in the future-possibilities section
-is not a reason to accept the current or a future RFC; such notes should be
-in the section on motivation or rationale in this or subsequent RFCs.
-The section merely provides additional information.
+Note that having something written down in the future-possibilities section is not a reason to accept the current or a future RFC; such notes should be in the section on motivation or rationale in this or subsequent RFCs. The section merely provides additional information.
 
 # References
 [references]: #references
 
-This is a sections for references such as links to other documents or reference implementations
+Include any references such as links to other documents or reference implementations.
