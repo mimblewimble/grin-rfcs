@@ -8,11 +8,10 @@ Grin RFC Process](grinrfc-0001.md).
 
 # List of RFCs
 
-| Number                           | Title                                                          | Type          | Status |
-|----------------------------------|----------------------------------------------------------------|---------------|--------|
-| [GRIN-RFC-0000](grinrfc-0000.md) | Grin RFC Template                                              | Informational | Draft  |
-| [GRIN-RFC-0001](grinrfc-0001.md) | Grin RFC Process                                               | Informational | Draft  |
-| [GRIN-RFC-0002](grinrfc-0002.md) | Grin Governance Structure                                      | Governance    | Draft  |
+|Title|Tl;dr|Status|
+|:---|:---|:---|
+| [0001-rfc-process](text/0001-rfc-process.md) | Introduce RFC process | Draft |
+| [0002-grin-governance](text/0002-grin-governance.md) | Articulate community values, define core and sub-teams | Draft |
 
 # License
 
