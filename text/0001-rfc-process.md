@@ -55,46 +55,34 @@ submit an RFC first.
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
-* Fork the RFC repo https://github.com/mimblewimble/grin-rfcs
-* Copy `grinrfc-0000.md` to `grinrfc-0000-my-feature.md` (where
+1. Fork the RFC repo https://github.com/mimblewimble/grin-rfcs
+1. Copy `0000-template.md` to `text/0000-my-feature.md` (where
 'my-feature' is descriptive. don't assign an RFC number yet).
-* Fill in the RFC
-* Submit a pull request.
-* The relevant community organization (relevant subteam or central council)
-will perform an initial review of the PR, and decide whether the RFC should
-be merged into the repository as a Draft PR.
+1. Write the RFC according to the template instructions.
+1. Submit a pull request.
+1. The relevant team (sub-team or core) will perform an initial review of the PR, and decide whether the RFC should be merged into the repository as a Draft PR.
 
-Once the PR is accepted into the repository, it will be given 'Draft'
-status. This does not mean the RFC has been accepted, only that is has been
+Once the PR is accepted into the repository, it will be given 'Draft' status. This does not mean the RFC has been accepted, only that is has been
 selected by the community for further discussion, feedback and refinement.
 
 At this point, whoever merges the PR should:
-* Assign an id, using the PR number of the RFC pull request. (If the RFC
-  has multiple pull requests associated with it, choose one PR number,
+* Assign an id, using the PR number of the RFC pull request. (If the RFC has multiple pull requests associated with it, choose one PR number,
   preferably the minimal one.)
-* Rename the file to `grin-rfc-xxxx.md` and merge into root of this repository. (where
+* Rename the file to `grin-rfc-xxxx.md` and merge into `/text`. (where
 xxxx is the RFC ID)
 * Fill in the remaining metadata in the RFC header.
 * Add an entry in the RFC List in `README.md`, with a status of Draft.
 
-When the RFC is in 'Draft' stage, it is important to refine details,
-build consensus among the community for the RFC and integrate useful
-feedback. RFCs that have broad support are much more likely to make progress 
-than those that don't receive any comments.
+When the RFC is in 'Draft' stage, it is important to refine details, build consensus among the community for the RFC and integrate useful
+feedback. RFCs that have broad support are much more likely to make progress than those that don't receive any comments.
 
-Eventually, the relevant community organization will either accept the RFC by
-changing its status to 'Accepted' or reject it by setting it to 'Rejected'.
+Eventually, the relevant community organization will either accept the RFC by changing its status to 'Accepted' or reject it by setting it to 'Rejected'.
 
-Once an RFC becomes active then authors may implement it and submit the
-feature as a pull request to the relevant Grin repo. An 'Accepted' status is not a rubber
-stamp, and in particular still does not mean the feature will ultimately
-be merged; it does mean that in principle all the major stakeholders
-have agreed to the feature and are amenable to merging it.
+Once an RFC becomes active then authors may implement it and submit the feature as a pull request to the relevant Grin repo. An 'Accepted' status is not a rubber stamp, and in particular still does not mean the feature will ultimately
+be merged; it does mean that in principle all the major stakeholders have agreed to the feature and are amenable to merging it.
 
-Modifications to Accepted RFC's can be done in followup PR's. An RFC that
-makes it through the entire process to implementation is considered
-'Active'; an RFC that fails after becoming active is 'Inactive' and is relabelled 
-as such.
+Modifications to Accepted RFC's can be done in followup PR's. An RFC that makes it through the entire process to implementation is considered
+'Active'; an RFC that fails after becoming active is 'Inactive' and is relabelled as such.
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -107,8 +95,7 @@ as such.
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-Alternatively retain the current informal RFC process. The newly proposed RFC process is
-designed to improve over the informal process in the following ways:
+Alternatively retain the current informal RFC process. The proposed RFC process is designed to improve over the informal process in the following ways:
 
 * Discourage unactionable or vague RFCs
 * Ensure that all serious RFCs are considered equally
@@ -130,8 +117,7 @@ Bitcoin uses BIPs which are an adaptation of Python's PEPs. These processes are 
 [unresolved-questions]: #unresolved-questions
 
 1. Does this RFC strike a favorable balance between formality and agility?
-2. Does this RFC successfully address the aforementioned issues with the current
-   informal process?
+2. Does this RFC successfully address the aforementioned issues with the current informal process?
 3. Should we retain rejected RFCs in the archive?  (YP: I think yes, so it's apparent to new submitters if their idea has already been considered and rejected)
 4. Should RFC issues be opened in their respective repos (wallet RFC in wallet repo etc.) or should they all be opened in grin-pm repo? (YP: I think 1 repository dedicated to Grin RFCs is fine)
 
