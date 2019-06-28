@@ -15,4 +15,9 @@ Grin RFC Process](grinrfc-0001.md).
 | [GRIN-RFC-0002](grinrfc-0002.md) | Grin Governance Structure                                      | Governance    | Draft  |
 
 # License
+
 Apache License 2.0
+
+## Contributions
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, shall be licensed as above, without any additional terms or conditions.
