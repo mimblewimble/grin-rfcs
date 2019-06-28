@@ -1,24 +1,23 @@
-# GRIN-RFC-0002 Grin Governance
+# 0002-grin-governance
 
 ```
-- Number: GRIN-RFC-0002
-- Title: Grin Governance
+- Title: grin-governance
 - Status: Draft
-- Authors: Daniel Lehnberg (daniel.lehnberg@protonmail.com)
+- Authors: Daniel Lehnberg (daniel.lehnberg@protonmail.com),
            Michael Cordner (yeastplume@protonmail.com)
-- Created : June 24th, 2019
+- Start date: June 24th, 2019
+- Related issue: [URL to any related github issue]
+
 ```
 
 # Summary
 [summary]: #summary
 
 Evolve Grin's governance:
-
-- Introduce RFC (Request For Comment) process
+- Define general community principles;
+- Convert council into core team and define its responsibilities and processes;
+- Introduce RFC process;
 - Introduce self-governing sub-teams that steward and guide work in each of their focus areas.
-- Convert council into core team and define its responsibilities
-- Recognize more contributors
-- Achieve less centralization
 
 # Motivation
 [motivation]: #motivation
@@ -27,9 +26,9 @@ Evolve Grin's governance:
 
 Grin's governance today consists of the Grin Technocratic Council, and the rest of the community. The council came to be as there was a need for some sub-set of community members to manage the multi-sig keys of the Grin General Fund, and it became a modest first pass at a governance structure. Over time, it has come to be that a lot of responsibilities and day to day tasks are handled by Grin council members. This puts a heavy workload on council members, but it also inhibits other members of the community from becoming more engaged, contributing more, and becoming recognized for it. Naturally this implies that either the council would have to grow large in order to be able to fit all the members of the community that deserve recognition for their contributions, or that we end up not rewarding active contributors properly.
 
-As most decisions are taken in the bi-weekly meetings, it's come to be that decisions take time to materialize: It can take up to 14 days just to have the initial conversation and sometimes multiples of that to reach an agreement. In these meetings the entire active community ends up participating in every discussion in a synchronous fashion that often does not end up being productive.
+In addition, as most decisions up to this point have been taken in the bi-weekly meetings, it's come to be that decisions take time to materialize: It can take up to 14 days just to have the initial conversation and sometimes multiples of that to reach an agreement. In these meetings the entire active community ends up participating in every discussion in a synchronous fashion that often does not end up being productive.
 
-We also struggle to answer more fundamental questions about Grin's governance, as in how decisions are made, who has authority to make these, and what the path is for a community member who would like to take on greater responsibilities.
+We have also struggled to answer more fundamental questions about Grin's governance, as in how decisions are made, who has authority to make these, and what the path is for a community member who would like to take on greater responsibilities.
 
 This is a proposal to evolve our governance process.
 
@@ -42,7 +41,7 @@ This is a proposal to evolve our governance process.
 
 ### Not objectives
 
-- **Do not create fiefdoms.** Do not create emperors. Nobody is anybody else's boss.
+- **Do not create fiefdoms.** Do not create emperors. Nobody is the boss of anybody else.
 - **Do not create bureaucracy for the sake of bureaucracy.** Do not impose death by a thousand papercuts or let forms and administration get in the way of making progress.
 - **Do not discourage contributions.** Nobody can prevent someone else from doing work. Anyone can contribute in which ever way they find meaningful. You do not need to ask for permission.
 
@@ -66,16 +65,35 @@ This proposal outlines a set of loose principles to guide the work we do. While 
 
 ### Core team
 
-The existing grin council is proposed to be renamed to core team.  The core team leads the wider Grin project as a whole. In particular:
+The existing grin council is proposed to be renamed to core team.
 
-* **Sets overall direction and vision.** Core values and philosophies. Steering towards use cases and targets.
+Over time, it's intended to be a broad representation of the wider community with diverse stakeholders.
+
+#### Responsibilities
+
+The core team leads the wider Grin project as a whole. In particular:
+
+* **Sets overall direction and vision.** Values and philosophies. Steering towards use cases and targets.
 * **Sets priorities and plans releases.** Maintains high level planning, roadmaps, focus areas, decides on pace and the release schedule.
 * **Work on broader, cross-sectional issues.** What falls in-between sub-teams, taking a global view. 
 * **Adds and removes sub-teams.** While proposals for new sub-teams can come from anywhere, the core team is responsible to ensure structures are productive and make sense.
+* **Appoints initial sub-team leadership.** Once a new sub-team is established, core appoints a leader that has the responsibility to grow the sub-team.
 * **Responsible for security.** Handles disclosures, vulnerabilities, audits, processes. 
 * **Handles multi-sig keys and takes high level spending decisions.** Spending proposals can be made by anyone, and sub-teams can have their own own budgets to deal with as they please.
 
-The core-team is self-selecting, and *may include* sub-team members. Over time, it's intended to be a broad representation of the wider community with diverse stakeholders.
+#### Organization & Processes
+
+- Ignotus Peverell, as creator of Grin, is considered BDFL and leader of the core team.
+- There's no defined maximum size of the team.
+- New members are added through a core decision; A core member can nominate a new member for inclusion, there’s discussion, and the process is consensus seeking.
+- The general decision making process is consensus seeking - no majority rule based voting, but also not blocked by lack of explicit consensus.
+- Core members have no explicit veto, but strong objections are considered.
+- Nominations and discussions are kept private.
+- The term of core members is currently undefined but may change in the future.
+- A core member can resign by notifying the rest of the team.
+- If unreachable for 30 days without any news, a core member can be removed through a core decision.
+- The core team *does not* make rulings on RFCs of other sub-teams, although individual team members might also participate in the discussions of sub teams or be members of those teams.
+- Meeting notes should be published and made transparent to the community on a regular basis. 
 
 ### RFC process
 
@@ -83,15 +101,19 @@ An RFC is a Request For Comments document, outlining a proposed improvement or d
 
 ### Sub-teams
 
+#### Overview 
+
 Sub teams are groups organized around specific areas or knowledge fields. They are responsible for these areas, but do not do all the work. Anyone can contribute anywhere, and do not need to hold a particular title to do so. 
 
 Rather, sub-teams work on policies, processes, and workflows for their specific areas, as required. They are in charge of the RFC process in their specific field: They determine what requires an RFC in their area, they assign RFC shepherds that guide an RFC through its various stages and ensures the right stakeholders become aware of it and solicit their feedback. Ultimately, sub-teams decide whether an RFC in their area should be accepted or rejected. They are responsible to ensure that each RFC in their area has a tracked status, and that they progress towards an outcome.
 
-Sub-teams self-organize. They should have a leader, often this leader may be part of the core team. They determine how members get added to the team. They should include area experts, and stakeholders. 
+Sub-teams self-organize, but should be inclusive and adhere to community values. They should have a leader, often this leader may be part of the core team. They determine how members get added to the team. They should include area experts, and stakeholders. The decision making process should be consensus-seeking where possible.
 
 Sub-teams can be broken down into smaller working groups or sub-teams, permanent or temporary, as required and is seen necessary for them to be productive.
 
-Each sub-team has a dedicated section on the forum, they should meet regularly, and keep some notes on what was covered and decided. Decisions do not need to happen in meetings, and could for example be handled asynchronously or in the RFC process.  
+Each sub-team has a dedicated section on the forum, they should meet regularly, and keep some notes on what was covered and decided. Decisions do not need to happen in meetings, and could for example be handled asynchronously or in the RFC process.
+
+Meeting notes should be published and made transparent to the community on a regular basis. 
 
 ### The teams
 
@@ -111,54 +133,49 @@ In addition to Core team, the following teams are proposed to be created initial
 
 * **Moderation.** Code of conduct, handles violations, across all areas of the project.  To avoid biases and conflicts of interest, this sub-team _does not_ contain any member of the core team.
 
-### Adoption path
+### In case of conflicts, disagreement, or dissent
 
-1. Publish Draft proposal in this respository
-2. Discuss and refine as required
-3. If approved;
-   - Core Team: 
-      1. Delineate roles, responsibilites and powers of core team?
-      2. Other open questions see [unresolved-questions](#unresolved-questions)
-   - Sub-teams:
-      1. Open questions as above
-      2. Appoint team leads from council/core where available
-      3. Let sub-teams without leaders self-form once there is someone ready to step up
-   - RFC process:
-      1. Create a repository (this one)
-      2. Propose, discuss and approve template & process document as grinrfc-0001 and grinrfc-0001
+Sub-teams are created and appointed by the core, and core can decide to re-organize team structures and shut down dysfunctional teams. This is a "nuclear" option, such decisions should not be taken lightly. The repercussions of such actions can be worse than the initial situation.
+
+In practice, core team members might be engaging with sub-teams as individual contributors. It is however not expected that "the core team" will become involved in the responsibilities of individual sub-teams. Core sets the overall direction for the project, but should not micro manage sub-teams as this defeats the entire purpose of having these teams in the first place.
+
+If there are conflicts within sub-teams, these should ideally be resolved within the sub-teams themselves. If this is not possible and there's contentious disagreements that need outside arbitration, sub-teams can invite core or another sub-team to become involved.
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-TBD
+- Adds a lot more structure. This might create overhead.
+- Could lead to infighting and conflict between teams.
+- Could lead to situations where one sub-team does work that conflicts with other sub-teams, "left hand not talking to the right".
+
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-TBD
+* Keep the process as is.
+* Change the process to something else.
 
 # Prior art
 [prior-art]: #prior-art
 
-TBD
+Python conducted a comprehensive survey of the governance structures of various open source projects in 2018 through [PEP-8002](https://www.python.org/dev/peps/pep-8002/). This document is highly recommended reading for various alternative structures.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-* Is this change to the structure actually going to help? Will we just end up with the same general arrangement of people as currently exists under a slightly different guise?
-* Is the core and subteam structure too loose and informal? Do we need to resolve questions such as:
-    * Who chooses the core team?
-    * Assuming the core team has a leader, what are the roles and responsibilities/veto/tie breaking powers etc?
-    * How long is their tenure? How do you get rid of them?
-    * Same questions for subteams
-    * The difference between the sub-teams and core teams. Where is the authority delineated?
-    * What happens during disagreements between the core team and subteams? Or internal disagreements?
-* Should we consider a core team and a council (see Python Steering Council Model below)
+Far too many to all be listed here, but here are some:
+
+- Is this too much structure for the amount of active contributors we have?
+- Does this approach really address the problems as highlighted in the motivation?
+- Does this legitimize the core team enough in the community?
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-TBD
+- Introduce more sub-teams
+- Introduce an electorate
+- Introduce terms
+- Define firmer structures and organizational rules
 
 # References
 [references]: #references
@@ -170,9 +187,6 @@ TBD
 
 **Node.js governance**
 - https://medium.com/the-node-js-collection/healthy-open-source-967fa8be7951
-
-**Python Steering Council Model**
-- https://www.python.org/dev/peps/pep-8016/
 
 **Swarmwise, by Rick Falkvinge**
 - https://falkvinge.net/files/2013/04/Swarmwise-2013-by-Rick-Falkvinge-v1.1-2013Sep01.pdf
