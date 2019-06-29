@@ -1,13 +1,12 @@
-# GRIN-RFC-0001 Grin RFC Process
+# 0001-rfc-process
 
-```
-- Number: GRIN-RFC-0001
-- Title: Grin RFC Process
-- Status: Draft
-- Authors: joltz (joltz@protonmail.com)
-           yeastplume (yeastplume@protonmail.com)
-- Created : June 21st, 2019
-```
+# THIS RFC IS STILL IN DRAFT MODE
+
+- Title: rfc-process
+- Authors: [joltz](mailto:joltz@protonmail.com), [yeastplume](mailto:yeastplume@protonmail.com), [lehnberg](mailto:daniel.lehnberg@protonmail.com)
+- Start date: June 21st, 2019
+
+---
 
 # Summary
 [summary]: #summary
@@ -17,9 +16,7 @@ The "RFC" (request for comments) process is intended to provide a consistent and
 # Motivation
 [motivation]: #motivation
 
-The previous "ad-hoc" method of adding new features to Grin was suitable for early development, but as Grin and its ecosystem matures it needs a more controlled process to keep development focused,
-help provide the community with a reasonable overview of Grin's future plans, and provide a platform for focused discussion of new features. This is a proposal for a structured RFC process, with
-the intent being that it will be closely followed as part of Grin's development.
+The previous "ad-hoc" method of adding new features to Grin was suitable for early development, but as Grin and its ecosystem matures it needs a more controlled process to keep development focused, help provide the community with a reasonable overview of Grin's future plans, and provide a platform for focused discussion of new features. This is a proposal for a structured RFC process, with the intent being that it will be closely followed as part of Grin's development.
 
 # Guide-level explanation
 [guide-level-explanation]: #guide-level-explanation
@@ -56,7 +53,7 @@ submit an RFC first.
 [reference-level-explanation]: #reference-level-explanation
 
 1. Fork the RFC repo https://github.com/mimblewimble/grin-rfcs
-1. Copy `0000-template.md` to `text/0000-my-feature.md` (where
+2. Copy `0000-template.md` to `text/0000-my-feature.md` (where
 'my-feature' is descriptive. don't assign an RFC number yet).
 1. Write the RFC according to the template instructions.
 1. Submit a pull request.
