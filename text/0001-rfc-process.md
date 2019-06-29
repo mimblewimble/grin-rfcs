@@ -41,6 +41,18 @@ If you submit a pull request to implement a new feature without going through th
 
 _To be added here once available._
 
+## Before creating an RFC
+[Before creating an RFC]: #before-creating-an-rfc
+
+A hastily-proposed RFC can hurt its chances of acceptance. Low quality proposals, proposals for previously-rejected features, or those that don't fit into the near-term roadmap, may be quickly rejected, which can be demotivating for the unprepared contributor. Laying some groundwork ahead of the RFC can make the process smoother.
+
+Although there is no single way to prepare for submitting an RFC, it is generally a good idea to pursue feedback from other project contributors
+beforehand, to ascertain that the RFC may be desirable; having a consistent impact on the project requires concerted effort toward consensus-building.
+
+Ways to prepare and pave the way for writing and submitting an RFC include discussing the topic or posting "pre-RFCs" to our [forum](https://grin-forum.org) for feedback.
+
+As a rule of thumb, receiving encouraging feedback from long-standing project
+contributors, and particularly members of the relevant sub-team (if applicable) is a good indication that the RFC is worth pursuing.
 
 ## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
