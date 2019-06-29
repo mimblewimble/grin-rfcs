@@ -59,7 +59,7 @@ contributors, and particularly members of the relevant sub-team (if applicable) 
 
 In order to make a "substantial" change to Grin, one must first get an RFC merged into the RFC repo as a markdown file. At that point the RFC is 'active' and may be implemented with the goal of eventual inclusion into Grin.
 
-![process state diagram](assets/../../assets/0001-state-diagram.svg)
+![process state diagram](../assets/0001-state-diagram.svg)
 
 ### Stages in detail
 
