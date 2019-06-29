@@ -9,10 +9,11 @@ draft : * tag sub-team
 draft : * assign shepherd
 draft : * feedback from community
 draft : * iterate on proposal
-draft -right-> FCP : [shepherd]\nMotion to enter\nFinal Comment Period
+draft -right-> FCP : [shepherd]\nEnter Final Comment Period
 FCP: * include disposition to merge/close/postpone
 FCP: * final feedback from community
 FCP: * final touches on proposal
+FCP -left-> draft : [shepherd]\nCancel FCP
 }
 
 state close_join <<join>>
