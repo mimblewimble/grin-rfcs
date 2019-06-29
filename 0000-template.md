@@ -1,10 +1,11 @@
-```
-- Title: [give this RFC a unique indented title like so: `my-awesome-proposal`]
-- Status: Draft
-- Authors: [Yourname (your@email.com)]
-- Start date : [the day work begun, i.e. `Jan 15, 2019`]
-- Related issue: [URL to any related github issue]
-```
+
+- Title: [edit and replace with a unique name like so: `my-awesome-proposal`]
+- Authors: [Your Name](mailto:your@email.com)
+- Start date : [edit and replace the day work begun, i.e. `Jan 15, 2019`]
+- RFC PR: [Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
+- Tracking issue: [Edit if merged with link to tracking github issue]
+
+---
 
 # Summary
 [summary]: #summary
