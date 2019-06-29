@@ -54,41 +54,62 @@ Ways to prepare and pave the way for writing and submitting an RFC include discu
 As a rule of thumb, receiving encouraging feedback from long-standing project
 contributors, and particularly members of the relevant sub-team (if applicable) is a good indication that the RFC is worth pursuing.
 
-## Reference-level explanation
-[reference-level-explanation]: #reference-level-explanation
+## Process description
+[process-description]: #process-description
 
-To add a major feature to Grin or make a change to Grin's governance structure, one must first get the RFC merged into the RFC repo as a markdown file. 
-At that point the RFC is 'active' and may be implemented with the goal of eventual inclusion into the Grin codebase or Governance procedures.
+In order to make a "substantial" change to Grin, one must first get an RFC merged into the RFC repo as a markdown file. At that point the RFC is 'active' and may be implemented with the goal of eventual inclusion into Grin.
 
+![process state diagram](assets/../../assets/0001-state-diagram.svg)
 
-1. Fork the RFC repo https://github.com/mimblewimble/grin-rfcs
-2. Copy `0000-template.md` to `text/0000-my-feature.md` (where
+### Stages in detail
+
+#### Submission
+* Fork the RFC repo https://github.com/mimblewimble/grin-rfcs
+* Copy `0000-template.md` to `text/0000-my-feature.md` (where
 'my-feature' is descriptive. don't assign an RFC number yet).
-1. Write the RFC according to the template instructions.
-1. Submit a pull request.
-1. The relevant team (sub-team or core) will perform an initial review of the PR, and decide whether the RFC should be merged into the repository as a Draft PR.
+* If you include any assets, do so as `/assets/0000-asset-description.xxx`
+* Write the RFC according to the template instructions.
+* Submit a pull request. As a pull request the RFC will receive design feedback from the larger community, and the author should be prepared to revise it in response.
 
-Once the PR is accepted into the repository, it will be given 'Draft' status. This does not mean the RFC has been accepted, only that is has been
-selected by the community for further discussion, feedback and refinement.
+#### Draft
 
-At this point, whoever merges the PR should:
-* Assign an id, using the PR number of the RFC pull request. (If the RFC has multiple pull requests associated with it, choose one PR number,
-  preferably the minimal one.)
-* Rename the file to `grin-rfc-xxxx.md` and merge into `/text`. (where
-xxxx is the RFC ID)
-* Fill in the remaining metadata in the RFC header.
-* Add an entry in the RFC List in `README.md`, with a status of Draft.
+* Each pull request will be labeled with the most relevant sub-team, which will lead to it being triaged by that team and is assigned a shepherd from this team. The shepherd ensures the RFC progresses through the process and that a decision is reached, but they themselves do not make this decision.
+* As the author, you build consensus and integrate feedback. RFCs that have broad support are much more likely to make progress than those that don't receive any comments. They are encouraged to reach out to the RFC shepherd in particular to get help identifying stakeholders and obstacles.
+* The relevant sub-team discuss the RFC pull request, as much as possible in the comment thread of the pull request itself. Offline discussion will be summarized on the pull request comment thread.
+* RFCs rarely go through this process unchanged, especially as alternatives and drawbacks are shown. As an author uou can make edits, big and small, to the RFC to clarify or change the design,but make changes as new commits to the pull request, and leave a comment on the pull request explaining your changes. Specifically, do not squash or rebase commits after they are visible on the pull request.
 
-When the RFC is in 'Draft' stage, it is important to refine details, build consensus among the community for the RFC and integrate useful
-feedback. RFCs that have broad support are much more likely to make progress than those that don't receive any comments.
+#### Final Comment Period (FCP)
 
-Eventually, the relevant community organization will either accept the RFC by changing its status to 'Accepted' or reject it by setting it to 'Rejected'.
+* At some point, a member of the sub-team will propose a "motion for final comment period" (FCP), along with a *disposition* for the RFC (merge, close, or postpone).
+* This step is taken when enough of the tradeoffs have been discussed that the sub-team is in a position to make a decision. That does not require consensus amongst all participants in the RFC thread (which is usually impossible). However, the argument supporting the disposition on the RFC needs to have already been clearly articulated, and there should not be a strong consensus *against* that position outside of the sub-team. Sub-team members use their best judgment in taking this step, and the FCP itself ensures there is ample time and notification for stakeholders to push back if it is made prematurely.
+* For RFCs with lengthy discussion, the motion to FCP is usually preceded by a *summary comment* trying to lay out the current state of the discussion and major tradeoffs/points of disagreement.
+* The FCP lasts ten calendar days, so that it is open for at least 5 business days. It is also advertised widely (i.e. in [Grin News](https://grinnews.substack.com)). This way all stakeholders have a chance to lodge any final objections before a decision is reached.
+* In most cases, the FCP period is quiet, and the RFC is either merged or closed. However, sometimes substantial new arguments or ideas are raised, the FCP is canceled, and the RFC goes back into draft mode.
 
-Once an RFC becomes active then authors may implement it and submit the feature as a pull request to the relevant Grin repo. An 'Accepted' status is not a rubber stamp, and in particular still does not mean the feature will ultimately
-be merged; it does mean that in principle all the major stakeholders have agreed to the feature and are amenable to merging it.
+#### Active
 
-Modifications to Accepted RFC's can be done in followup PR's. An RFC that makes it through the entire process to implementation is considered
-'Active'; an RFC that fails after becoming active is 'Inactive' and is relabelled as such.
+* As FCP concludes and there are no objections to accepting the RFC, it gets merged into `/grin-rfcs` and becomes "active".
+* Before merging, the shepherd:
+    * updates the RFC to give it an RFC number (which is the same as the number of the initial Pull Request)
+    * Renames the markdown file accordingly
+    * If a tracking issue on the repo affected by the RFC has created, it is linked to in the header. 
+* Once active, the authors may then implement it and submit the feature as a pull request to the relevant repo.
+* Being "active" is not a rubber stamp, and in particular still does not mean the feature will ultimately be merged; it does mean that in principle all the major stakeholders have agreed to the feature and are amenable to merging it.
+* Furthermore, the fact that a given RFC has been accepted and is "active" implies nothing about what priority is assigned to its implementation, nor does it imply anything about whether a developer has been assigned the task of implementing the feature.
+* While it is not necessary that the author of the RFC also write the implementation, it is by far the most effective way to see an RFC through to completion: authors should not expect that other project contributors will take on responsibility for implementing their accepted feature.
+* Modifications to "active" RFCs can be done in follow-up pull requests. We strive to write each RFC in a manner that it will reflect the final design of the feature; but the nature of the process means that we cannot expect every merged RFC to actually reflect what the end result will be at the time of implementation.
+* In general, once accepted, RFCs should not be substantially changed. Only very minor changes should be submitted as amendments. More substantial changes should be new RFCs, with a note added to the original RFC. Exactly what counts as a "very minor change" is up to the sub-team to decide; check sub-team specific guidelines for more details.
+
+#### Postponed
+
+* Some RFC pull requests are tagged with the "postponed" label when they are closed (as part of the rejection process).
+* An RFC closed with "postponed" is marked as such because we want neither to think about evaluating the proposal nor about implementing the described feature until some time in the future, and we believe that we can afford to wait until then to do so.
+* Postponed pull requests may be re-opened when the time is right. We don't have any formal process for that, you should ask members of the relevant sub-team.
+* Usually an RFC pull request marked as "postponed" has already passed an informal first round of evaluation, namely the round of "do we think we would ever possibly consider making this change, as outlined in the RFC pull request, or some semi-obvious variation of it." (When the answer to the latter question is "no", then the appropriate response is to close the RFC, not postpone it.)
+
+#### Closed
+
+* At any time before merging, the RFC can be closed if there is no support in the community for the proposal.
 
 ## Drawbacks
 [drawbacks]: #drawbacks
@@ -110,10 +131,12 @@ Alternatively retain the current informal RFC process. The proposed RFC process 
 understand why new features are being merged
 * Assist the Grin community with feature and release planning.
 
-As an alternative, we could adopt an even stricter RFC process than the one proposed here. If desired, we should likely look to Bitcoin's BIP or Python's PEP process for inspiration.
+As an alternative, we could adopt an even stricter RFC process than the one proposed here. We could for example look to Bitcoin's BIP or Python's PEP process for inspiration.
 
 ## Prior art
 [prior-art]: #prior-art
+
+This process draws inspiration _extensively_ from Rust's RFC process, where much credit for the process is due.
 
 Most decentralized cryptocurrency projects have adopted an RFC-like process to manage adding new features.
 
@@ -123,21 +146,15 @@ Bitcoin uses BIPs which are an adaptation of Python's PEPs. These processes are 
 [unresolved-questions]: #unresolved-questions
 
 1. Does this RFC strike a favorable balance between formality and agility?
-2. Does this RFC successfully address the aforementioned issues with the current informal process?
-3. Should we retain rejected RFCs in the archive?  (YP: I think yes, so it's apparent to new submitters if their idea has already been considered and rejected)
-4. Should RFC issues be opened in their respective repos (wallet RFC in wallet repo etc.) or should they all be opened in grin-pm repo? (YP: I think 1 repository dedicated to Grin RFCs is fine)
+2. Does this RFC address the issues with the current informal process adequately?
 
 ## Future possibilities
 [future-possibilities]: #future-possibilities
 
-This proposal was initially based on an RFC process for codebase development.
-As the process evolves it will have a larger impact in the governance of Grin.
-This is a relatively new area of exploration as governance processes can have
+This proposal was initially based on an RFC process for codebase development. As the process evolves it will have a larger impact in the governance of Grin. This is a relatively new area of exploration as governance processes can have
 wide ranging impacts on the ecosystem as a whole.
 
-Just as it is important to hone the language to support the development process
-and life-cycle it is also important to sharpen the language to support governance
-processes and life-cycles for the Grin ecosystem.
+Just as it is important to hone the language to support the development process and life-cycle it is also important to sharpen the language to support governance processes and life-cycles for the Grin ecosystem.
 
 ## References
 [references]: #references
