@@ -8,25 +8,25 @@
 
 ---
 
-# Summary
+## Summary
 [summary]: #summary
 
 The "RFC" (request for comments) process is intended to provide a consistent and controlled path for improvements to be made to Grin.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Many changes, including bug fixes and documentation improvements can be implemented and reviewed via the normal GitHub pull request workflow.
 
 Some changes though are "substantial", and could benefit from being put through a bit of a design process in order to produce a consensus among Grin community participants and stakeholders.
 
-# Guide-level explanation
+## Guide-level explanation
 [guide-level-explanation]: #guide-level-explanation
 
 To add a major feature to Grin or make a change to Grin's governance structure, one must first get the RFC merged into the RFC repo as a markdown file. 
 At that point the RFC is 'active' and may be implemented with the goal of eventual inclusion into the Grin codebase or Governance procedures.
 
-## When you need to follow this process
+### When you need to follow this process
 
 You need to follow this process if you intend to make "substantial"
 changes to the Grin codebase or governance process. What constitutes a "substantial"
@@ -51,7 +51,7 @@ through the RFC process, it may be closed with a polite request to
 submit an RFC first.
 
 
-# Reference-level explanation
+## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
 1. Fork the RFC repo https://github.com/mimblewimble/grin-rfcs
@@ -83,7 +83,7 @@ be merged; it does mean that in principle all the major stakeholders have agreed
 Modifications to Accepted RFC's can be done in followup PR's. An RFC that makes it through the entire process to implementation is considered
 'Active'; an RFC that fails after becoming active is 'Inactive' and is relabelled as such.
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 * May not be formal enough
@@ -91,7 +91,7 @@ Modifications to Accepted RFC's can be done in followup PR's. An RFC that makes 
 * May slow down needed features
 * May allow some features to be included too quickly
 
-# Rationale and alternatives
+## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
 Alternatively retain the current informal RFC process. The proposed RFC process is designed to improve over the informal process in the following ways:
@@ -105,14 +105,14 @@ understand why new features are being merged
 
 As an alternative, we could adopt an even stricter RFC process than the one proposed here. If desired, we should likely look to Bitcoin's BIP or Python's PEP process for inspiration.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 Most decentralized cryptocurrency projects have adopted an RFC-like process to manage adding new features.
 
 Bitcoin uses BIPs which are an adaptation of Python's PEPs. These processes are similar to the Rust RFC process which has had success in the Rust community as well as in other cryptocurrency projects like Peercoin.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
 1. Does this RFC strike a favorable balance between formality and agility?
@@ -120,7 +120,7 @@ Bitcoin uses BIPs which are an adaptation of Python's PEPs. These processes are 
 3. Should we retain rejected RFCs in the archive?  (YP: I think yes, so it's apparent to new submitters if their idea has already been considered and rejected)
 4. Should RFC issues be opened in their respective repos (wallet RFC in wallet repo etc.) or should they all be opened in grin-pm repo? (YP: I think 1 repository dedicated to Grin RFCs is fine)
 
-# Future possibilities
+## Future possibilities
 [future-possibilities]: #future-possibilities
 
 This proposal was initially based on an RFC process for codebase development.
@@ -132,7 +132,7 @@ Just as it is important to hone the language to support the development process
 and life-cycle it is also important to sharpen the language to support governance
 processes and life-cycles for the Grin ecosystem.
 
-# References
+## References
 [references]: #references
 
 https://github.com/rust-lang/rfcs
