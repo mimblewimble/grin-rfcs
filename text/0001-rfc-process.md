@@ -11,7 +11,7 @@
 # Summary
 [summary]: #summary
 
-The "RFC" (request for comments) process is intended to provide a consistent and controlled path for new features to enter the Grin codebase and governance structure.
+The "RFC" (request for comments) process is intended to provide a consistent and controlled path for improvements to be made to Grin.
 
 # Motivation
 [motivation]: #motivation
