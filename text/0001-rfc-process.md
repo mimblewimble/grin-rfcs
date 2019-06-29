@@ -90,8 +90,8 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 
 * As FCP concludes and there are no objections to accepting the RFC, it gets merged into `/grin-rfcs` and becomes "active".
 * Before merging, the shepherd:
-    * updates the RFC to give it an RFC number (which is the same as the number of the initial Pull Request)
-    * Renames the markdown file accordingly
+    * updates the RFC to give it an RFC number (which is the same as the number of the initial Pull Request).
+    * Renames the markdown file accordingly and any accompanied assets.
     * If a tracking issue on the repo affected by the RFC has created, it is linked to in the header. 
 * Once active, the authors may then implement it and submit the feature as a pull request to the relevant repo.
 * Being "active" is not a rubber stamp, and in particular still does not mean the feature will ultimately be merged; it does mean that in principle all the major stakeholders have agreed to the feature and are amenable to merging it.
