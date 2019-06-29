@@ -16,7 +16,9 @@ The "RFC" (request for comments) process is intended to provide a consistent and
 # Motivation
 [motivation]: #motivation
 
-The previous "ad-hoc" method of adding new features to Grin was suitable for early development, but as Grin and its ecosystem matures it needs a more controlled process to keep development focused, help provide the community with a reasonable overview of Grin's future plans, and provide a platform for focused discussion of new features. This is a proposal for a structured RFC process, with the intent being that it will be closely followed as part of Grin's development.
+Many changes, including bug fixes and documentation improvements can be implemented and reviewed via the normal GitHub pull request workflow.
+
+Some changes though are "substantial", and could benefit from being put through a bit of a design process in order to produce a consensus among Grin community participants and stakeholders.
 
 # Guide-level explanation
 [guide-level-explanation]: #guide-level-explanation
