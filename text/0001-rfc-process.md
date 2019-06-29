@@ -20,39 +20,34 @@ Many changes, including bug fixes and documentation improvements can be implemen
 
 Some changes though are "substantial", and could benefit from being put through a bit of a design process in order to produce a consensus among Grin community participants and stakeholders.
 
-## Guide-level explanation
-[guide-level-explanation]: #guide-level-explanation
+## When this process should be followed
+[when-this-process-should-be-followed]: #when-this-process-should-be-followed
 
-To add a major feature to Grin or make a change to Grin's governance structure, one must first get the RFC merged into the RFC repo as a markdown file. 
-At that point the RFC is 'active' and may be implemented with the goal of eventual inclusion into the Grin codebase or Governance procedures.
-
-### When you need to follow this process
-
-You need to follow this process if you intend to make "substantial"
-changes to the Grin codebase or governance process. What constitutes a "substantial"
-change may evolve based on community norms, but may include the following.
+You need to follow this process if you intend to make "substantial" changes to the Grin codebase or governance process. What constitutes a "substantial" change may evolve based on community norms and individual definitions of sub-teams, but may include the following.
 
    - Any semantic or syntactic change to the wallet, node, miner or underlying crypto libraries that is not a bugfix.
-   - Major changes in ecosystem content such as the docs, site or explorer
+   - Major changes in ecosystem content such as the docs, site or explorer.
    - Removing Grin features, including those that are feature-gated.
 
 Some changes do not require an RFC:
 
-   - Rephrasing, reorganizing, refactoring, or changes that are not
- visible to Grin's users.
-   - Additions that strictly improve objective, numerical quality
-criteria (warning removal, speedup, better platform coverage, more
-parallelism, trap more errors, etc.)
-   - Additions only likely to be _noticed by_ other developers-of-grin,
-invisible to users-of-grin.
+   - Rephrasing, reorganizing, refactoring, or changes that are not visible to Grin's users.
+   - Additions that strictly improve objective, numerical quality criteria (warning removal, speedup, better platform coverage, more parallelism, trap more errors, etc.)
+   - Additions only likely to be _noticed by_ other developers-of-grin, invisible to users-of-grin.
 
-If you submit a pull request to implement a new feature without going
-through the RFC process, it may be closed with a polite request to
-submit an RFC first.
+If you submit a pull request to implement a new feature without going through the RFC process, it may be closed with a polite request to submit an RFC first.
+
+### Sub-team specific guidelines
+
+_To be added here once available._
 
 
 ## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
+
+To add a major feature to Grin or make a change to Grin's governance structure, one must first get the RFC merged into the RFC repo as a markdown file. 
+At that point the RFC is 'active' and may be implemented with the goal of eventual inclusion into the Grin codebase or Governance procedures.
+
 
 1. Fork the RFC repo https://github.com/mimblewimble/grin-rfcs
 2. Copy `0000-template.md` to `text/0000-my-feature.md` (where
