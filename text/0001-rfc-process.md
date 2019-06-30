@@ -18,7 +18,7 @@ The "RFC" (request for comments) process is intended to provide a consistent and
 
 Many changes, including bug fixes and documentation improvements can be implemented and reviewed via the normal GitHub pull request workflow.
 
-Some changes though are "substantial", and could benefit from being put through a bit of a design process in order to produce a consensus among Grin community participants and stakeholders.
+Some changes though are "substantial", and could benefit from being put through a more formal design process in order to produce a consensus among Grin community participants and stakeholders.
 
 ## When this process should be followed
 [when-this-process-should-be-followed]: #when-this-process-should-be-followed
@@ -97,7 +97,7 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 * Being "active" is not a rubber stamp, and in particular still does not mean the feature will ultimately be merged; it does mean that in principle all the major stakeholders have agreed to the feature and are amenable to merging it.
 * Furthermore, the fact that a given RFC has been accepted and is "active" implies nothing about what priority is assigned to its implementation, nor does it imply anything about whether a developer has been assigned the task of implementing the feature.
 * While it is not necessary that the author of the RFC also write the implementation, it is by far the most effective way to see an RFC through to completion: authors should not expect that other project contributors will take on responsibility for implementing their accepted feature.
-* Modifications to "active" RFCs can be done in follow-up pull requests. We strive to write each RFC in a manner that it will reflect the final design of the feature; but the nature of the process means that we cannot expect every merged RFC to actually reflect what the end result will be at the time of implementation.
+* Modifications to "active" RFCs can be done in follow-up pull requests. We strive to write each RFC in a manner that it will reflect the final design of the feature; but the nature of software development means that we cannot expect every merged RFC to actually reflect what the end result will be at the time of implementation.
 * In general, once accepted, RFCs should not be substantially changed. Only very minor changes should be submitted as amendments. More substantial changes should be new RFCs, with a note added to the original RFC. Exactly what counts as a "very minor change" is up to the sub-team to decide; check sub-team specific guidelines for more details.
 
 #### Postponed
@@ -109,12 +109,11 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 
 #### Closed
 
-* At any time before merging, the RFC can be closed if there is no support in the community for the proposal.
+* A proposed RFC can be closed at any time before reaching 'active' state. This is done by closing the pull request itself. This would happen for example if there is no support in the community for the proposal or if there are other underlying reasons why this is not a change the community wants to make.
 
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-* May not be formal enough
 * May not encourage sufficient community engagement
 * May slow down needed features
 * May allow some features to be included too quickly
