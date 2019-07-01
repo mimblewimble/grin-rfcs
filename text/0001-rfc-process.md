@@ -111,6 +111,12 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 
 * A proposed RFC can be closed at any time before reaching 'active' state. This is done by closing the pull request itself. This would happen for example if there is no support in the community for the proposal or if there are other underlying reasons why this is not a change the community wants to make.
 
+### Changes to the RFC process
+
+In the spirit of the proposed process itself, a future "substantial" overhaul to the RFC process should be opened as a new RFC rather than making edits to this RFC. Minor changes can be made by opening pull requests against this document.
+
+As the RFC process is something that should be consistent across all sub-teams and the project as a whole, changes to the process fall under Core's remit. As they evaluate proposals to modify the process, they are expected to consult with sub-teams, and other stakeholders using or being affected by the process.
+
 ## Drawbacks
 [drawbacks]: #drawbacks
 
