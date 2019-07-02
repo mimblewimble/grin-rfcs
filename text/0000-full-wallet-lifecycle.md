@@ -1,12 +1,10 @@
-# GRIN-RFC-0000 Full Wallet Lifecycle Support in Wallet API
+- Title: full-wallet-lifecycle
+- Authors: [Michael Cordner](mailto:yeastplume@protonmail.com)
+- Start date : June 26th, 2019
+- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
+- Tracking issue: [Edit if merged with link to tracking github issue]
 
-```
-- Number: GRIN-RFC-0000
-- Title: Full Wallet Lifecycle Support in Wallet API
-- Status: Draft
-- Authors: yeastplume (yeastplume@protonmail.com)
-- Created : June 26th, 2019
-```
+---
 
 # Summary
 [summary]: #summary
@@ -81,13 +79,13 @@ The wallet data directory structure will become (for example):
         ...
 ```
 
-If a data directory is not provided in a wallet API call, it will be assumed to be operating on the `default` wallet
+If a data directory is not provided in a wallet API call, it will be assumed to be operating on the `default` wallet.
 
 ### Data migration
 
 The target version of the wallet will contain a function to migrate existing wallets from the current data structure to the new,
 essentially moving `wallet_data/wallet.seed`, `wallet_data/db/` and `wallet_data/saved_txs/` into `wallet_data/default/wallet.seed` etc.
-(Should this be performed within the API for consistency?)
+(Should this be performed within an API call for consistency?)
 
 ## Wallet Initialization
 
