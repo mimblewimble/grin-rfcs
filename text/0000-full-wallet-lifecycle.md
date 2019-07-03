@@ -22,6 +22,12 @@ The Wallet APIs are intended to be the foundation upon which community-created w
 more difficult by the absence of wallet creation and seed management functions within the API. Ideally, it should be the case that a wallet can
 be instantiated and managed solely via the Owner API.
 
+In order to achieve this, several other pieces of functionality will need to in place. These are outlined in detail below, but as a summary:
+
+* Support for multiple wallets within a single data directory
+* Change the model for the command-line wallet from single-use commands to an internal prompt, keeping the wallet instance resident between commands.
+
+
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
@@ -81,6 +87,9 @@ The wallet data directory structure will become (for example):
 
 If a data directory is not provided in a wallet API call, it will be assumed to be operating on the `default` wallet.
 
+There should only be a single `grin-wallet.toml` file in the wallet's data directory. Its configuration settings are global to all wallet
+instances.
+
 ### Data migration
 
 The target version of the wallet will contain a function to migrate existing wallets from the current data structure to the new,
@@ -94,19 +103,32 @@ in the `~/.grin/main` directory (or `~/.grin/floonet`, or the current directory 
 creates a seed file, stores the resulting data files in the directory specified in `grin-wallet.toml` (`~/.grin/main/wallet_data` by default)
 and initialises the lmdb database.
 
-OwnerAPI::create_config(Option<DataDirectory>) -> Outputs a `grin-wallet.toml` file into the given location, defaulting to `~/.grin/main/wallet_data`
-OwnerAPI::create_wallet(Option<name>, password) -> Creates and initializes a new wallet in the directory specified by `name`, `default` if None
-OwnerAPI::get_mnemonic(name) -> Returns mnemonic from given wallet
-
 It should be possible to run `grin-wallet owner_api` or invoke the API directly from a linked binary without having instantiated a wallet.
-
 
 (How is grin-wallet.toml generated?)
 
-## Additional API Functions
+## Wallet Runtime Instantiation
 
-Owner::SetWalletDirectory -> Set the top-level system wallet directory (`~/.grin/main/wallet_data` by default)
-Owner::ListWallets -> list wallet directories
+Currently, wallet instantiation works differently depending on whether the wallet is invoked via the APIs or via the command line.
+
+1. In the command line case, each wallet command is a separate invocation. Command line invocation will ask for a password, decrypt the master seed and initialize the wallet with the descrypted seed. It will then perform the desired function and return, zeroing memory and exiting the process.
+
+1. In the case of a listening API (owner or foreign), the password is given once and the wallet seed is decrypted. The wallet instance is then kept in memory by the handling thread, and re-used for each Foreign or Owner API call.
+
+In order to retain consistency and provide a framework through which the wallet can be run and lifecycle API functions can be called without wallet data actually being present, we propose that the operational model of the command-line wallet be changed to point 2 above. When the command-line wallet is first invoked, it will essentially present nothing other than a prompt. The user can then enter commands to create a wallet, instantiate a particular wallet, change the active wallet, etc. via the wallet's command prompt.
+
+Note that (wallet713)[https://github.com/vault713/wallet713] by vault713 already works exactly as this feature is described. Pending approval by vault 713, we propose merging the relevant code from wallet713 directly into the Grin command line wallet.
+
+Note this will mean significant changes from an end-user perspective on the relevant wallet release, as the existing command line commands will all be replaced with internal equivalents. There will also be additional end-user lifecycle commands that call new wallet lifecycle APIs.
+
+## New API Functions
+
+* OwnerAPI::set_wallet_directory -> Set the top-level system wallet directory (`~/.grin/main/wallet_data` by default,) from which named wallets are read
+* OwnerAPI::create_config(Option<DataDirectory>) -> Outputs a `grin-wallet.toml` file into the given location, defaulting to `~/.grin/main/wallet_data`
+* OwnerAPI::list_wallets -> list created wallets (subdirectories from the system wallet directory).
+* OwnerAPI::create_wallet(Option<name>, password) -> Creates and initializes a new wallet in the directory specified by `name`, `default` if None
+* OwnerAPI::open_wallet(name, password) -> Opens the specified wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
+* OwnerAPI::get_mnemonic() -> Returns mnemonic from the active, (open) wallet
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -168,4 +190,6 @@ The section merely provides additional information.
 # References
 [references]: #references
 
-This is a sections for references such as links to other documents or reference implementations
+**wallet713**
+- https://github.com/vault713/wallet713
+
