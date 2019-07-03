@@ -15,8 +15,8 @@ Increase the scope of the Grin Wallet's Owner API to support all wallet lifecycl
 [motivation]: #motivation
 
 Grin Wallet's APIs currently provides functions for transacting and querying the contents of the wallet. However, several pieces of functionality
-around wallet creation and seed/password management are not included within the API. This means that any consumers of the API will expect their users
-to initialize the wallet manually before the APIs can be used.
+around wallet creation and seed/password management are not included within the API. This means that any consumers of the API will either expect their users
+to initialize the wallet manually before the APIs can be used, or provide custom management for wallet lifecycle functions.
 
 The Wallet APIs are intended to be the foundation upon which community-created wallets should be built, and the job of a wallet creator is made far
 more difficult by the absence of wallet creation and seed management functions within the API. Ideally, it should be the case that a wallet can
@@ -26,7 +26,6 @@ In order to achieve this, several other pieces of functionality will need to in 
 
 * Support for multiple wallets within a single data directory
 * Change the model for the command-line wallet from single-use commands to an internal prompt, keeping the wallet instance resident between commands.
-
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
@@ -94,7 +93,7 @@ instances.
 
 The target version of the wallet will contain a function to migrate existing wallets from the current data structure to the new,
 essentially moving `wallet_data/wallet.seed`, `wallet_data/db/` and `wallet_data/saved_txs/` into `wallet_data/default/wallet.seed` etc.
-(Should this be performed within an API call for consistency?)
+(Should this be performed within an API call for consistency, or should existing files just be left alone?)
 
 ## Wallet Initialization
 
@@ -104,8 +103,6 @@ creates a seed file, stores the resulting data files in the directory specified 
 and initialises the lmdb database.
 
 It should be possible to run `grin-wallet owner_api` or invoke the API directly from a linked binary without having instantiated a wallet.
-
-(How is grin-wallet.toml generated?)
 
 ## Wallet Runtime Instantiation
 
@@ -123,12 +120,54 @@ Note this will mean significant changes from an end-user perspective on the rele
 
 ## New API Functions
 
-* OwnerAPI::set_wallet_directory -> Set the top-level system wallet directory (`~/.grin/main/wallet_data` by default,) from which named wallets are read
-* OwnerAPI::create_config(Option<DataDirectory>) -> Outputs a `grin-wallet.toml` file into the given location, defaulting to `~/.grin/main/wallet_data`
-* OwnerAPI::list_wallets -> list created wallets (subdirectories from the system wallet directory).
-* OwnerAPI::create_wallet(Option<name>, password) -> Creates and initializes a new wallet in the directory specified by `name`, `default` if None
-* OwnerAPI::open_wallet(name, password) -> Opens the specified wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
-* OwnerAPI::get_mnemonic() -> Returns mnemonic from the active, (open) wallet
+* `OwnerAPI::set_wallet_directory(dir: String) -> Result<(), libwallet::Error>`
+    - On API startup, it's assumed the top-level wallet data directory is `~/.grin/main/wallet_data` (or floonet equivalent)
+    - Set the top-level system wallet directory from which named wallets are read. Further calls to lifecycle functions will use this wallet directory
+* `OwnerAPI::create_config(data_dir: Option<String>, config_overrides: Option<GlobalWalletConfig>) -> Result<(), libwallet::Error>`
+    - Outputs a `grin-wallet.toml` file into current top-level system wallet directory
+    - Optionally takes wallet configuration structure to override defaults in the grin-wallet.toml file
+* `OwnerAPI::list_wallets() -> Result<Vec<String>, libwallet::Error>`
+    - list created wallets (i.e. wallet subdirectory names from the top-level system wallet directory).
+* `OwnerAPI::create_wallet(name: Option<String>, mnemonic: String, password: String) -> Result<(), libwallet::Error>`
+    - Creates and initializes a new wallet in the subdirectory specified by `name`, `default` if None
+    - Initializes seed from given mnemonic if given, random seed otherwise
+    - Should error appropriately if the wallet subdir already exists
+* `OwnerAPI::open_wallet(name: Option<String>, password: String) -> Result<(), libwallet::Error>`
+    - Opens the specified wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
+* `OwnerAPI::get_mnemonic() -> Result<String, libwallet::Error>`
+    - Returns the mnemonic from the active, (open) wallet
+* `OwnerAPI::change_password(old: String, new: String) -> Result<(), libwallet::Error>`
+    - Changes the password for the open wallet. This will essentially:
+        - Close the wallet instance
+        - Confirm the existing seed can be opened with the given password
+        - Regenerate the `wallet.seed` file with the new password
+        - Re-open the wallet instance
+        - (Should this just operate on closed wallets instead?)
+
+### Use cases
+
+* First time use
+   - run `grin-wallet` (or launch OwnerAPI for web wallet)
+   - top-level data directory is set to `~/.grin/main/wallet_data` (but nothing is yet written)
+   - Optionally config data directory
+   - `create_config` called to create `grin-wallet.toml`
+   - `create_wallet` called with new wallet name and seed to create a new wallet and seed
+   - new wallet subdirectory is created and initialized
+
+* Recover from seed
+   - As above, except call `create_wallet` with mnemonic seed instead
+
+### Implementation notes
+
+Although this document doesn't attempt to outline implementation, a few notes to consider for the implementor:
+
+* Currently, the code that deals with wallet initialization and seed management sits outside the wallet APIs, in the `impls` crate, (denoting they're implementation specific). The implementation should attempt to refactor traits from these hard implementations into a new interface, similar to the existing WalletBackend and NodeClient interfaces (WalletLifecycleManager, for instance). The implementation within `impls` will then become an implementation of that trait, and can be substituted by wallet authors with their own implementations.
+* The implementation period of this RFC may be a good time to remove the BIP32 specific code out from Grin core into the wallet or into a separate rust crate (probably more desirable).
+* New API functions should be implemented as additions, with the new features optional to ensure complete backwards compatibility
+* The implementation should likely be split up into separate PRs (possibly across multiple releases), in rough order:
+    * Support for multiple wallets, and upgrade mechanism
+    * Trait refactoring and new API function implementation
+    * (wallet713-based) CLI Rework, including calls to new API functions
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -162,9 +201,9 @@ Please also take into consideration that Grin sometimes intentionally diverges f
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the RFC process before this gets merged?
-- What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
+* Security implications of sending passwords and/or master seed mnemonics through the JSON-RPC API, and how to deal with this as securely as possible.
+* Security implications of leaving master seed 'open' in memory (this is aleady a concern for most wallets, but there isn't a clear way to deal with this).
+* Should upgrade mechanism to support multiple wallets just leave the default directory in place, to minimise the impact of disruption?
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
