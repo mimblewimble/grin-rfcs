@@ -1,4 +1,4 @@
-- Title: multiple-named-wallets
+- Title: full-wallet-lifecycle
 - Authors: [Michael Cordner](mailto:yeastplume@protonmail.com)
 - Start date : June 26th, 2019
 - RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
@@ -9,13 +9,23 @@
 # Summary
 [summary]: #summary
 
-Modify the wallet's data structure to allow for support of multiple named wallets within a top-level directory. Provide OwnerAPI
-functions to allow for querying existing wallets and switching the active wallet.
+Increase the scope of the Grin Wallet's Owner API to support all wallet lifecycle functions. Wallet creation, seed management, (TBD)
 
 # Motivation
 [motivation]: #motivation
 
-Grin's wallet currently assumes a single instance of seed/data, which is limiting from both a user's and wallet developer's perspective. Much wallet software (e.g. Electrum) provides end-users with the option to create and operate on multiple named wallets contained within a single directory, and adding this capability to the core Grin wallet's APIs will afford developers more flexibility.
+Grin Wallet's APIs currently provides functions for transacting and querying the contents of the wallet. However, several pieces of functionality
+around wallet creation and seed/password management are not included within the API. This means that any consumers of the API will either expect their users
+to initialize the wallet manually before the APIs can be used, or provide custom management for wallet lifecycle functions.
+
+The Wallet APIs are intended to be the foundation upon which community-created wallets should be built, and the job of a wallet creator is made far
+more difficult by the absence of wallet creation and seed management functions within the API. Ideally, it should be the case that a wallet can
+be instantiated and managed solely via the Owner API.
+
+In order to achieve this, several other pieces of functionality will need to in place. These are outlined in detail below, but as a summary:
+
+* Support for multiple wallets within a single data directory
+* Change the model for the command-line wallet from single-use commands to an internal prompt, keeping the wallet instance resident between commands.
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
