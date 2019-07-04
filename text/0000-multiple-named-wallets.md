@@ -19,22 +19,14 @@ Grin's wallet currently assumes a single instance of seed/data, which is limitin
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-Explain the proposal as if it were already included in the Grin ecosystem and you were teaching it to another Grin community member. That generally means:
-
-- Introducing new named concepts.
-- Explaining the feature largely in terms of examples.
-- Explaining how Grin community members should *think* about the feature, and how it should impact the way they use Grin. It should explain the impact as concretely as possible.
-- If applicable, provide sample error messages, deprecation warnings, or migration guidance.
-- If applicable, describe the differences between teaching this to existing Grin community members and new Grin community members.
-
-For implementation-oriented RFCs (e.g. for wallet), this section should focus on how wallet contributors should think about the change, and give examples of its concrete impact. For policy RFCs, this section should provide an example-driven introduction to the policy, and explain its impact in concrete terms.
+TBD
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
 ## Wallet Backend Structure and Multiple Wallets
 
-The Wallet API should be able to support multiple named Wallets. Currently, the default wallet data directory assumes a single wallet instance, and
+Currently, the default wallet data directory assumes a single wallet instance, and
 is structured as follows:
 
 ```
@@ -80,58 +72,42 @@ instances.
 
 ### Data migration
 
-The target version of the wallet will contain a function to migrate existing wallets from the current data structure to the new,
-essentially moving `wallet_data/wallet.seed`, `wallet_data/db/` and `wallet_data/saved_txs/` into `wallet_data/default/wallet.seed` etc.
-(Should this be performed within an API call for consistency, or should existing files just be left alone?)
+`Legacy` wallets will retain their existing structure, so as to minimize backwards compatibility concerns. The wallet should detect whether wallet data is already present directly in the top-level directory,
+and if so assume that the wallet named 'default' refers to that directory.
 
-## Wallet Initialization
+A wallet created before this change that has new named wallets added will contain this directory structure:
 
-Currently, wallet data does not exist until the user runs `grin-wallet init`. The `init` command creates `grin-wallet.toml`,
-in the `~/.grin/main` directory (or `~/.grin/floonet`, or the current directory via the `-h` flag), prompts the user for a password,
-creates a seed file, stores the resulting data files in the directory specified in `grin-wallet.toml` (`~/.grin/main/wallet_data` by default)
-and initialises the lmdb database.
+```
+~/.grin/main/
+   grin-wallet.log
+   grin-wallet.toml
+   wallet_data/
+     wallet.seed
+     db/
+     saved_txs/
+     my_wallet_1/
+        wallet.seed
+        ...
+     my_wallet_2/
+        wallet.seed
+        ...
+```
 
-It should be possible to run `grin-wallet owner_api` or invoke the API directly from a linked binary without having instantiated a wallet.
+## New API Functions and Functionality Changes
 
-## Wallet Runtime Instantiation
+Please note that the new API functions defined in [0000-full-wallet-lifecycle-rfc](#) contain additional arguments in certain API functions in anticipation of this feature.
 
-Currently, wallet instantiation works differently depending on whether the wallet is invoked via the APIs or via the command line.
+### Functions with changed behaviour
 
-1. In the command line case, each wallet command is a separate invocation. Command line invocation will ask for a password, decrypt the master seed and initialize the wallet with the descrypted seed. It will then perform the desired function and return, zeroing memory and exiting the process.
+* `OwnerAPI::create_wallet(name: Option<String>, mnemonic: String, password: String) -> Result<(), libwallet::Error>`
+    - Now consideres the `name` argument, creating the wallet in a subdirectory of the top-level directory.
+* `OwnerAPI::open_wallet(name: Option<String>, password: String) -> Result<(), libwallet::Error>`
+    - Considers the `name` argument as above
 
-1. In the case of a listening API (owner or foreign), the password is given once and the wallet seed is decrypted. The wallet instance is then kept in memory by the handling thread, and re-used for each Foreign or Owner API call.
+### New Functions
 
-In order to retain consistency and provide a framework through which the wallet can be run and lifecycle API functions can be called without wallet data actually being present, we propose that the operational model of the command-line wallet be changed to point 2 above. When the command-line wallet is first invoked, it will essentially present nothing other than a prompt. The user can then enter commands to create a wallet, instantiate a particular wallet, change the active wallet, etc. via the wallet's command prompt.
-
-Note that (wallet713)[https://github.com/vault713/wallet713] by vault713 already works exactly as this feature is described. Pending approval by vault 713, we propose merging the relevant code from wallet713 directly into the Grin command line wallet.
-
-Note this will mean significant changes from an end-user perspective on the relevant wallet release, as the existing command line commands will all be replaced with internal equivalents. There will also be additional end-user lifecycle commands that call new wallet lifecycle APIs.
-
-## New API Functions
-
-* `OwnerAPI::set_wallet_directory(dir: String) -> Result<(), libwallet::Error>`
-    - On API startup, it's assumed the top-level wallet data directory is `~/.grin/main/wallet_data` (or floonet equivalent)
-    - Set the top-level system wallet directory from which named wallets are read. Further calls to lifecycle functions will use this wallet directory
-* `OwnerAPI::create_config(data_dir: Option<String>, config_overrides: Option<GlobalWalletConfig>) -> Result<(), libwallet::Error>`
-    - Outputs a `grin-wallet.toml` file into current top-level system wallet directory
-    - Optionally takes wallet configuration structure to override defaults in the grin-wallet.toml file
 * `OwnerAPI::list_wallets() -> Result<Vec<String>, libwallet::Error>`
     - list created wallets (i.e. wallet subdirectory names from the top-level system wallet directory).
-* `OwnerAPI::create_wallet(name: Option<String>, mnemonic: String, password: String) -> Result<(), libwallet::Error>`
-    - Creates and initializes a new wallet in the subdirectory specified by `name`, `default` if None
-    - Initializes seed from given mnemonic if given, random seed otherwise
-    - Should error appropriately if the wallet subdir already exists
-* `OwnerAPI::open_wallet(name: Option<String>, password: String) -> Result<(), libwallet::Error>`
-    - Opens the specified wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
-* `OwnerAPI::get_mnemonic() -> Result<String, libwallet::Error>`
-    - Returns the mnemonic from the active, (open) wallet
-* `OwnerAPI::change_password(old: String, new: String) -> Result<(), libwallet::Error>`
-    - Changes the password for the open wallet. This will essentially:
-        - Close the wallet instance
-        - Confirm the existing seed can be opened with the given password
-        - Regenerate the `wallet.seed` file with the new password
-        - Re-open the wallet instance
-        - (Should this just operate on closed wallets instead?)
 
 ### Use cases
 
@@ -150,74 +126,26 @@ Note this will mean significant changes from an end-user perspective on the rele
 
 Although this document doesn't attempt to outline implementation, a few notes to consider for the implementor:
 
-* Currently, the code that deals with wallet initialization and seed management sits outside the wallet APIs, in the `impls` crate, (denoting they're implementation specific). The implementation should attempt to refactor traits from these hard implementations into a new interface, similar to the existing WalletBackend and NodeClient interfaces (WalletLifecycleManager, for instance). The implementation within `impls` will then become an implementation of that trait, and can be substituted by wallet authors with their own implementations.
-* The implementation period of this RFC may be a good time to remove the BIP32 specific code out from Grin core into the wallet or into a separate rust crate (probably more desirable).
 * New API functions should be implemented as additions, with the new features optional to ensure complete backwards compatibility
-* The implementation should likely be split up into separate PRs (possibly across multiple releases), in rough order:
-    * Support for multiple wallets, and upgrade mechanism
-    * Trait refactoring and new API function implementation
-    * (wallet713-based) CLI Rework, including calls to new API functions
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+* Simplicity of having a single wallet instance
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not choosing them?
-- What is the impact of not doing this?
-
 # Prior art
 [prior-art]: #prior-art
-
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- For core, node, wallet and infrastructure proposals: Does this feature exist in other projects and what experience have their community had?
-- For community, ecosystem and moderation proposals: Is this done by some other community and what were their experiences with it?
-- For other teams: What lessons can we learn from what other communities have done here?
-- Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
-
-This section is intended to encourage you as an author to think about the lessons from other languages, provide readers of your RFC with a fuller picture.
-If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other projects.
-
-Note that while precedent set by other projects is some motivation, it does not on its own motivate an RFC.
-Please also take into consideration that Grin sometimes intentionally diverges from common project features.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-* Security implications of sending passwords and/or master seed mnemonics through the JSON-RPC API, and how to deal with this as securely as possible.
-* Security implications of leaving master seed 'open' in memory (this is aleady a concern for most wallets, but there isn't a clear way to deal with this).
-* Should upgrade mechanism to support multiple wallets just leave the default directory in place, to minimise the impact of disruption?
-
 # Future possibilities
 [future-possibilities]: #future-possibilities
-
-Think about what the natural extension and evolution of your proposal would
-be and how it would affect the project and ecosystem as a whole in a holistic
-way. Try to use this section as a tool to more fully consider all possible
-interactions with the project and language in your proposal.
-Also consider how the this all fits into the roadmap for the project
-and of the relevant sub-team.
-
-This is also a good place to "dump ideas", if they are out of scope for the
-RFC you are writing but otherwise related.
-
-If you have tried and cannot think of any future possibilities,
-you may simply state that you cannot think of anything.
-
-Note that having something written down in the future-possibilities section
-is not a reason to accept the current or a future RFC; such notes should be
-in the section on motivation or rationale in this or subsequent RFCs.
-The section merely provides additional information.
 
 # References
 [references]: #references
 
-**wallet713**
-- https://github.com/vault713/wallet713
 
