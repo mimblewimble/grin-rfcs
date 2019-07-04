@@ -79,6 +79,10 @@ It should be possible to run `grin-wallet owner_api` or invoke the API directly 
 * Recover from seed
    - As above, except call `create_wallet` with mnemonic seed instead
 
+### API only
+
+Note that this RFC does not propose making user-facing changes to the existing CLI wallet to invoke these functions. It's expected that the existing cli functionality will be modified to invoke the new API functions.
+
 ### Implementation notes
 
 Although this document doesn't attempt to outline implementation, a few notes to consider for the implementor:
