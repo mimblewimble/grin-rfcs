@@ -111,6 +111,24 @@ has - allowing the development team to accurately prioritize and resolve the iss
 decide not to include those details with our reports to partners ahead of
 coordinated release, so long as we are sure that they are vulnerable.
 
+### Canaries
+
+For a privacy preserving project such as Grin, adversaries wishing to break that
+privacy may have incentive to disrupt Grin's security processes. This could be
+attempted via NSLs, FISA court orders, secret government subpoenas and rubber-hose
+tactics. The purpose of a PGP signed canary by each disclosure contact on a
+regular basis is to indicate that the disclosure contacts are not compelled
+in any way to take any actions (or non-actions) to jeopardize the security of
+Grin users. There are several examples of canaries in action, particularly in
+privacy preserving projects [5][6][7].
+
+If this section is adopted with the RFC, canaries for each security contact for
+Grin vulnerability disclosures will be updated quarterly. Repos containing up to
+date signatures will be linked in the SECURITY.md document. In the event a
+security contact fails to keep their canary alive, they will be removed from the
+list of contacts. The specific language of each canary can be up to each contact
+unless a canary standard is adopted.
+
 # Drawbacks
 [drawbacks]: #drawbacks
 
@@ -223,8 +241,6 @@ relevant to the security process for Grin.
 # References
 [references]: #references
 
-Include any references such as links to other documents or reference implementations.
-
 [0] https://dl.packetstormsecurity.net/papers/general/rfpolicy-2.0.txt
 
 [1] https://www.youtube.com/watch?v=h7W1u1K2VjQ
@@ -234,3 +250,9 @@ Include any references such as links to other documents or reference implementat
 [3] https://github.com/zcash/zcash/blob/master/responsible_disclosure.md
 
 [4] https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md
+
+[5] https://github.com/QubesOS/qubes-secpack/blob/master/canaries/canary-020-2019.txt
+
+[6] https://riseup.net/about-us/canary/canary-statement-signed.txt
+
+[7] https://protonmail.com/blog/transparency-report/
