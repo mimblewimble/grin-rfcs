@@ -1,0 +1,16 @@
+@startuml
+actor "Client" as client
+participant "JSON-RPC API (if used)" as jsonrpc
+participant "Internal Rust API" as rustapi
+participant "Wallet Backend" as backend
+
+== Initialization (ECDH/secp256k1)==
+client -> client: Calc Pub ECDH Key (**cP**)
+client -> jsonrpc: init_api_secure (**cP**)
+jsonrpc -> rustapi: init_api_secure (**cP**)
+rustapi -> rustapi: Calc Pub ECDH Key (**sP**)
+rustapi -> rustapi: Calc shared secret (**sS**)
+rustapi -> jsonrpc: **sP**
+jsonrpc -> client: **sP**
+client -> client: Calc shared secret (**s**)
+@enduml

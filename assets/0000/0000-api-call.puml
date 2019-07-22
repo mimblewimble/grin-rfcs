@@ -1,0 +1,34 @@
+@startuml
+actor "Client" as client
+participant "JSON-RPC API (if used)" as jsonrpc
+participant "Internal Rust API" as rustapi
+participant "Wallet Backend" as backend
+
+== Previous call ==
+
+rustapi -> rustapi: Generate/store new nonce -> (**k**)
+rustapi -> rustapi: Encrypt any sensitive call result data (**secret_data**, **s** + **k_prev**) -> **sdEnc**
+rustapi -> rustapi: Encrypt (**k**, **s** + **k_prev**) -> (**kEnc**)
+note left: 'open_wallet' returns **t|k**, all other api calls return **k**
+rustapi -> jsonrpc: Return (**kEnc**, Result, **sdEnc**)
+jsonrpc -> client: Return (**kEnc**, Result, **sdEnc**)
+client -> client: decrypt(**kEnc**, **s** + **k_prev**) -> **k**
+client -> client: decrypt(**sdEnc**, **s** + **k_prev**) -> **secret_data**
+client -> client: Next call encrypts t as enc(**s** + **k**, **t**)
+
+== API Call ==
+client -> jsonrpc: Encrypt token (**s** + **k**, **t**) -> **tEnc**
+client -> jsonrpc: store **k** as **k_prev**
+client -> jsonrpc: Encrypt sensitive data (**s** + **k**, **secret_data**) -> **sdEnc**
+client -> jsonrpc: api_call(**tEnc**, **sdEnc**)
+jsonrpc -> rustapi: api_call(**tEnc**, **sdEnc**)
+rustapi -> rustapi: dec(**tEnc**, **s** + **k**) -> **T**
+rustapi -> rustapi: dec(**sdEnc**, **s** + **k**) -> **secret_data**
+rustapi -> rustapi: store **k** as **k_prev**
+rustapi -> backend: decode_seed(**T**)
+backend -> backend: calculate (**T** ^ **SeedT**) -> **Seed**
+rustapi -> backend: Further API calls
+backend -> backend: Drop **Seed**
+rustapi -> rustapi: Generate/store new nonce -> (**k**)
+rustapi -> client: (Proceed as per 'previous call' section above)
+@enduml

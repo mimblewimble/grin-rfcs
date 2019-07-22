@@ -1,0 +1,28 @@
+@startuml
+actor "Client" as client
+participant "JSON-RPC API (if used)" as jsonrpc
+participant "Internal Rust API" as rustapi
+participant "Wallet Backend" as backend
+== Open Wallet ==
+client -> client: Plain-text password (**pw**)
+client -> jsonrpc: Open Wallet(**pw**)
+jsonrpc -> rustapi: Open Wallet(**pw**)
+rustapi -> rustapi: Generate Token (**t**)
+rustapi -> backend: Open Wallet(**t**, **pw**)
+backend -> backend: Decrypt seed(**pw**) -> **Seed**
+backend -> backend: Store **Seed**^**Token** (**seedT**)
+rustapi -> jsonrpc: Return (**t**)
+jsonrpc -> client: Return (**t**)
+client -> client: Include **t** in next call
+
+== API Call ==
+client -> jsonrpc: api_call(**t**, **data**)
+note right: Sensitive data such as recovery seeds are in plaintext
+jsonrpc -> rustapi: api_call(**t**, **data**)
+rustapi -> backend: decode_seed(**T**)
+backend -> backend: calculate (**T** ^ **SeedT**) -> **Seed**
+rustapi <-> backend: Further API calls
+backend -> backend: Drop **Seed**
+rustapi -> jsonrpc: Return Data
+jsonrpc -> client: Return Data
+@enduml

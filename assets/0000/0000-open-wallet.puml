@@ -1,0 +1,21 @@
+@startuml
+actor "Client" as client
+participant "JSON-RPC API (if used)" as jsonrpc
+participant "Internal Rust API" as rustapi
+participant "Wallet Backend" as backend
+== Open Wallet ==
+client -> client: Encrypt password (**pw**) with DH shared secret **s** -> **pwEnc**
+client -> jsonrpc: Open Wallet (**pwEnc**)
+jsonrpc -> rustapi: Open Wallet (**pwEnc**)
+rustapi -> rustapi: Decrypt (**pwEnc**, **s**) -> (**pw**)
+rustapi -> rustapi: Generate Token (**t**)
+rustapi -> backend: Open Wallet(**t**, **pw**)
+backend -> backend: Decrypt seed(**pw**) -> **Seed**
+backend -> backend: Store Seed^Token (**seedT**)
+rustapi -> rustapi: Generate random nonce -> (**k**)
+rustapi -> rustapi: Encrypt (**T**|**k**, **s**) -> (**tkEnc**)
+rustapi -> jsonrpc: Return (**tkEnc**)
+jsonrpc -> client: Return (**tkEnc**)
+client -> client: Decode(**s**, **tkEnc**) -> **t|k**
+client -> client: Next call encrypts t as enc(**s** + **k**, **t**)
+@enduml
