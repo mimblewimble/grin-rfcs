@@ -1,14 +1,10 @@
 # 0002-grin-governance
 
-```
 - Title: grin-governance
-- Status: Draft
 - Authors: Daniel Lehnberg (daniel.lehnberg@protonmail.com),
            Michael Cordner (yeastplume@protonmail.com)
 - Start date: June 24th, 2019
-- Related issue: [URL to any related github issue]
-
-```
+- Related issue: [/grin-pm/#167](https://github.com/mimblewimble/grin-pm/issues/167) 
 
 # Summary
 [summary]: #summary
