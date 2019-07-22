@@ -1,7 +1,5 @@
 # 0001-rfc-process
 
-# THIS RFC IS STILL IN DRAFT MODE
-
 - Title: rfc-process
 - Authors: [joltz](mailto:joltz@protonmail.com), [yeastplume](mailto:yeastplume@protonmail.com), [lehnberg](mailto:daniel.lehnberg@protonmail.com)
 - Start date: June 21st, 2019
