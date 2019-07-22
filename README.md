@@ -12,7 +12,7 @@ To begin writing your own RFC or to find out more about the process and the gene
 ## List of accepted RFCs
 
 |Title|Tl;dr|
-|:---|:---|:---|
+|:---|:---|
 | [0001-rfc-process](text/0001-rfc-process.md) | Introduce RFC process |
 | [0002-grin-governance](text/0002-grin-governance.md) | Articulate community values, define core and sub-teams |
 
