@@ -93,27 +93,29 @@ Calling the API in insecure mode is a simpler case of the above, where passwords
 * `OwnerAPI::set_wallet_directory(dir: String) -> Result<(), libwallet::Error>`
     - On API startup, it's assumed the top-level wallet data directory is `~/.grin/main/wallet_data` (or floonet equivalent)
     - Set the top-level system wallet directory from which named wallets are read. Further calls to lifecycle functions will use this wallet directory
-* `OwnerAPI::create_config(data_dir: Option<String>, config_overrides: Option<GlobalWalletConfig>) -> Result<(), libwallet::Error>`
+* `OwnerAPI::create_config(chain_type: &global::ChainTypes, config_overrides: Option<GlobalWalletConfig>) -> Result<(), libwallet::Error>`
     - Outputs a `grin-wallet.toml` file into current top-level system wallet directory
     - Optionally takes wallet configuration structure to override defaults in the grin-wallet.toml file
-* `OwnerAPI::open_wallet(name: Option<String>, password: String) -> Result<(), libwallet::Error>`
-    - Opens the wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
-    - The 'name' argument is included for future use, anticipating the inclusion of multiple wallets and seeds within a single top-level wallet directory.
-* `OwnerAPI::create_wallet(name: Option<String>, mnemonic: String, password: String) -> Result<(), libwallet::Error>`
+* `OwnerAPI::create_wallet(name: Option<String>, mnemonic: Option<ZeroingString>, mnemonic_length: usize, password: ZeroingString) -> Result<(), libwallet::Error>`
     - Creates and initializes a new wallet
     - Initializes seed from given mnemonic if given, random seed otherwise
     - Should error appropriately if the wallet already exists
     - The 'name' parameter is included for future use as in `open_wallet` above.
-* `OwnerAPI::get_mnemonic() -> Result<String, libwallet::Error>`
+* `OwnerAPI::open_wallet(name: Option<String>, password: String) -> Result<(), libwallet::Error>`
+    - Opens the wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
+    - The 'name' argument is included for future use, anticipating the inclusion of multiple wallets and seeds within a single top-level wallet directory.
+* `OwnerAPI::close_wallet(&mut self) -> Result<(), libwallet::Error>`
+    - Closes the currently open wallet
+* `OwnerAPI::get_mnemonic() -> Result<ZeroingString, libwallet::Error>`
     - Returns the mnemonic from the active, (open) wallet
-* `OwnerAPI::change_password(old: String, new: String) -> Result<(), libwallet::Error>`
+* `OwnerAPI::change_password(old: ZeroingString, new: ZeroingString) -> Result<(), libwallet::Error>`
     - Changes the password for the open wallet. This will essentially:
         - Close the wallet instance
         - Confirm the existing seed can be opened with the given password
         - Regenerate the `wallet.seed` file with the new password
         - Re-open the wallet instance
         - (Should this just operate on closed wallets instead?)
-* `OwnerAPI::delete_wallet(name: Option<String>, password: String) -> Result<(), libwallet::Error>`
+* `OwnerAPI::delete_wallet(name: Option<String>, password: ZeroingString) -> Result<(), libwallet::Error>`
     - Dangerous function that removes all wallet data
     - name argument reserved for future use
 
@@ -143,7 +145,7 @@ Although this document doesn't attempt to outline implementation, a few notes to
 # Drawbacks
 [drawbacks]: #drawbacks
 
-* Sending sensitive information such as passwords and mnemonics via the OwnerAPI is an obvious security concern.
+* Security-critical information such as passwords and mnemonics are covered via the encryption in the above scheme, but sending slate information via the OwnerAPI has privacy concerns.
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
@@ -158,9 +160,7 @@ TBD
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-* Security implications of sending passwords and/or master seed mnemonics through the JSON-RPC API, and how to deal with this as securely as possible.
-* Security implications of leaving master seed 'open' in memory (this is aleady a concern for most wallets, but there isn't a clear way to deal with this).
-* Should upgrade mechanism to support multiple wallets just leave the default directory in place, to minimise the impact of disruption?
+* Should all fields be encrypted in addition to password and seed fields (or perhaps just the slate)
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
