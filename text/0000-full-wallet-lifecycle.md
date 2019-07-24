@@ -88,10 +88,9 @@ Wallets that link the wallet API directly will not be required to encrypt parame
 ![open-wallet-direct](../assets/0000/0000-open-wallet-direct.svg)
 ![api-call-direct](../assets/0000/0000-api-call-direct.svg)
 
+'Legacy' support will not be provided for directly-linked wallets on release of the features described in this RFC. Is is expected wallet authors will need to update their code to store and supply the token with each request.
 
-## New API Functions
-
-(Needs updating)
+## New Lifecycle API Functions
 
 * `OwnerAPI::set_wallet_directory(dir: String) -> Result<(), libwallet::Error>`
     - On API startup, it's assumed the top-level wallet data directory is `~/.grin/main/wallet_data` (or floonet equivalent)
@@ -104,12 +103,12 @@ Wallets that link the wallet API directly will not be required to encrypt parame
     - Initializes seed from given mnemonic if given, random seed otherwise
     - Should error appropriately if the wallet already exists
     - The 'name' parameter is included for future use as in `open_wallet` above.
-* `OwnerAPI::open_wallet(name: Option<String>, password: String) -> Result<(), libwallet::Error>`
+* `OwnerAPI::open_wallet(name: Option<String>, password: String) -> Result<t:Token, libwallet::Error>`
     - Opens the wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
     - The 'name' argument is included for future use, anticipating the inclusion of multiple wallets and seeds within a single top-level wallet directory.
 * `OwnerAPI::close_wallet(&mut self) -> Result<(), libwallet::Error>`
     - Closes the currently open wallet
-* `OwnerAPI::get_mnemonic() -> Result<ZeroingString, libwallet::Error>`
+* `OwnerAPI::get_mnemonic(t:Token) -> Result<ZeroingString, libwallet::Error>`
     - Returns the mnemonic from the active, (open) wallet
 * `OwnerAPI::change_password(old: ZeroingString, new: ZeroingString) -> Result<(), libwallet::Error>`
     - Changes the password for the open wallet. This will essentially:
@@ -150,20 +149,10 @@ Although this document doesn't attempt to outline implementation, a few notes to
 
 * Security-critical information such as passwords and mnemonics are covered via the encryption in the above scheme, but sending slate information via the OwnerAPI has privacy concerns.
 
-# Rationale and alternatives
-[rationale-and-alternatives]: #rationale-and-alternatives
-
-TBD
-
-# Prior art
-[prior-art]: #prior-art
-
-TBD
-
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-* Should all fields be encrypted in addition to password and seed fields (or perhaps just the slate)
+* Is there a potential for replay attacks?
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
