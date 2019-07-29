@@ -53,7 +53,7 @@ Note that this mode of operation is primarly intended for use over the JSON-RPC 
 
 SecureAPI Mode consists of an ECDH key agreement followed by the establishment of an API Token that's used to XOR encrypt the wallet seed on the server side. The negotiated ECDH shared key is used to encrypt all requests and responses between the client and the JSON-RPC layer, while the token must be included in all API requests to allow the wallet backend to decrypt the seed. 'Open' wallets store their in-memory seeds XORed against the token, which is temporarily XORed against the supplied token during each request to reproduce the master seed.
 
-Q: Exact encryption algorithm TBD
+ECDH will use secp256k1 for key agreement, while encryption of JSON-RPC requests and responses will be performed via the AES256 Encryption standard.
 
 #### Security Mode Selection
 
@@ -92,6 +92,11 @@ Wallets that link the wallet API directly will not be required to encrypt parame
 
 ## New Lifecycle API Functions
 
+The functions as shown here are for illustrative purposes, and their signatures will change during implementation.
+
+* `OwnerAPI::init_api_secure(pubkey: Secp256k1Point) -> Result<pubkey: Secp256K1Point, Error>
+    - Initializes secure API mode, returning the server-side public key to be used for key agreement
+    - All further calls to the JSON-RPC API must be encrypted with the shared secret
 * `OwnerAPI::set_wallet_directory(dir: String) -> Result<(), libwallet::Error>`
     - On API startup, it's assumed the top-level wallet data directory is `~/.grin/main/wallet_data` (or floonet equivalent)
     - Set the top-level system wallet directory from which named wallets are read. Further calls to lifecycle functions will use this wallet directory
@@ -104,10 +109,11 @@ Wallets that link the wallet API directly will not be required to encrypt parame
     - Should error appropriately if the wallet already exists
     - The 'name' parameter is included for future use as in `open_wallet` above.
 * `OwnerAPI::open_wallet(name: Option<String>, password: String) -> Result<t:Token, libwallet::Error>`
-    - Opens the wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
+    - Opens a wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
+    - 'Opens' the wallet seed in memory, stored XORd against a new token. The token is to be returned to the client for use in all further API calls.
     - The 'name' argument is included for future use, anticipating the inclusion of multiple wallets and seeds within a single top-level wallet directory.
 * `OwnerAPI::close_wallet(&mut self) -> Result<(), libwallet::Error>`
-    - Closes the currently open wallet
+    - Closes the currently open wallet (i.e. drops the XORed seed from memory)
 * `OwnerAPI::get_mnemonic(t:Token) -> Result<ZeroingString, libwallet::Error>`
     - Returns the mnemonic from the active, (open) wallet
 * `OwnerAPI::change_password(old: ZeroingString, new: ZeroingString) -> Result<(), libwallet::Error>`
@@ -120,17 +126,6 @@ Wallets that link the wallet API directly will not be required to encrypt parame
 * `OwnerAPI::delete_wallet(name: Option<String>, password: ZeroingString) -> Result<(), libwallet::Error>`
     - Dangerous function that removes all wallet data
     - name argument reserved for future use
-
-### Use cases
-
-* First time use (API Case)
-   - run `grin-wallet owner_api`
-   - top-level data directory is set to `~/.grin/main/wallet_data` (but nothing is yet written)
-   - `create_config` called to create `grin-wallet.toml`
-   - `create_wallet` called (with name == None) and seed to create a new wallet and seed, wallet data is created and initialized
-
-* Recover from seed
-   - As above, except call `create_wallet` with mnemonic seed instead
 
 ### API only
 
@@ -152,7 +147,7 @@ Although this document doesn't attempt to outline implementation, a few notes to
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-* Is there a potential for replay attacks?
+* Due to how this is likely to be implemented, the Foreign API will also have to provide a token for all wallet access. The Foreign API will need to store this token in-process, therefore negating much of the benefit of the scheme. Is there a cleverer way to deal with this?
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
