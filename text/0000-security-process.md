@@ -96,10 +96,11 @@ cryptocurrency ecosystem.
 
 ### Deviations from the Standard
 
->Grin is a technology that provides strong privacy. Due to the nature of Grin's
-zero-knowledge commitments and rangeproofs, if a counterfeiting bug results it
-could be be exploited without a way to identify when or which data was corrupted,
-making a rollback or other fork-based attempted fix ineffective.
+>Grin is a technology that provides strong privacy with zero-knowledge 
+commitments and rangeproofs. Due to the nature of the cryptography used, if a
+counterfeiting bug results it could be exploited without a way to identify
+which data was corrupted. This renders rollbacks or other fork-based attempted
+fixes ineffective.
 
 >The standard describes reporters of vulnerabilities including full details of an
 issue, in order to reproduce it. This is necessary for instance in the case of
@@ -222,8 +223,19 @@ relevant to the security process for Grin.
 [unresolved-questions]: #unresolved-questions
 
 - How can we further reduce centralization risk for Grin's security process?
+    - Disclosures are sent directly only to those listed in SECURITY.md.
+    This poses a centralization risk for the community as there is no way to
+    trustlessly publicly verify actions taken by individuals involved in a
+    disclosure. While this RFC is a step in the right direction, it does not
+    completely remove centralization risk for the disclosure process.
 
 - How can we responsibly handle vulnerabilities in academic papers?
+    - It is possible that a vulnerability may be found in an underlying primitive
+    at the specification level that Grin relies on. In this case not only
+    do we have potential vulnerabilities in all implementations, but also in
+    the specification itself. Without addressing these properly some may
+    continue to use academic papers with vulnerable specifications as a
+    reference for new development.
 
 - What role will formal verification play in Grin's future?
 
