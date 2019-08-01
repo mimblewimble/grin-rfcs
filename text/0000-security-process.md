@@ -29,50 +29,133 @@ clarify security process actions and expectations [2].
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-This proposal adopts a vulnerability disclosure standard for Grin that provides
-more guidance and clears up some unanswered questions from Grin's current
-security process [4]. The community should think of this improvement as an extension
+This RFC proposes adopting a
+[vulnerability disclosure standard](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#the-standard)
+for Grin that provides
+more guidance and clears up some unanswered questions from Grin's
+[current security process](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#grins-security-process).
+The community should think of this improvement as an extension
 to the existing security process with the following changes:
 
-- Better define ethical behavior (and deviations) for vulnerability disclosure
-- Better define the processes and expectations for receiving and sending disclosures
-- Provide a framework for bi-lateral disclosure agreements with other projects/implementations
-- A public pre-commitment to the above
+- Better define
+[ethical behavior](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#ethical-behavior)
+(and deviations) for vulnerability disclosure
+- Better define the
+[processes and expectations](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#standard-disclosure-timelines)
+for receiving and sending disclosures
+- Provide a framework for
+[bi-lateral disclosure agreements](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#publicly-committing-to-disclosure-relationships)
+with other projects/implementations
+- A [public commitment](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#publicly-committing-to-disclosure-process)
+to the above
 
 This all results in a more robust security process for Grin that is transparent
 from the beginning to the community, vulnerability researchers, the core team
 and other neighboring projects that share threads in the same security blanket.
 
+An example of another project adopting the same standard can be found
+[here](https://github.com/zcash/zcash/blob/master/responsible_disclosure.md)
+in Zcash's vulnerability disclosure document.
+
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
-_The standard that this RFC proposes to adopt for Grin is located at https://github.com/RD-Crypto-Spec/Responsible-Disclosure.
-Below we will describe how the standard would be adopted by Grin's Security Process
-in SECURITY.md, based on the example used by Zcash [3]._
+- This RFC proposes to adopt a community responsible disclosure standard for Grin: https://github.com/RD-Crypto-Spec/Responsible-Disclosure
 
-The 'Code Reviews and Audits' and 'Chain Splits' sections will be removed as
-they are out of scope for SECURITY.md.
+- Here we will describe the specific changes that would be made to
+[SECURITY.md](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md) if the RFC is adopted.
 
-Details for 'Code Reviews and Audits' can be kept track of on project forums or
-in the 'grin-pm' repo or relevant sub-team repo. The status and resource availability
-for code reviews and audits will change over time and will likely be changing
-too often to be stable enough to be included in a formal security policy.
+- Many of the changes proposed are modeled from
+[Zcash's security disclosure policy](https://github.com/zcash/zcash/blob/master/responsible_disclosure.md#security-disclosures)
+which adopts the same standard proposed here for Grin.
 
-Likewise 'Chain Splits' is not defined well enough and would probably be better
-tracked and managed outside of the formal security policy, or with a sub-team,
-at least until the language and tooling are better defined and stable.
+_All links to the standard in the actual implementation of SECURITY.md must be
+permanent._
 
-_The sections below will replace the 'Responsible Disclosure', 'Vulnerability
-Handling' and 'Recognition and Bug Bounties' sections of SECURITY.md following
-a statement of intention to adhere the standard as well as its location._
+## Changes to [SECURITY.md](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md)
+
+- The original
+[Recognition and Bug Bounties](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#recognition-and-bug-bounties)
+section will be updated:
+    - Include a link to the
+    [Acknowledgements](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#acknowledgements)
+    section of the standard
+    - Include a link to the
+[Bounty Payments](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#bounty-payments)
+section of the standard
+    - Keep existing language such as:
+    >As of this writing, Grin is a traditional open source project with limited to
+    no direct funding. As such, we have little means with which to compensate
+    security researchers for their contributions.
+
+    - Remove unnecessary or old language such as:
+    >It is our hope that after mainnet release...
+
+    - Include a note that there is not currently a formal bug bounty program
+    but that more donations can help provide the resources to run one in the
+    future. Include a donation link here.
+
+- The original
+[Code Reviews and Audits](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#code-reviews-and-audits)
+section will be moved to a not yet determined page on the
+[wiki](https://github.com/mimblewimble/docs/wiki).
+
+- The original
+[Chain Splits](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#chain-splits)
+section will move to a not yet determined
+[Github issue](https://github.com/mimblewimble/grin/issues)
+in the main repository.
+
+_**The following sections will be added to
+[SECURITY.md](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md) and may replace existing sections as noted below.**_
+
+### Responsible Disclosure Standard
+
+_This section will replace the
+[original vulnerability handling section](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#vulnerability-handling)_
+
+>Grin follows a
+[community standard for responsible disclosure](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#the-standard)
+in cryptocurrency and related software.
+
+>This document is a public commitment to following the standard. Any expected
+deviations are explained in the following sections.
+
+>The standard provides detailed information for:
+- [Initial Contact](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#initial-contact):
+how the initial contact process works
+- [Giving Details](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#giving-details):
+what details to include with your disclosure after receiving a response to your
+initial contact
+- [Setting Dates](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#setting-dates):
+details for when to release updates and publicize details of the issue
 
 ### Receiving Disclosures
+
+_This section will replace the
+will replace the
+[original responsible disclosure section](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#responsible-disclosure)._
 
 >Grin is committed to working with researchers who submit security vulnerability
 notifications to us to resolve those issues on an appropriate timeline and perform
 a coordinated release, giving credit to the reporter if they would like.
 
-Emails and PGP keys for Grin's security contacts will be listed here as in SECURITY.md
+>Please submit issues to all of the following main points of contact for
+security related issues according to the
+[initial contact](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#initial-contact)
+and [details](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#giving-details)
+guidelines. More information is available about the
+[expected timelines for the full disclosure cycle](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#standard-disclosure-timelines).
+
+Emails and PGP keys for Grin's security contacts will be listed here as in the
+existing
+[Responsible Disclosure](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#responsible-disclosure)
+and
+[Public Key](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#public-keys)
+sections.
+
+
+
 
 ### Sending Disclosures
 
@@ -96,7 +179,7 @@ cryptocurrency ecosystem.
 
 ### Deviations from the Standard
 
->Grin is a technology that provides strong privacy with zero-knowledge 
+>Grin is a technology that provides strong privacy with zero-knowledge
 commitments and rangeproofs. Due to the nature of the cryptography used, if a
 counterfeiting bug results it could be exploited without a way to identify
 which data was corrupted. This renders rollbacks or other fork-based attempted
