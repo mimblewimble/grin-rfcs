@@ -100,7 +100,15 @@ along with a relative height (height in blocks between the two kernels).
 
 In the example above the transaction containing this kernel would only be valid 1044 blocks after the referenced kernel.
 
-For additional flexibility we can also support a lock_height of 0 here. i.e. A transaction is only valid if another kernel _exists_
+----
+
+*** TODO - Protocol version support. Describe need to bump protocol version. All messages that include kernels (txs, blocks, compact blocks etc.) Also txhashset.zip download...
+
+----
+
+[Does below belong in future possibilities?]
+
+We can support a lock_height of 0 here. i.e. A transaction is only valid if another kernel _exists_
 on-chain, regardless of its height.
 
 ```
@@ -113,6 +121,7 @@ on-chain, regardless of its height.
 
 The transaction containing this kernel is only valid if the reference kernel exists.
 These transactions could potentially be accepted in the same block with no relative height between them.
+
 
 
 # Drawbacks
