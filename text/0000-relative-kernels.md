@@ -15,7 +15,7 @@ Currently we can lock a transaction kernel such that it is only valid after an a
 # Motivation
 [motivation]: #motivation
 
-Absolute timelocks are useful but are susceptible to delay. Any delay between creation and use can have an adverse impact on their efficacy. An absolute timelock starts ticking as soon as the transactions are built. Relative timelocks can be more useful in some scenarios. Transactions can be created well in advance of their actual use without impacting the lock period.
+Absolute timelocks are useful but are susceptible to delay. Any delay between creation and use can have an adverse impact on their usage. An absolute timelock starts counting down as soon as the transaction is built. Relative timelocks can be more useful in some scenarios allowing transactions to be created well in advance of their actual use without impacting the lock period.
 
 Robust atomic swap implementations can be implemented with relative timelocks on the refund transactions, insulating both parties from delays during the swap process, intentional or otherwise.
 
