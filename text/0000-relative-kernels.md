@@ -98,38 +98,60 @@ along with a relative height (height in blocks between the two kernels).
 }
 ```
 
-In the example above the transaction containing this kernel would only be valid 1044 blocks after the referenced kernel.
+In the example above the transaction containing this kernel would only be valid 1044 blocks (approx 24 hours) after the referenced kernel.
+
+While we require a full 32 bytes of data to reference a previous kernel we can optimize this when storing the kernel in the MMR. We append kernels to the MMR based on immutable history and this allows us to reference the prior kernel by MMR position. At a given block height the MMR is immutable and the kernel at a given position is deterministic and immutable. Every node sees a consistent view of kernel ordering in their local copy of the kernel MMR.
+
+```
+# Relative Height Locked (MMR storage optimized)
+{
+  "fee": 8,
+  "lock_height": 1044,
+  "rel_kernel_pos": 18542
+}
+```
+
+In this way we can represent relative lock heights in the kernel MMR with an additional 8 bytes for each relative lock height instance.
+
+Every kernel requires 97 bytes for the following -
+* 64 bytes for the signature
+* 32 bytes for the excess commitment
+* 1 byte for the feature variant
+
+A plain kernel requires an additional -
+* 8 bytes for the fee
+
+A height locked kernel requires an additional -
+* 8 bytes for the fee
+* 8 bytes for the lock height
+
+A relative height locked kernel requires an additional -
+* 8 bytes for the fee
+* 8 bytes for the lock height
+* 8 bytes for the referenced kernel MMR position
+
+Kernel sizes are as follows -
+* Plain kernel: 97+8 = 105 bytes
+* Coinbase kernel: 97 bytes
+* Height locked kernel: 97+8+8 = 113 bytes
+* Relative height locked kernel: 97+8+8+8 = 121 bytes
+
+Height locked and relative height locked kernels should be relatively rare and these additional bytes should only be rarely required.
+
+Transaction slates (wallet to wallet) and transactions (p2p broadcast and within txpool) will need the full 32 bytes to represent a referenced kernel excess commitment. But once the kernel is appended to the kernel MMR we can save much of this additional overhead and represent the reference to the previous kernel with 8 bytes for the kernel MMR position.
 
 ----
 
 *** TODO - Protocol version support. Describe need to bump protocol version. All messages that include kernels (txs, blocks, compact blocks etc.) Also txhashset.zip download...
 
-----
-
-[Does below belong in future possibilities?]
-
-We can support a lock_height of 0 here. i.e. A transaction is only valid if another kernel _exists_
-on-chain, regardless of its height.
-
-```
-{
-  "fee": 8,
-  "lock_height": 0,
-  "rel_kernel": "088305235baac64e90daca81b0bad7afbce3a6e49c989572095a892e857e681429"
-}
-```
-
-The transaction containing this kernel is only valid if the reference kernel exists.
-These transactions could potentially be accepted in the same block with no relative height between them.
-
-
-
 # Drawbacks
 [drawbacks]: #drawbacks
 
-A "relative lock height" kernel would need an additional 32 bytes of data to store a reference (excess commitment) to the previous kernel. All kernels must be validated by all nodes so this additional storage cost would be permanent.
-We believe these will only rarely be used.
-In the Lightning example the relative lock height refund would only be necessary if one or more parties refused to participate in closing out the payment channel cooperatively. Similarly in the case of an atomic swap the relative lock height refund would only be necessary if one party refused or was unable to complete the swap.
+Relative height locked kernels require more bytes to represent. We need an additional 32 bytes when referencing a previous kernel excess commitment. But we can optimize this to 8 bytes to represent the kernel MMR position when storing this additional data in the kernel MMR.
+
+We will need to translate between kernel excess commitments and kernel MMR positions to faciliate this and this will introduce some additional complexity to the implementation.
+
+Relative height locks will introduce some additional complexity around the handling of the txpool, particularly when dealing with forks and chain reorgs. Previously valid transactions may not necessarily be valid after a reorg if they are included in an earlier block for example. We need to consider various edge cases here.
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
@@ -154,7 +176,7 @@ Explain why Grin/MW only has kernels to work with.
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-Explain why "relative lock heights" against kernel excess commitments is more flexible in some ways (kernels need not exist yet, height can be 0 etc).
+Explain why "relative lock heights" against kernel excess commitments is more flexible in some ways (kernels need not exist yet etc).
 
 Kernel excess commitments can be constructed independently from the transactions themselves.
 And given kernel offsets we have a lot of flexibility in how multi-party transactions can be built. i.e. parties can cooperatively build a kernel excess first, then build the corresponding transaction, then finally sign the necessary transaction data. This flexibility may open up interesting ways of using relative dependencies between transaction kernels.
