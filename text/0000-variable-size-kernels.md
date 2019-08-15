@@ -123,5 +123,9 @@ One motivation for "variable size kernels" is to allow for new kernel variants t
 [references]: #references
 
 * [RFC 0000-relative-kernels][0] [fix link once RFC merged]
+* [PR #2734 (Support for variable size MMRs)][1]
+* [PR #2824 (Protocol version support)][2]
 
 [0]: https://github.com/mimblewimble/grin-rfcs/blob/master/text/0000-relative-kernels.md
+[1]: https://github.com/mimblewimble/grin/pull/2734
+[2]: https://github.com/mimblewimble/grin/pull/2824
