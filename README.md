@@ -9,12 +9,12 @@ Grin RFCs may cover (but are not limited to) technical enhancements, changes to 
 To begin writing your own RFC or to find out more about the process and the general RFC guidelines, refer to [the RFC that established this  process](text/0001-rfc-process.md).
 
 
-## List of RFCs
+## List of accepted RFCs
 
-|Title|Tl;dr|Status|
-|:---|:---|:---|
-| [0001-rfc-process](text/0001-rfc-process.md) | Introduce RFC process | Draft |
-| [0002-grin-governance](text/0002-grin-governance.md) | Articulate community values, define core and sub-teams | Draft |
+|Title|Tl;dr|
+|:---|:---|
+| [0001-rfc-process](text/0001-rfc-process.md) | Introduce RFC process |
+| [0002-grin-governance](text/0002-grin-governance.md) | Articulate community values, define core and sub-teams |
 
 ## License
 
