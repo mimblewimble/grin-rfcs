@@ -15,6 +15,8 @@ To begin writing your own RFC or to find out more about the process and the gene
 |:---|:---|
 | [0001-rfc-process](text/0001-rfc-process.md) | Introduce RFC process |
 | [0002-grin-governance](text/0002-grin-governance.md) | Articulate community values, define core and sub-teams |
+| [0003-security-process](text/0003-security-process.md) | Define community standards for ethical disclosure behaviour |
+| [0004-full-wallet-lifecycle](text/0004-full-wallet-lifecycle.md) | Define API standard for sensitive wallet operations |
 
 ## License
 
