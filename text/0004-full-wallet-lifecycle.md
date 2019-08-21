@@ -1,8 +1,8 @@
 - Title: full-wallet-lifecycle
 - Authors: [Michael Cordner](mailto:yeastplume@protonmail.com)
 - Start date : June 26th, 2019
-- RFC PR: [mimblewimble/grin-rfcs#0004](https://github.com/mimblewimble/grin-rfcs/pull/18) 
-- Tracking issue: [Edit if merged with link to tracking github issue]
+- RFC PR: [mimblewimble/grin-rfcs#18](https://github.com/mimblewimble/grin-rfcs/pull/18) 
+- Tracking issue: [mimblewimble/grin-wallet#212](https://github.com/mimblewimble/grin-wallet/issues/212)
 
 ---
 
