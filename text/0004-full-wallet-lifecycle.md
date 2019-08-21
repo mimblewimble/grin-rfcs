@@ -1,7 +1,7 @@
 - Title: full-wallet-lifecycle
 - Authors: [Michael Cordner](mailto:yeastplume@protonmail.com)
 - Start date : June 26th, 2019
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
+- RFC PR: [mimblewimble/grin-rfcs#0004](https://github.com/mimblewimble/grin-rfcs/pull/18) 
 - Tracking issue: [Edit if merged with link to tracking github issue]
 
 ---
@@ -43,58 +43,76 @@ It should be possible to run `grin-wallet owner_api` or invoke the API directly 
 
 Given that the Wallet's Owner API needs to deal with sensitive data such as passwords and seed phrases, the API will be enhanced with a new ECDH and Token-based security model, the primary goals of which are to:
 
-* Ensure sensitive data such as passwords or seed phrases are always end-to-end encrypted between the client and Owner API server, regardless of what higher-level protocols are used during the exchange.
+* Ensure sensitive data such as passwords or seed phrases are always end-to-end encrypted between the client and the Owner API server, regardless of what higher-level protocols are used during the exchange.
 * Minimize the potential for damage that can be done by a third party listening on the exchange between a wallet client and its corresponding server.
 * Ensure that sensitive data such as passwords or seed phrases are not resident in server-side memory any longer than they absolutely need to be.
 
-Note that this mode of operation is primarly intended for use over the JSON-RPC API, which supports many different architectural possiblities. Clients that link libraries directly and keep all sensitive data in the same process would see less benefit from this scheme, and an alternative model which doesn't encrypt any sensitive data is provided. Further, authors of existing wallets will need time to consider and/or implement the added complexity needed on the client-side to support ECDH and encryption. It's therefore proposed that the Owner API initially provide the new "SecureAPI" mode as an optional feature, with wallet authors strongly encouraged to make use of it. Support for the "InsecureAPI" model can be maintained indefinitely for directly-linked wallets, and for the JSON-RPC API until a cut-off release at some point in the future.
+Note that this mode of operation is primarily intended for use over the JSON-RPC API, which supports many different architectural possiblities. Clients that link libraries directly and keep all sensitive data in the same process would see less benefit from this scheme, and an alternative model which doesn't encrypt any sensitive data is provided. Further, authors of existing wallets will need time to consider and/or implement the added complexity needed on the client-side to support ECDH and encryption. It's therefore proposed that the Owner API initially provide the new "SecureAPI" mode as an optional feature, with wallet authors strongly encouraged to make use of it. Support for the "InsecureAPI" model can be maintained indefinitely for directly-linked wallets, and for the JSON-RPC API until a cut-off release at some point in the future.
+
+Note that the "SecureAPI" mode and all lifecycle functions will be implemented in a V3 API, with the V2 API maintained for a time for backwards compatibility. The V3 API requires all JSON-RPC communication to be encrypted, with the exception of the `init_secure_api` function.
 
 ### SecureAPI Mode
 
 SecureAPI Mode consists of an ECDH key agreement followed by the establishment of an API Token that's used to XOR encrypt the wallet seed on the server side. The negotiated ECDH shared key is used to encrypt all requests and responses between the client and the JSON-RPC layer, while the token must be included in all API requests to allow the wallet backend to decrypt the seed. 'Open' wallets store their in-memory seeds XORed against the token, which is temporarily XORed against the supplied token during each request to reproduce the master seed.
 
-ECDH will use secp256k1 for key agreement, while encryption of JSON-RPC requests and responses will be performed via the AES256 Encryption standard.
+ECDH will use secp256k1 for key agreement.
 
-#### Security Mode Selection
+Encryption of JSON-RPC requests and responses will be performed using AEAD in GCM mode with 128-bit tags, 96 bit nonces, a 16 byte suffix length and an empty vector for the additional data. A 12 byte nonce will be applied in the encryption and included in each request/response to use o n the decrypting side.
 
-To initialize SecureAPI Mode, clients will generate an EC keypair using the secp256k1 curve, and provide the public key to the Owner API server via a new `init_api_secure` method. Both client and server will calculate the shared key, and store this key for the remainder of the session. The sequence of operations is outlined below:
+Encrypted requests and responses will be exchanged in valid JSON-RPC calls with the method "encrypted_request_v3" (with 'v3' here denoting the version of the API). They will have the following form:
 
-![init_api_secure](../assets/0000/0000-dh-init.svg)
+```
+{
+    "jsonrpc": "2.0",
+    "method: "encrypted_request_v3",
+    "id": "1",
+    "params": {
+       "nonce": "ef32...",
+       "body_enc": "e0bcd..."
+    }
+}
+```
 
-Once `init_api_secure` is called the API will assume that subsequent API requests will be encrypted with the shared secret, and that that all subsequent API calls (other than `open_wallet`) will be accompanied with a valid encrypted token derived during the call to the `open_wallet` function. This assumption will remain until the server process exits or a call to a corresponding `close_api_secure` function is called.
+#### Security Mode Initialization
 
-The shared secret can be refreshed by the client at any time with another call to `init_api_secure`. Closing a wallet via the `close_wallet` function does not regenerate the shared secret but does invalidate the token and drops the XORed seed from memory.
+To initialize the Secure API, clients will generate an EC keypair using the secp256k1 curve, and provide the public key to the Owner API server via a new `init_secure_api` method. Both client and server will calculate the shared key, and store this key for the remainder of the session. The sequence of operations is outlined below:
+
+![init_secure_api](../assets/0004/0004-dh-init.svg)
+
+The Secure API assumes that all requests (other than the actual call to `init_secure_api` itself) will be encrypted with the shared secret and presented in the above JSON-RPC format. All API calls other than `open_wallet` will be accompanied with a valid encrypted token derived during the call to the `open_wallet` function. This assumption will remain until the server process exits or a call to a corresponding `close_api_secure` function is called.
+
+The shared secret can be refreshed by the client at any time with another call to `init_secure_api` (either encrypted or unencrypted). Closing a wallet via the `close_wallet` function does not regenerate the shared secret but does invalidate the token and drops the XORed seed from memory.
 
 ##### Legacy support
 
-If `init_api_secure` is not called, the mode of operation for the JSON-RPC API will be assumed to work as currently, i.e. requests and responses are unencrypted, the wallet stores its full seed in-memory between requests and the providing of a Token with each request is not requred. However, the new lifecycle functions described in this RFC, which deal with highly sensitive data such as passwords and master keys, will not be available via the JSON-RPC API unless `init_api_secure` has been called. This setup should allow existing wallets to continue working as-is until a cutoff release for legacy mode is determined.
+The V2 API will remain active for a time the mode of operation for its JSON-RPC API will be assumed to work as currently, i.e. requests and responses are unencrypted, the wallet stores its full seed in-memory between requests and the providing of a token with each request is not requred. However, the new lifecycle functions described in this RFC, which deal with highly sensitive data such as passwords and master keys, will not be available in the V2 API. This setup should allow existing wallets to continue working as-is until a cutoff release for legacy mode is determined.
 
 #### Opening a Wallet in SecureAPI Mode
 
-Opening a wallet in SecureAPI mode consists of encrypting a request to `open_wallet` (which contains the wallet password) with the shared secret `s`. The request is decrypted in the JSON-RPC layer, and the password is used in the wallet backend to unlock the wallet master seed. The master seed is stored XORed against a randomly-generated token T, which is returned to the client in an encrypted response for inclusion in all further API calls. T is valid for the lifetime of the process, or until a corresponding call to `close_wallet`.
+Opening a wallet in SecureAPI mode consists of encrypting a request to `open_wallet` (which contains the wallet password) with the shared secret `s`. The request is decrypted in the JSON-RPC layer and the password is used in the wallet backend to unlock the wallet master seed. The master seed is stored XORed against a randomly-generated token T, which is returned to the client in an encrypted response for inclusion in all further API calls. T is valid for the lifetime of the process, or until a corresponding call to `close_wallet`.
 
-![open_wallet](../assets/0000/0000-open-wallet.svg)
+![open_wallet](../assets/0004/0004-open-wallet.svg)
 
 #### Calling API functions in SecureAPI Mode
 
 Calls to each API function proceed as per a call to `open_wallet`, however each encrypted request must contain the token provided by the `open_wallet` call. The token is XORed against the stored XORed seed to recover the original seed by the backend for the duration of each call, and the seed value is dropped and zeroed from memory when each call returns.
 
-![api_call](../assets/0000/0000-api-call.svg)
+![api_call](../assets/0004/0004-api-call.svg)
 
 ### Directly Linked Wallets
 
-Wallets that link the wallet API directly will not be required to encrypt parameters, as there would be little benefit to doing so within a single process. However, for consistency they will be expected to store and supply a token to each API call. The modified workflow for a linked wallet is outlined below:
+Wallets that link the wallet API directly will not be required to encrypt parameters, as there would be little benefit to doing so within a single process. However, for consistency, they will be expected to store and supply a token to each API call. The modified workflow for a linked wallet is outlined below:
 
-![open-wallet-direct](../assets/0000/0000-open-wallet-direct.svg)
-![api-call-direct](../assets/0000/0000-api-call-direct.svg)
+![open-wallet-direct](../assets/0004/0004-open-wallet-direct.svg)
+![api-call-direct](../assets/0004/0004-api-call-direct.svg)
 
-'Legacy' support will not be provided for directly-linked wallets on release of the features described in this RFC. Is is expected wallet authors will need to update their code to store and supply the token with each request.
+'Legacy' support will not be provided for directly-linked wallets on release of the features described in this RFC. It is expected that wallet authors will need to update their code to store and supply the token with each request.
 
 ## New Lifecycle API Functions
 
 The functions as shown here are for illustrative purposes, and their signatures will change during implementation.
 
-* `OwnerAPI::init_api_secure(pubkey: Secp256k1Point) -> Result<pubkey: Secp256K1Point, Error>
+* `OwnerAPI::init_secure_api(pubkey: Secp256k1Point) -> Result<pubkey: Secp256K1Point, Error>`
     - Initializes secure API mode, returning the server-side public key to be used for key agreement
     - All further calls to the JSON-RPC API must be encrypted with the shared secret
 * `OwnerAPI::set_wallet_directory(dir: String) -> Result<(), libwallet::Error>`
@@ -110,7 +128,7 @@ The functions as shown here are for illustrative purposes, and their signatures 
     - The 'name' parameter is included for future use as in `open_wallet` above.
 * `OwnerAPI::open_wallet(name: Option<String>, password: String) -> Result<t:Token, libwallet::Error>`
     - Opens a wallet and sets it as the 'active' wallet. All further API commands will be performed against this wallet.
-    - 'Opens' the wallet seed in memory, stored XORd against a new token. The token is to be returned to the client for use in all further API calls.
+    - 'Opens' the wallet seed in memory, stored XORed against a new token. The token is to be returned to the client for use in all further API calls.
     - The 'name' argument is included for future use, anticipating the inclusion of multiple wallets and seeds within a single top-level wallet directory.
 * `OwnerAPI::close_wallet(&mut self) -> Result<(), libwallet::Error>`
     - Closes the currently open wallet (i.e. drops the XORed seed from memory)
@@ -135,7 +153,7 @@ Note that this RFC does not propose making user-facing changes to the existing C
 
 Although this document doesn't attempt to outline implementation, a few notes to consider for the implementor:
 
-* Currently, the code that deals with wallet initialization and seed management sits outside the wallet APIs, in the `impls` crate, (denoting they're implementation specific). The implementation should attempt to refactor traits from these hard implementations into a new interface, similar to the existing WalletBackend and NodeClient interfaces (WalletLifecycleManager, for instance). The implementation within `impls` will then become an implementation of that trait, and can be substituted by wallet authors with their own implementations.
+* Currently, the code that deals with wallet initialization and seed management sits outside the wallet APIs, in the `impls` crate, (denoting they're implementation specific). The implementation should attempt to refactor traits from these hard implementations into a new interface, similar to the existing WalletBackend and NodeClient interfaces (WalletLifecycleManager, for instance). The implementation within `impls` will then become an implementation of that trait and can be substituted by wallet authors with their own implementations.
 * The implementation period of this RFC may be a good time to remove the BIP32 specific code out from Grin core into the wallet or into a separate rust crate (probably more desirable).
 * New API functions should be implemented as additions, with the new features optional to ensure complete backwards compatibility
 
