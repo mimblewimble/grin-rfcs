@@ -77,19 +77,36 @@ features (1 byte) | fee (8 bytes) | lock_height (8 bytes) | excess (32 bytes) | 
 02 | 00 00 00 00 00 6a cf c0 | 00 00 00 00 00 00 04 14 | 09 4d ... bb 9a | 09 c7 ... bd 54
 ```
 
-----
-
 #### Backward Compatibility (Protocol Version Support)
 
-[wip] Discuss compatibility between nodes across protocol version 1 and protocol version 2. Both for transaction and block p2p messages and the less flexible heavyweight txhashset.zip
+##### Network p2p messages
 
-How do we structure compatibility rules here to ensure nodes can still successfully communicate if bytes appear to be missing etc.
+The following p2p messages include serialized transaction kernels -
 
-We also need to account for in-place migration. Full blocks are stored in the local database.
+* transaction
+* full block
+* compact block (incl. coinbase kernel)
 
-Each node maintains a local kernel MMR - but this is also used to generate txhashset.zip which is sent to other nodes, so not limited to local node.
+Each node has a "local" protocol version. Nodes exchange protocol versions during the initial handshake when setting up a connection.
 
-----
+If both nodes are running protocol version 2 then no translation is required and transaction kernels can be serialized using protocl version 2.
+
+If both nodes are running protocol version 1 then again no translation is required.
+
+The complexity arises when one node is running protocol version 2 and the other node is running protocol version 1.
+
+* Node A: protocol version 2
+* Node B protocol version 1
+
+Node B will broadcast transactions and blocks using protocol version 1. Node A will need to use the previous protocol version and not the local version when deserializing these messages. Node A will need to ensure anything broadcast to Node B is compatible with protocol version 1. In both cases node A is responsible for translating to and from the previous protocol version.
+
+##### Local db storage
+
+Each node has a "db" protocol version. All entries in the db serialize/deserialize using that protocol version. Nodes support a process for local migration of data. On startup the db is inspected and if necessary a migration is performed upgrading all entries in the db to the latest protocol version. This process can be disabled locally to allow nodes to run against old databases without upgrading the protocol version. This is useful in cases where nodes do not wish to immediately upgrade the db, allowing for previous versions of code to run without problems.
+
+##### Kernel MMR storage (and txhashset fast sync)
+
+[wip]
 
 #### Wallet Compatibility
 
