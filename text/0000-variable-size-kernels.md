@@ -10,21 +10,21 @@
 # Summary
 [summary]: #summary
 
-We can reduce the amount of data used to serialize transaction kernel in binary format by including only the data applicable for each kernel feature variant. Specifically we only need a lock height on height locked kernels and coinbase kernels have no associated fee. Each kernel feature variant will serialize to a known number of bytes but this size will not be consistent across different feature variants.
+We minimize the size of binary serialized transaction kernels by including only the data applicable for each kernel variant. Height locked kernels include a fee and a lock height. Plain kernels include only a fee. Coinbase kernels include neither a fee nor a lock height. Each kernel feature variant will serialize to a fixed size in bytes but this size will differ across the kernel variants.
 
 # Motivation
 [motivation]: #motivation
 
-We currently include both the fee and the lock_height on _every_ kernel in binary serialization format. We store a fee of 0 on coinbase kernels and a lock_height of 0 on plain and coinbase kernels. Kernels are never pruned and exist forever so this overhead is relatively expensive. By only serializing data strictly necessary for each kernel feature variant we reduce data storage and transmission costs. This change will also introduce the flexibility necessary to more easily introduce future kernel variants, for example the proposed [relative kernels][0].
+We were originally including both fee and lock_height on _every_ kernel in the binary serialization format. We were storing a fee of 0 on coinbase kernels and a lock_height of 0 on both plain and coinbase kernels. Kernels are never pruned and must be maintained forever so this overhead is relatively expensive. By only serializing data strictly necessary for each kernel variant we minimize storage and transmission costs. This also provides the flexibility necessary to introduce new kernel variants in the future, for example the proposed [relative kernels][0].
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-Each transaction kernel feature variant may have some associated data. For example height locked kernels include an associated lock height and plain kernels have an associated fee. Coinbase kernels have no associated fee nor lock height. Binary serialization of each kernel feature variant produces a fixed size in bytes but this size may differ across different feature variants. This allows kernels to be serialized efficiently in terms of size in bytes and also provides flexibility to introduce new kernel variants that have additional associated data in the future.
+Each transaction kernel variant may have associated data. For example height locked kernels include an associated lock height and non-coinbase kernels have an associated fee. Each kernel variant serializes to a fixed size in bytes but this size may be different for each kernel variants. This allows kernels to be serialized efficiently and provides flexibility to introduce new kernel variants that have additional associated data in the future.
 
-To illustrate the benfit of saving a few bytes, we observe that 8 bytes are used to serialize the transaction fee. By not including 8 bytes for the fee on coinbase kernels we save 8,000,000 bytes of unneccesary data over one million coinbase kernels.
+A plain kernel is 105 bytes compared to 113 bytes for a height locked kernel. Omitting the lock height from plain kernels saves approximately 7% in kernel storage costs.
 
-These changes affect serialization/deserialization of transaction kernels and these are included in several p2p messages, including transactions, full blocks and compact blocks. We need to be careful with the rollout of these changes to ensure backward compatibility across nodes on the network. The kernel MMR is received as part of the initial state sync so care must be taken here to ensure all nodes can continue to sync successfully when joining the network.
+These changes affect serialization/deserialization of transaction kernels. Kernels are included in p2p messages for transactions and full blocks. Older nodes will serialize transaction kernels differently so nodes on the network need to be able to handle old and new serialization formats. The kernel MMR is also included in the txhashset state file during fast sync so nodes need to be able to support old and new formats of the state file.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
