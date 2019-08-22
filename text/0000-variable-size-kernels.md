@@ -106,7 +106,7 @@ Each node has a "db" protocol version. All entries in the db serialize/deseriali
 
 ##### Kernel MMR storage (and txhashset fast sync)
 
-[wip]
+[wip - need to discuss how to handle txhashset fast sync support]
 
 #### Wallet Compatibility
 
