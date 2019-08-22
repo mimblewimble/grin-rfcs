@@ -29,6 +29,8 @@ These changes affect serialization/deserialization of transaction kernels. Kerne
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
+#### Protocol Version 1 (Previous Version)
+
 In protocol version 1 all transaction kernels are serialized using the same structure, regardless of kernel variant. All kernels include 8 bytes for the fee and 8 bytes for the lock_height, even if unused.
 
 ```
@@ -49,9 +51,9 @@ The initial feature byte would determine the number of subsequent bytes to read 
 
 This would always be followed by a fixed 32 bytes for the excess commitment and 64 bytes for the kernel signature.
 
-----
+#### Protocol Version 2 (Current Version)
 
-Proposed plain kernel (protocol version 2) -
+Plain kernel, includes fee.
 
 ```
 features (1 byte) | fee (8 bytes) | excess (32 bytes) | signature (64 bytes)
@@ -59,7 +61,7 @@ features (1 byte) | fee (8 bytes) | excess (32 bytes) | signature (64 bytes)
 00 | 00 00 00 00 01 f7 8a 40 | 08 b1 ... 22 d8 | 33 11 ... b9 69
 ```
 
-Proposed coinbase kernel (protocol version 2) -
+Coinbase kernel, no fee, no lock height.
 
 ```
 features (1 byte) | excess (32 bytes) | signature (64 bytes)
@@ -67,7 +69,7 @@ features (1 byte) | excess (32 bytes) | signature (64 bytes)
 01 | 08 b2 ... 15 36 | 08 14 ... 98 96
 ```
 
-Proposed height locked kernel (protocol version 2) -
+Height locked kernel, include fee and lock height.
 
 ```
 features (1 byte) | fee (8 bytes) | lock_height (8 bytes) | excess (32 bytes) | signature (64 bytes)
@@ -91,9 +93,9 @@ Each node maintains a local kernel MMR - but this is also used to generate txhas
 
 #### Wallet Compatibility
 
-Interactive transaction building involves passing a transaction "slate" around. This includes a json serialized representation of the transaction.
+Interactive transaction building involves a transaction "slate" passed between parties. This includes a json serialized representation of the transaction.
 
-To minimize compatibility issues between walets we are not planning to change this json format or structure. Transaction kernels will continue to be translated to a single consistent json format, always including values for both fee and lock_height, regardless of feature variant. For example plain kernels will always have lock_height of 0 and coinbase kernels will always have 0 fee. This is consistent with the current "v2" slate.
+To minimize compatibility issues between wallets we have maintained this existing json format. Transaction kernels are represented in a single consistent json format, with fee and lock_height both included, regardless of kernel variant. Plain kernels have an associated lock_height of 0 and coinbase kernels include a 0 fee. This is consistent with the current "v2" slate.
 
 ```
 "kernels": [
@@ -103,21 +105,15 @@ To minimize compatibility issues between walets we are not planning to change th
 	"lock_height": "0",
 	"excess": "08b1...22d8",
 	"excess_sig": "3311...b969"
-  }
+  },
+  ...
 ]
 ```
-
-# Rationale and alternatives
-[rationale-and-alternatives]: #rationale-and-alternatives
-
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not choosing them?
-- What is the impact of not doing this?
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-One motivation for "variable size kernels" is to allow for new kernel variants to be introduced in the future. One concrete exampe of this is the proposal for [relative kernels][0]. Kernels of this feature variant will have an associated reference to a prior kernel and the existing "fixed size" binary serialization format does not provide the flexibility to include this additional data.
+Support for variable size kernels allows new kernel variants to be introduced in the future. One concrete exampe of this is [relative kernels][0]. Kernels with relative lock heights will have an associated reference to a prior kernel in addition to a lock height based on that prior kernel.
 
 # References
 [references]: #references
