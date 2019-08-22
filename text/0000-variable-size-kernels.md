@@ -29,7 +29,7 @@ These changes affect serialization/deserialization of transaction kernels. Kerne
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
-#### Protocol Version 1 (Previous Version)
+### Protocol Version 1 (Previous Version)
 
 In protocol version 1 all transaction kernels are serialized using the same structure, regardless of kernel variant. All kernels include 8 bytes for the fee and 8 bytes for the lock_height, even if unused.
 
@@ -51,7 +51,7 @@ The initial feature byte would determine the number of subsequent bytes to read 
 
 This would always be followed by a fixed 32 bytes for the excess commitment and 64 bytes for the kernel signature.
 
-#### Protocol Version 2 (Current Version)
+### Protocol Version 2 (Current Version)
 
 Plain kernel, includes fee.
 
@@ -77,9 +77,9 @@ features (1 byte) | fee (8 bytes) | lock_height (8 bytes) | excess (32 bytes) | 
 02 | 00 00 00 00 00 6a cf c0 | 00 00 00 00 00 00 04 14 | 09 4d ... bb 9a | 09 c7 ... bd 54
 ```
 
-#### Backward Compatibility (Protocol Version Support)
+### Backward Compatibility (Protocol Version Support)
 
-##### Network p2p messages
+#### Network p2p messages
 
 The following p2p messages include serialized transaction kernels -
 
@@ -96,19 +96,35 @@ If both nodes are running protocol version 1 then again no translation is requir
 The complexity arises when one node is running protocol version 2 and the other node is running protocol version 1.
 
 * Node A: protocol version 2
-* Node B protocol version 1
+* Node B: protocol version 1
 
-Node B will broadcast transactions and blocks using protocol version 1. Node A will need to use the previous protocol version and not the local version when deserializing these messages. Node A will need to ensure anything broadcast to Node B is compatible with protocol version 1. In both cases node A is responsible for translating to and from the previous protocol version.
+If node A and node B are communicating they must both send and receive using a protocol version compatible with both nodes. In this case protocol version 1.
 
-##### Local db storage
+__Receiving messages using previous protocol version__
+
+Node B will broadcast transactions and blocks using protocol version 1. Node A will need to use the previous protocol version and not the local version when deserializing these messages.
+
+__Sending messages using previous protocol version__
+
+Node A will need to ensure anything broadcast to Node B is compatible with protocol version 1. In both cases node A is responsible for translating to and from the previous protocol version.
+
+#### Local db storage
 
 Each node has a "db" protocol version. All entries in the db serialize/deserialize using that protocol version. Nodes support a process for local migration of data. On startup the db is inspected and if necessary a migration is performed upgrading all entries in the db to the latest protocol version. This process can be disabled locally to allow nodes to run against old databases without upgrading the protocol version. This is useful in cases where nodes do not wish to immediately upgrade the db, allowing for previous versions of code to run without problems.
 
-##### Kernel MMR storage (and txhashset fast sync)
+#### Kernel MMR storage
 
-[wip - need to discuss how to handle txhashset fast sync support]
+Each node maintains a kernel MMR as part of the txhashset data structure. Each node has an MMR protocol version. The node will serialize/deserialize kernel entries in the kernel MMR data file according to the MMR protocol version.
 
-#### Wallet Compatibility
+##### Fast sync (txhashset.zip state file)
+
+Internally nodes are free to use any protocol version but the kernel MMR is also provided to other nodes during initial fast sync. A node joining the network requests a txhashset state file and this includes the kernel MMR. It is important that nodes send and receive the txhashset file using a compatible protocol version. This is a special case of "p2p messages" above with the txhashset state file provided as an attachment to the txhashset message.
+
+If node A (protocol version 2) requests a txhashset from node B (protocol version 1) then it must read the file using protocol version 1. Similarly if node B requests txhashset from node A then node A must provide the file such that it is compatible with protocol version 1.
+
+The simplest way to achieve this is for all nodes to continue to use protocol version 1 internally for MMR storage, even if they use protocol version 2 externally for p2p messages. A transition period will be in place until a majority of nodes support protocol version 2 at which time nodes can migrate their MMR storage to protocol version 2.
+
+### Wallet Compatibility
 
 Interactive transaction building involves a transaction "slate" passed between parties. This includes a json serialized representation of the transaction.
 
