@@ -36,5 +36,5 @@ The changes in this RFC lead the way for:
 * Offline transacting via SBBS/Grinbox-style relay system. See “Offline Transactions” RFC
 
 # References
-[1] https://github.com/torproject/torspec/blob/87698dc1c0fa4cf2186f180a636fc7ad1c5fb5fd/rend-spec-v3.txt#L2059-L2081
+[1] https://github.com/torproject/torspec/blob/87698dc1c0fa4cf2186f180a636fc7ad1c5fb5fd/rend-spec-v3.txt#L2059-L2081 <br/>
 [2] https://github.com/mimblewimble/grin/blob/d918c5fe84e859290c9d09f5cfc167ed41d27bff/keychain/src/extkey_bip32.rs#L122
