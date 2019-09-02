@@ -1,10 +1,11 @@
 # 0000-asynchronous-transacting-via-relays.md
-Title: asynchronous-transacting-via-relays
-Authors: DavidBurkett
-Start date: September 2, 2019
+Title: asynchronous-transacting-via-relays<br />
+Authors: DavidBurkett<br />
+Start date: September 2, 2019<br />
 
 # Summary
 Builds on 0000-online-transacting-via-tor to provide a fallback mechanism for sending to peers who are not currently accessible (offline or no TOR connection).
+
 A limited subset of peers elect to be “relay nodes” which are responsible for storing encrypted slates for a limited period of time and serving them to peers on request.
 
 # Motivation
