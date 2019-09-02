@@ -23,7 +23,7 @@ Some changes though are "substantial", and could benefit from being put through 
 
 You need to follow this process if you intend to make "substantial" changes to the Grin codebase or governance process. What constitutes a "substantial" change may evolve based on community norms and individual definitions of sub-teams, but may include the following.
 
-   - Any semantic or syntactic change to the wallet, node, miner or underlying crypto libraries that is not a bugfix.
+   - Any semantic or syntactic change to the wallet, node, miner, or underlying crypto libraries that is not a bugfix.
    - Major changes in ecosystem content such as the docs, site or explorer.
    - Removing Grin features, including those that are feature-gated.
 
@@ -55,7 +55,7 @@ contributors, and particularly members of the relevant sub-team (if applicable) 
 ## Process description
 [process-description]: #process-description
 
-In order to make a "substantial" change to Grin, one must first get an RFC merged into the RFC repo as a markdown file. At that point the RFC is 'active' and may be implemented with the goal of eventual inclusion into Grin.
+In order to make a "substantial" change to Grin, one must first get an RFC merged into the RFC repo as a markdown file. At that point the RFC is "active" and may be implemented with the goal of eventual inclusion into Grin.
 
 ![process state diagram](../assets/0001-state-diagram.svg)
 
@@ -64,7 +64,7 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 #### Submission
 * Fork the RFC repo https://github.com/mimblewimble/grin-rfcs
 * Copy `0000-template.md` to `text/0000-my-feature.md` (where
-'my-feature' is descriptive. don't assign an RFC number yet).
+"my-feature" is descriptive. don't assign an RFC number yet).
 * If you include any assets, do so as `/assets/0000-asset-description.xxx`
 * Write the RFC according to the template instructions.
 * Submit a pull request. As a pull request the RFC will receive design feedback from the larger community, and the author should be prepared to revise it in response.
@@ -74,7 +74,7 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 * Each pull request will be labeled with the most relevant sub-team, which will lead to it being triaged by that team and is assigned a shepherd from this team. The shepherd ensures the RFC progresses through the process and that a decision is reached, but they themselves do not make this decision.
 * As the author, you build consensus and integrate feedback. RFCs that have broad support are much more likely to make progress than those that don't receive any comments. They are encouraged to reach out to the RFC shepherd in particular to get help identifying stakeholders and obstacles.
 * The relevant sub-team discuss the RFC pull request, as much as possible in the comment thread of the pull request itself. Offline discussion will be summarized on the pull request comment thread.
-* RFCs rarely go through this process unchanged, especially as alternatives and drawbacks are shown. As an author uou can make edits, big and small, to the RFC to clarify or change the design,but make changes as new commits to the pull request, and leave a comment on the pull request explaining your changes. Specifically, do not squash or rebase commits after they are visible on the pull request.
+* RFCs rarely go through this process unchanged, especially as alternatives and drawbacks are shown. As an author you can make edits, big and small, to the RFC to clarify or change the design,but make changes as new commits to the pull request, and leave a comment on the pull request explaining your changes. Specifically, do not squash or rebase commits after they are visible on the pull request.
 
 #### Final Comment Period (FCP)
 
@@ -107,7 +107,7 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 
 #### Closed
 
-* A proposed RFC can be closed at any time before reaching 'active' state. This is done by closing the pull request itself. This would happen for example if there is no support in the community for the proposal or if there are other underlying reasons why this is not a change the community wants to make.
+* A proposed RFC can be closed at any time before reaching "active" state. This is done by closing the pull request itself. This would happen for example if there is no support in the community for the proposal or if there are other underlying reasons why this is not a change the community wants to make.
 
 ### Changes to the RFC process
 
@@ -125,7 +125,7 @@ As the RFC process is something that should be consistent across all sub-teams a
 ## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-Alternatively retain the current informal RFC process. The proposed RFC process is designed to improve over the informal process in the following ways:
+Alternatively, retain the current informal RFC process. The proposed RFC process is designed to improve over the informal process in the following ways:
 
 * Discourage unactionable or vague RFCs
 * Ensure that all serious RFCs are considered equally
@@ -157,7 +157,7 @@ Bitcoin uses BIPs which are an adaptation of Python's PEPs. These processes are 
 This proposal was initially based on an RFC process for codebase development. As the process evolves it will have a larger impact in the governance of Grin. This is a relatively new area of exploration as governance processes can have
 wide ranging impacts on the ecosystem as a whole.
 
-Just as it is important to hone the language to support the development process and life-cycle it is also important to sharpen the language to support governance processes and life-cycles for the Grin ecosystem.
+Just as it is important to hone the language to support the development process and life-cycle, it is also important to sharpen the language to support governance processes and life-cycles for the Grin ecosystem.
 
 ## References
 [references]: #references
