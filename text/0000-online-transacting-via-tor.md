@@ -4,8 +4,8 @@ Authors: DavidBurkett<br/>
 Start date: September 1, 2019<br/>
 
 # Summary
-Describes a standardized addressing and communication protocol for building Grin transactions.
-Wallets will attempt to connect to the recipient directly to build transactions over a TOR hidden service similar to how http(s) transaction building works today.
+Describes a standardized addressing and communication protocol for building Grin transactions.<br/><br/>
+Wallets will attempt to connect to the recipient directly to build transactions over a TOR hidden service similar to how http(s) transaction building works today.<br/><br/>
 If the recipient is not online, or cannot be contacted directly, users have the option of falling back to an “offline” communication system where slates are encrypted and stored, for a limited period of time, by a subset(TBD) of nodes known as “relay nodes” (described in a future RFC).
 
 # Motivation
@@ -17,7 +17,7 @@ From an end-user perspective, there should no longer be a need to configure rout
 
 ## Reference-level explanation
 ### Addressing
-Onion addresses for TOR hidden services are generated from an ed25519 public key (32 bytes), and include a checksum and a version[1]. This provides an equivalent level of security as bitcoin addresses, and can be ephemeral or permanent, depending on the user’s needs. Grin addresses should be generated in the same way as TOR addresses, although we have the flexibility to decide whether we would like to encode them using base32 (like TOR), base58 (like Bitcoin), or even a far superior encoding based on emojis.
+Onion addresses for TOR hidden services are generated from an ed25519 public key (32 bytes), and include a checksum and a version[1]. This provides an equivalent level of security as bitcoin addresses, and can be ephemeral or permanent, depending on the user’s needs. Grin addresses should be generated in the same way as TOR addresses, although we have the flexibility to decide whether we would like to encode them using base32 (like TOR), base58 (like Bitcoin), or even a far superior encoding based on emojis.<br/><br/>
 Although ed25519 is a different curve than used by the grin protocol, we can still use our HD wallets to generate deterministic ed25519 public keys (and therefore Grin addresses). We can decide to generate them from a special keychain path, or even using a different master seed [2], along with a KDF for converting those HD child keys to ed25519-compatible private keys.
 
 ### TOR Hidden Services
