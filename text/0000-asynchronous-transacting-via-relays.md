@@ -15,12 +15,12 @@ There are various reasons why 24/7 uptime is not possible for all wallets, so a 
 End-users should be given the option to use the relay system in cases where the receiving party cannot be contacted directly. Although for most cases this is the desired behavior, it may not be desirable in some situations, such as when full privacy is required, or when limited bandwidth is available. For this reason, the fallback mechanism should be optional, not mandatory.
 
 ## Reference-level explanation
-TODO
+TODO: Provide descirption of full workflow
 
 ### Relays
-TODO: storage/bandwidth requirements?
-
 A new feature flag should be added and advertised by all nodes willing to act as relays by storing and serving encrypted slates to allow asynchronous transaction building.
+
+These nodes should expect higher storage requirements, although we may be able to support an adjustable maximum size of the encrypted data pool. These nodes will also have higher bandwidth requirements, and the network benefits if they support high upload speeds.
  
 ### Data Format (Encryption/Decryption)
 Slates can be encrypted using a modification of the “Basic Stealth Address Protocol(BSAP).” 
@@ -32,9 +32,10 @@ Given a receiver public key (B=b*G) and an ephemeral sender public key (R=r*G), 
 For improved privacy, when receiver creates response, they should generate and use a new ephemeral keypair for calculating a shared secret, rather than reusing (b, B).
 
 ### Spam/Flooding Prevention
-TODO: Discuss dynamic PoW requirements, maximum storage size(?), timeouts
+The biggest issue with a private, decentralized relay system is, without the option of charging fees for transacting, it’s difficult to prevent spam/flooding attacks. The best option we have is PoW, which must be high enough to be useful, but low enough to avoid being an inconvenience to the user. It’s a balancing act that is hard to get right, and even harder to maintain. Rather than requiring constant code changes to support changing needs, we can do several things to ensure the PoW requirements are automatically adjusted to our needs:
 
-The biggest issue with a private, decentralized relay system is, without the option of charging fees for transacting, it’s difficult to prevent spam/flooding attacks. The best option we have is PoW, which must be high enough to be useful, but low enough to avoid being an inconvenience to the user. It’s a balancing act that is hard to get right, and even harder to maintain. Rather than requiring constant code changes to support changing needs, we can do 2 things to ensure 
+1. A minimum PoW requirement based on the network hashrate. As an example, there is currently an equivalent of ~100K 1080Ti's mining c31. If we choose a minimum PoW requirement of 0.000001% of the hashrate, then a device with a 1080Ti can generate the PoW requirement in approximately .1 seconds, while less capable devices could generate the solution in just a few seconds. In this scenario, if a node decides to spam the network, they would be giving up approximately 0.000006 grins in mining profit for every spam transaction created.
+2. Adjust PoW requirements based on the size of the encrypted data, the requested timeout length, and the number of transactions stored by relays in the last X minutes.
 
 ### P2P Protocol
 TODO: New message for submitting partial txs (using dandelion), message for receiving stored txs via time-range and potential channel/sharding mechanism (reduces privacy).
