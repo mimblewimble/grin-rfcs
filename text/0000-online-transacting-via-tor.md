@@ -6,7 +6,7 @@ Start date: September 1, 2019<br/>
 # Summary
 Describes a standardized addressing and communication protocol for building Grin transactions.<br/><br/>
 Wallets will attempt to connect to the recipient directly to build transactions over a TOR hidden service similar to how http(s) transaction building works today.<br/><br/>
-If the recipient is not online, or cannot be contacted directly, users have the option of falling back to an “offline” communication system where slates are encrypted and stored, for a limited period of time, by a subset(TBD) of nodes known as “relay nodes” (described in a future RFC).
+If the recipient is not online, or cannot be contacted directly, users have the option of falling back to an asynchronous communication system where slates are encrypted and stored, for a limited period of time, by “relay nodes” (described in 0000-asynchronous-transacting-via-relays).
 
 # Motivation
 Grin is unique in that it requires the sender and receiver to interact in order to transact. This presents a lot of unique challenges that most coins don’t have to deal with. There are a number of different incompatible standards for sending and receiving, resulting in confusion and headaches for many users. The hope is that the addressing mechanism described here will become the new default method for sending and receiving, deprecating several less secure and less private methods in the process.
@@ -33,7 +33,7 @@ Requires users to setup and configure TOR, or bundle it with Grin, which could b
 # Future possibilities
 The changes in this RFC lead the way for:
 * Payment proofs
-* Offline transacting via SBBS/Grinbox-style relay system. See “Offline Transactions” RFC
+* Offline transacting via SBBS/Grinbox-style relay system. See 0000-asynchronous-transacting-via-relays RFC
 
 # References
 [1] https://github.com/torproject/torspec/blob/87698dc1c0fa4cf2186f180a636fc7ad1c5fb5fd/rend-spec-v3.txt#L2059-L2081 <br/>
