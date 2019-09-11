@@ -1,7 +1,7 @@
 
 - Title: variable-size-kernels
 - Authors: [Antioch Peverell](mailto:apeverell@protonmail.com)
-- Start date : Aug 13, 2019
+- Start date: Aug 13, 2019
 - RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
 - Tracking issue: [Edit if merged with link to tracking github issue]
 
@@ -20,7 +20,7 @@ We were originally including both fee and lock_height on _every_ kernel in the b
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-Each transaction kernel variant may have associated data. For example height locked kernels include an associated lock height and non-coinbase kernels have an associated fee. Each kernel variant serializes to a fixed size in bytes but this size may be different for each kernel variants. This allows kernels to be serialized efficiently and provides flexibility to introduce new kernel variants that have additional associated data in the future.
+Each transaction kernel variant may have associated data. For example, height locked kernels include an associated lock height and non-coinbase kernels have an associated fee. Each kernel variant serializes to a fixed size in bytes but this size may be different for each kernel variants. This allows kernels to be serialized efficiently and provides flexibility to introduce new kernel variants that have additional associated data in the future.
 
 A plain kernel is 105 bytes compared to 113 bytes for a height locked kernel. Omitting the lock height from plain kernels saves approximately 7% in kernel storage costs.
 
@@ -89,7 +89,7 @@ The following p2p messages include serialized transaction kernels -
 
 Each node has a "local" protocol version. Nodes exchange protocol versions during the initial handshake when setting up a connection.
 
-If both nodes are running protocol version 2 then no translation is required and transaction kernels can be serialized using protocl version 2.
+If both nodes are running protocol version 2 then no translation is required and transaction kernels can be serialized using protocol version 2.
 
 If both nodes are running protocol version 1 then again no translation is required.
 
@@ -110,7 +110,7 @@ Node A will need to ensure anything broadcast to Node B is compatible with proto
 
 #### Local db storage
 
-Each node has a "db" protocol version. All entries in the db serialize/deserialize using that protocol version. Nodes support a process for local migration of data. On startup the db is inspected and if necessary a migration is performed upgrading all entries in the db to the latest protocol version. This process can be disabled locally to allow nodes to run against old databases without upgrading the protocol version. This is useful in cases where nodes do not wish to immediately upgrade the db, allowing for previous versions of code to run without problems.
+Each node has a "db" protocol version. All entries in the db serialize/deserialize using that protocol version. Nodes support a process for local migration of data. On startup, the db is inspected and if necessary a migration is performed upgrading all entries in the db to the latest protocol version. This process can be disabled locally to allow nodes to run against old databases without upgrading the protocol version. This is useful in cases where nodes do not wish to immediately upgrade the db, allowing for previous versions of code to run without problems.
 
 #### Kernel MMR storage
 
