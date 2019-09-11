@@ -1,9 +1,9 @@
 
-- Title: variable-size-kernels
+- Title: `variable-size-kernels`
 - Authors: [Antioch Peverell](mailto:apeverell@protonmail.com)
 - Start date: Aug 13, 2019
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
-- Tracking issue: [Edit if merged with link to tracking github issue]
+- RFC PR: [mimblewimble/grin-rfcs#21](https://github.com/mimblewimble/grin-rfcs/pull/21)
+- Tracking issue: [mimblewimble/grin#3038](https://github.com/mimblewimble/grin/issues/3038)
 
 ---
 
