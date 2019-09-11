@@ -120,7 +120,7 @@ Each node maintains a kernel MMR as part of the txhashset data structure. Each n
 
 Internally nodes are free to use any protocol version but the kernel MMR is also provided to other nodes during initial fast sync. A node joining the network requests a txhashset state file and this includes the kernel MMR. It is important that nodes send and receive the txhashset file using a compatible protocol version. This is a special case of "p2p messages" above with the txhashset state file provided as an attachment to the txhashset message.
 
-If node A (protocol version 2) requests a txhashset from node B (protocol version 1) then it must read the file using protocol version 1. Similarly if node B requests txhashset from node A then node A must provide the file such that it is compatible with protocol version 1.
+If node A (protocol version 2) requests a txhashset from node B (protocol version 1) then it must read the file using protocol version 1. Similarly, if node B requests txhashset from node A then node A must provide the file such that it is compatible with protocol version 1.
 
 The simplest way to achieve this is for all nodes to continue to use protocol version 1 internally for MMR storage, even if they use protocol version 2 externally for p2p messages. A transition period will be in place until a majority of nodes support protocol version 2 at which time nodes can migrate their MMR storage to protocol version 2.
 
@@ -146,7 +146,7 @@ To minimize compatibility issues between wallets we have maintained this existin
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-Support for variable size kernels allows new kernel variants to be introduced in the future. One concrete exampe of this is [relative kernels][0]. Kernels with relative lock heights will have an associated reference to a prior kernel in addition to a lock height based on that prior kernel.
+Support for variable size kernels allows new kernel variants to be introduced in the future. One concrete example of this is [relative kernels][0]. Kernels with relative lock heights will have an associated reference to a prior kernel in addition to a lock height based on that prior kernel.
 
 # References
 [references]: #references
