@@ -323,7 +323,71 @@ Only one parameters is needed. If multiple parameters are provided only the firs
 }
 ```
 
-Return
+#### get_tip
+
+Returns details about the state of the current fork tip.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "get_tip",
+    "params": [],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": {
+      "height": 374350,
+      "last_block_pushed": "000000543c69a0306b5463b92939643442a44a6d9be5bef72bea9fc1d718d310",
+      "prev_block_to_last": "000001237c6bac162f1add2b122fab6a254b9fcc2c4b4c8c632a8c39855521f1",
+      "total_difficulty": 1133621604919005
+    }
+  }
+}
+```
+
+#### validate_chain
+
+Trigger a validation of the chain state.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "validate_chain",
+    "params": [],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": null
+  }
+}
+```
+
+#### compact_chain
+
+Trigger a compaction of the chain state to regain storage space.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "compact_chain",
+    "params": [],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": null
+  }
+}
+```
+
 
 ### Peer endpoints
 
