@@ -139,9 +139,89 @@ Returns the node version and block header version (used by grin-wallet).
 
 ### Chain endpoints
 
+#### get_header
+
+Gets block header given either a height, a hash or an unspent output commitment.
+Only one parameters is needed. If multiple parameters are provided only the first one in the list is used.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "get_header",
+    "params": [null, "00000100c54dcb7a9cbb03aaf55da511aca2c98b801ffd45046b3991e4f697f9", null],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": {
+      "cuckoo_solution": [
+        9886309,
+        35936712,
+        43170402,
+        48069549,
+        70022151,
+        97464262,
+        107044653,
+        108342481,
+        118947913,
+        130828808,
+        144192311,
+        149269998,
+        179888206,
+        180736988,
+        207416734,
+        227431174,
+        238941623,
+        245603454,
+        261819503,
+        280895459,
+        284655965,
+        293675096,
+        297070583,
+        299129598,
+        302141405,
+        313482158,
+        321703003,
+        351704938,
+        376529742,
+        381955038,
+        383597880,
+        408364901,
+        423241240,
+        436882285,
+        442043438,
+        446377997,
+        470779425,
+        473427731,
+        477149621,
+        483204863,
+        496335498,
+        534567776
+      ],
+      "edge_bits": 29,
+      "hash": "00000100c54dcb7a9cbb03aaf55da511aca2c98b801ffd45046b3991e4f697f9",
+      "height": 374336,
+      "kernel_root": "d294e6017b9905b288dc62f6f725c864665391c41da20a18a371e3492c448b88",
+      "nonce": 4715085839955132421,
+      "output_root": "12464313f7cd758a7761f65b2837e9b9af62ad4060c97180555bfc7e7e5808fa",
+      "prev_root": "e22090fefaece85df1441e62179af097458e2bdcf600f8629b977470db1b6db1",
+      "previous": "0000015957d92c9e04c6f3aec8c5b9976f3d25f52ff459c630a01a643af4a88c",
+      "range_proof_root": "4fd9a9189e0965aa9cdeb9cf7873ecd9e6586eac1dd9ca3915bc50824a253b02",
+      "secondary_scaling": 561,
+      "timestamp": "2019-10-03T16:08:11+00:00",
+      "total_difficulty": 1133587428693359,
+      "total_kernel_offset": "0320b6f8a4a4180ed79ecd67c8059c1d7bd74afe144d225395857386e5822314",
+      "version": 2
+    }
+  }
+}
+```
+
 #### get_block
 
-Gets block details given either the height, the hash or an unspent output commitment.
+Gets block details given either a height, a hash or an unspent output commitment.
 Only one parameters is needed. If multiple parameters are provided only the first one in the list is used.
 
 ```JSON
