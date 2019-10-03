@@ -388,10 +388,47 @@ Trigger a compaction of the chain state to regain storage space.
 }
 ```
 
-
 ### Peer endpoints
 
-TBD
+#### ban_peer
+
+Bans a specific peer.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "ban_peer",
+    "params": ["70.50.33.130:3414"],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": null
+  }
+}
+```
+
+#### unban_peer
+
+Unbans a specific peer.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "unban_peer",
+    "params": ["70.50.33.130:3414"],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": null
+  }
+}
+```
 
 ### Pool endpoints
 
