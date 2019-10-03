@@ -390,6 +390,147 @@ Trigger a compaction of the chain state to regain storage space.
 
 ### Peer endpoints
 
+### get_peers
+
+Retrieves information about peers. If `null` is provided, `get_peers` will list all stored peers.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "get_peer",
+    "params": ["70.50.33.130:3414"],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": [
+      {
+        "addr": "70.50.33.130:3414",
+        "ban_reason": "None",
+        "capabilities": {
+          "bits": 15
+        },
+        "flags": "Defunct",
+        "last_banned": 0,
+        "last_connected": 1570129317,
+        "user_agent": "MW/Grin 2.0.0"
+      }
+    ]
+  }
+}
+```
+
+### get_connected_peers
+
+Retrieves a list of all connected peers.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "get_peer",
+    "params": [],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": [
+      {
+        "addr": "35.176.195.242:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "47.97.198.21:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "148.251.16.13:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "68.195.18.155:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "52.53.221.15:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 0,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "109.74.202.16:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "121.43.183.180:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "35.157.247.209:23414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      }
+    ]
+  }
+}
+```
+
 #### ban_peer
 
 Bans a specific peer.
