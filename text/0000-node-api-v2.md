@@ -37,6 +37,9 @@
       - [get_stempool_size](#get_stempool_size)
       - [get_unconfirmed_transactions](#get_unconfirmed_transactions)
       - [push_transaction](#push_transaction)
+  * [Errors](#errors)
+    + [JSON-RPC Errors](#json-rpc-errors)
+    + [API Result Errors](#api-result-errors)
   * [Authentication](#authentication)
     + [Wallet support](#wallet-support)
     + [Legacy support](#legacy-support)
@@ -80,7 +83,7 @@ This new API will be particularly useful for wallet developer and should ultimat
 
 ## Current Endpoints with the v1 API
 
-While the endpoints are documented in details [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md), here is an overview of the current REST API Endpoints of the V1 API.
+While the endpoints are documented in details [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md), here is an overview of the current REST API Endpoints of the v1 API.
 
 ```JSON
 [
@@ -944,9 +947,89 @@ Push new transaction to our local transaction pool. Optional fluff boolean to by
 }
 ```
 
+## Errors
+
+There is two kind of errors that can appear when making a call on the API v2: basic JSON-RPC errors and API result errors
+
+### JSON-RPC Errors
+
+These errors are often due to a miscontructed JSON body.
+For example when there is not enough parameters:
+
+```JSON
+{
+  "error": {
+    "code": -32602,
+    "message": "WrongNumberOfArgs. Expected 4. Actual 5"
+  },
+  "id": 1,
+  "jsonrpc": "2.0"
+}
+```
+
+or invalid type of data entered:
+
+```JSON
+{
+  "error": {
+    "code": -32602,
+    "message": "InvalidArgStructure \"start_height\" at position 1."
+  },
+  "id": 1,
+  "jsonrpc": "2.0"
+}
+```
+
+or method not found:
+
+```JSON
+{
+  "error": {
+    "code": -32601,
+    "message": "Method not found"
+  },
+  "id": 2,
+  "jsonrpc": "2.0"
+}
+```
+
+this list of errors is not exhaustive, for more information about the possible error objects see the [JSON RPC 2.0 specifications](https://www.jsonrpc.org/specification#error_object).
+
+
+### API Result Errors
+
+These type of errors are due to an API error during the query. This type of error is wrapped into the result. 
+The possible error objects are defined in the [`grin_api` crate](https://docs.rs/grin_api/2.0.0/grin_api/struct.Error.html)
+
+For example, trying to ban a peer that's already banned:
+
+```JSON
+{
+  "id": 2,
+  "jsonrpc": "2.0",
+  "result": {
+    "Err": {
+      "Internal": "ban peer error: PeerNotFound"
+    }
+  }
+}
+```
+
+or a block that doesn't exist:
+
+```JSON
+{
+  "id": 2,
+  "jsonrpc": "2.0",
+  "result": {
+    "Err": "NotFound"
+  }
+}
+```
+
 ## Authentication
 
-Like the V1 API, the v2 API will use basic auth with the same secret. This token is usually in `grin/main/.api_secret`.
+Like the v1 API, the v2 API will use basic auth with the same secret. This token is usually in `grin/main/.api_secret`.
 
 ### Wallet support
 
@@ -954,7 +1037,7 @@ The wallet currently uses the Grin Node API v1 so changes will be needed in the 
 
 ### Legacy support
 
-The V1 API will remain active for a time the mode of operation for its REST API will be assumed to work as currently. This setup should allow existing wallets and apps to continue working as-is until a cutoff release for legacy mode is determined.
+The v1 API will remain active for a time the mode of operation for its REST API will be assumed to work as currently. This setup should allow existing wallets and apps to continue working as-is until a cutoff release for legacy mode is determined.
 
 ### API only
 
