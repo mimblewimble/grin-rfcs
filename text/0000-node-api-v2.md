@@ -532,7 +532,7 @@ Retrieves information about peers. If `null` is provided, `get_peers` will list 
 ```JSON
 {
     "jsonrpc": "2.0",
-    "method": "get_peer",
+    "method": "get_peers",
     "params": ["70.50.33.130:3414"],
     "id": 1
 }
@@ -564,7 +564,7 @@ Retrieves a list of all connected peers.
 ```JSON
 {
     "jsonrpc": "2.0",
-    "method": "get_peer",
+    "method": "get_connected_peers",
     "params": [],
     "id": 1
 }
