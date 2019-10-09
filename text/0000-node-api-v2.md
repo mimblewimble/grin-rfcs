@@ -27,23 +27,23 @@
       - [get_unspent_outputs](#get_unspent_outputs)
       - [validate_chain](#validate_chain)
       - [compact_chain](#compact_chain)
-    + [Peer endpoints](#peer_endpoints)
-    + [get_peers](#get_peers)
-    + [get_connected_peers](#get_connected_peers)
+    + [Peer endpoints](#peer-endpoints)
+      - [get_peers](#get_peers)
+      - [get_connected_peers](#get_connected_peers)
       - [ban_peer](#ban_peer)
       - [unban_peer](#unban_peer)
-    + [Pool endpoints](#pool_endpoints)
+    + [Pool endpoints](#pool-endpoints)
       - [get_pool_size](#get_pool_size)
       - [get_stempool_size](#get_stempool_size)
       - [get_unconfirmed_transactions](#get_unconfirmed_transactions)
       - [push_transaction](#push_transaction)
   * [Authentication](#authentication)
-    + [Wallet support](#wallet_support)
-    + [Legacy support](#legacy_support)
-    + [API only](#api_only)
+    + [Wallet support](#wallet-support)
+    + [Legacy support](#legacy-support)
+    + [API only](#api-only)
 - [Drawbacks](#drawbacks)
-- [Prior art](#prior_art)
-- [Future possibilities](#future_possibilities)
+- [Prior art](#prior-art)
+- [Future possibilities](#future-possibilities)
 - [References](#references)
 
 # Summary
@@ -66,7 +66,7 @@ The goal of this RFC is to provide a new API with:
 - Cleaner methods and errors.
 - Generated documentation directly on docs.rs.
 - Automatic testing with doc tests.
-- Finally stronger basis for future improvements.
+- Stronger basis for future improvements.
 
 # Community-level explanation
 
@@ -110,7 +110,7 @@ While the endpoints are documented in details [here](https://github.com/mimblewi
 ]
 ```
 
-This endpoints can be grouped into 5 categories:
+These endpoints can be grouped into 5 categories:
 
 - miscellaneous endpoints (which contain `status` and `version` endpoints)
 - `chain` endpoints (which also contain `blocks`, `chain` and headers` endpoints)
@@ -220,7 +220,7 @@ Returns the node version and block header version (used by grin-wallet).
 #### get_header
 
 Gets block header given either a height, a hash or an unspent output commitment.
-Only one parameters is needed. If multiple parameters are provided only the first one in the list is used.
+Only one parameter is required. If multiple parameters are provided only the first one in the list is used.
 
 ```JSON
 {
@@ -300,7 +300,7 @@ Only one parameters is needed. If multiple parameters are provided only the firs
 #### get_block
 
 Gets block details given either a height, a hash or an unspent output commitment.
-Only one parameters is needed. If multiple parameters are provided only the first one in the list is used.
+Only one parameter is required. If multiple parameters are provided only the first one in the list is used.
 
 ```JSON
 {
@@ -603,7 +603,7 @@ Trigger a compaction of the chain state to regain storage space.
 
 ### Peer endpoints
 
-### get_peers
+#### get_peers
 
 Retrieves information about peers. If `null` is provided, `get_peers` will list all stored peers.
 
@@ -635,7 +635,7 @@ Retrieves information about peers. If `null` is provided, `get_peers` will list 
 }
 ```
 
-### get_connected_peers
+#### get_connected_peers
 
 Retrieves a list of all connected peers.
 
@@ -788,7 +788,7 @@ Unbans a specific peer.
 
 #### get_pool_size
 
-Returns the number of transaction in the transaction pool.
+Returns the number of transactions in the transaction pool.
 
 ```JSON
 {
@@ -808,7 +808,7 @@ Returns the number of transaction in the transaction pool.
 
 #### get_stempool_size
 
-Returns the number of transaction in the stem transaction pool.
+Returns the number of transactions in the stem transaction pool.
 
 ```JSON
 {
@@ -946,7 +946,7 @@ Push new transaction to our local transaction pool. Optional fluff boolean to by
 
 ## Authentication
 
-Similarly to the V1 API, the v2 API will use basic auth with the same secret. This token is usually in `grin/main/.api_secret`.
+Like the V1 API, the v2 API will use basic auth with the same secret. This token is usually in `grin/main/.api_secret`.
 
 ### Wallet support
 
@@ -964,7 +964,7 @@ Note that this RFC does not propose making user-facing changes to the existing C
 
 [drawbacks]: #drawbacks
 
-The implementation of this RFC will temporarily introduces some additional code complexity as v1 and v2 node API will need to coexist until a cutoff release is determined.
+The implementation of this RFC will temporarily introduce some additional code complexity as v1 and v2 node API will need to coexist until a cutoff release is determined.
 
 # Prior art
 
