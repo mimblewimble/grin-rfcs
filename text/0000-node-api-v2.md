@@ -62,7 +62,11 @@ The current Node API (referred here as v1 API) is a REST API. This API while sim
 - Contains call with heterogenous args such as `?byid=xxx` and `commitment/xxx` which can be confusing and lack some uniformity.
 - Uses REST which is bound to HTTP while v2 wallet API uses JSON-RPC.
 
-The goal of this RFC is to provide a new API with cleaner methods and errors, automatically generated documentation directly on docs.rs and finally stronger basis for future improvements.
+The goal of this RFC is to provide a new API with:
+- Cleaner methods and errors.
+- Generated documentation directly on docs.rs.
+- Automatic testing with doc tests.
+- Finally stronger basis for future improvements.
 
 # Community-level explanation
 
