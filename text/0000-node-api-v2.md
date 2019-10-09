@@ -7,6 +7,45 @@
 
 ---
 
+Table of Contents
+
+- [Summary](#summary)
+- [Motivation](#motivation)
+- [Community-level explanation](#community-level-explanation)
+- [Reference-level explanation](#reference-level-explanation)
+  * [Current Endpoints with the v1 API](#current-endpoints-with-the-v1-api)
+  * [Proposed Endpoints](#proposed-endpoints)
+    + [Miscellaneous endpoints](#miscellaneous-endpoints)
+      - [get_status](#get-status)
+      - [get_version](#get-version)
+    + [Chain endpoints](#chain-endpoints)
+      - [get_header](#get-header)
+      - [get_block](#get-block)
+      - [get_tip](#get-tip)
+      - [get_kernel](#get-kernel)
+      - [get_outputs](#get-outputs)
+      - [get_unspent_outputs](#get-unspent-outputs)
+      - [validate_chain](#validate-chain)
+      - [compact_chain](#compact-chain)
+    + [Peer endpoints](#peer-endpoints)
+    + [get_peers](#get-peers)
+    + [get_connected_peers](#get-connected-peers)
+      - [ban_peer](#ban-peer)
+      - [unban_peer](#unban-peer)
+    + [Pool endpoints](#pool-endpoints)
+      - [get_pool_size](#get-pool-size)
+      - [get_stempool_size](#get-stempool-size)
+      - [get_unconfirmed_transactions](#get-unconfirmed-transactions)
+      - [push_transaction](#push-transaction)
+  * [Authentication](#authentication)
+    + [Wallet support](#wallet-support)
+    + [Legacy support](#legacy-support)
+    + [API only](#api-only)
+- [Drawbacks](#drawbacks)
+- [Prior art](#prior-art)
+- [Future possibilities](#future-possibilities)
+- [References](#references)
+
 # Summary
 
 [summary]: #summary
@@ -76,6 +115,41 @@ This endpoints can be grouped into 5 categories:
 - `txhashset` endpoints
 
 ## Proposed Endpoints
+
+This RFC proposes to keep the logic of the following endpoints and refactor them:
+
+```JSON
+[
+  "get blocks",
+  "get headers",
+  "get chain",
+  "post chain/compact",
+  "get chain/validate",
+  "get chain/kernels/xxx?min_height=yyy&max_height=zzz",
+  "get chain/outputs/byids?id=xxx,yyy,zzz",
+  "get chain/outputs/byheight?start_height=101&end_height=200",
+  "get status",
+  "get txhashset/outputs?start_index=1&max=100",
+  "get pool",
+  "post pool/push_tx",
+  "post peers/a.b.c.d:p/ban",
+  "post peers/a.b.c.d:p/unban",
+  "get peers/all",
+  "get peers/connected",
+  "get peers/a.b.c.d",
+  "get version"
+]
+```
+
+The logic of the following endpoints will NOT be implemented as they are purely internals:
+
+```JSON
+  "get txhashset/roots",
+  "get txhashset/lastoutputs?n=10",
+  "get txhashset/lastrangeproofs",
+  "get txhashset/lastkernels",
+  "get txhashset/merkleproof?n=1",
+```
 
 ### Miscellaneous endpoints
 
