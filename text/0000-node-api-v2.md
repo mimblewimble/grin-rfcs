@@ -15,7 +15,7 @@
 - [Reference-level explanation](#reference-level-explanation)
   * [Current Endpoints with the v1 API](#current-endpoints-with-the-v1-api)
   * [Proposed Endpoints](#proposed-endpoints)
-    + [Miscellaneous endpoints](#miscellaneous-endpoints)
+    + [Node endpoints](#node-endpoints)
       - [get_status](#get_status)
       - [get_version](#get_version)
     + [Chain endpoints](#chain-endpoints)
@@ -182,7 +182,7 @@ The new endpoint methods are the following:
 
 NB: The following v2 endpoints are classified by categories solely to simplify the reading and understanding of the RFC.
 
-### Miscellaneous endpoints
+### Node endpoints
 
 #### get_status
 
