@@ -41,9 +41,10 @@
     + [JSON-RPC Errors](#json-rpc-errors)
     + [API Result Errors](#api-result-errors)
   * [Authentication](#authentication)
-    + [Wallet support](#wallet-support)
-    + [Legacy support](#legacy-support)
-    + [API only](#api-only)
+  * [Wallet support](#wallet-support)
+  * [Legacy support](#legacy-support)
+  * [API only](#api-only)
+  * [Node V1 Depreciation Timeline](#node-v1-depreciation-timeline)
 - [Drawbacks](#drawbacks)
 - [Prior art](#prior-art)
 - [Future possibilities](#future-possibilities)
@@ -157,6 +158,29 @@ The logic of the following endpoints will NOT be implemented as they are purely 
   "get txhashset/lastkernels",
   "get txhashset/merkleproof?n=1",
 ```
+
+The new endpoint methods are the following:
+
+- [get_status](#get_status)
+- [get_version](#get_version)
+- [get_header](#get_header)
+- [get_block](#get_block)
+- [get_tip](#get_tip)
+- [get_kernel](#get_kernel)
+- [get_outputs](#get_outputs)
+- [get_unspent_outputs](#get_unspent_outputs)
+- [validate_chain](#validate_chain)
+- [compact_chain](#compact_chain)
+- [get_peers](#get_peers)
+- [get_connected_peers](#get_connected_peers)
+- [ban_peer](#ban_peer)
+- [unban_peer](#unban_peer)
+- [get_pool_size](#get_pool_size)
+- [get_stempool_size](#get_stempool_size)
+- [get_unconfirmed_transactions](#get_unconfirmed_transactions)
+- [push_transaction](#push_transaction)
+
+NB: The following v2 endpoints are classified by categories solely to simplify the reading and understanding of the RFC.
 
 ### Miscellaneous endpoints
 
@@ -1031,17 +1055,22 @@ or a block that doesn't exist:
 
 Like the v1 API, the v2 API will use basic auth with the same secret. This token is usually in `grin/main/.api_secret`.
 
-### Wallet support
+## Wallet support
 
 The wallet currently uses the Grin Node API v1 so changes will be needed in the grin-wallet repository to make it compatible with the v2 Node API.
 
-### Legacy support
+## Legacy support
 
 The v1 API will remain active for a time the mode of operation for its REST API will be assumed to work as currently. This setup should allow existing wallets and apps to continue working as-is until a cutoff release for legacy mode is determined.
 
-### API only
+## API only
 
 Note that this RFC does not propose making user-facing changes to the existing CLI (invoked by `grin client`) to invoke these functions. It's expected that the existing cli functionality will be modified to invoke the new API functions.
+
+## Node V1 Depreciation Timeline
+
+- v3.0.0 (January 2020): Node API v1 is marked as deprecated and will be remove in next major version.
+- v4.0.0 (July 2020): Node API v1 is removed from the code.
 
 # Drawbacks
 
