@@ -57,7 +57,7 @@ Outputs and tranasctions are created during the transaction exchange process as 
  * The sender sends the slate to the payee (via file or http). If sending synchronously, (e.g via http)  the associated transaction is saved to the log after a response from the payee's listener. If sending asynchronously, (e.g. via file), the transaction is saved immediately. 
  * When saved, the associated transaction is set to type 'Sent Tx'  with a status of 'unconfirmed', inputs are locked internally and a change output is added with status 'unconfirmed'.
  * The payee receives the slate, creates (an) output(s) for the received amount with status unconfirmed, and immediately stores a transaction in their log of type 'Received Tx' with confirmed set to false. 
- * The payee calculates and saves the transaction kernel for later reference.
+ * The payee calculates and saves the transaction kernel commitment for later reference.
  * The slate is returned to the payer for completion, who calculates and saves the transaction kernel. The transaction is sent to a node for validation.
 
 ### Transaction and Output Statue Update Processes
@@ -140,7 +140,7 @@ It is still be possible to manually scan the chain via the `scan` (`check`) comm
 
 ### Invocation of Update Process
 
-The update process was previously run inline in a synchronous blocking fashion as part of individual wallet commands. With the `scan` command becoming part of normal operations, it's expected that a particlar invocation the overall update process could potentially take a long time. This is acceptable in single-use modes such as the single invocation model of `grin-wallet`, but is far less usable in environments where the wallet and Owner API stay resident and the caller may not have any particular insight as to why a call invoking the update process might be taking a long time to complete.
+The update process was previously run inline in a synchronous blocking fashion as part of individual wallet commands. With the `scan` command becoming part of normal operations, it's expected that a particular invocation of the overall update process could potentially take a long time. This is acceptable in single-use modes such as the single invocation model of `grin-wallet`, but is far less usable in environments where the wallet and Owner API stay resident and the caller may not have any particular insight as to why a call invoking the update process might be taking a long time to complete.
 
 To address this, the wallet provides a method of calling the Overall Update Process in its own thread that attempts to mimimise its usage of the wallet lock. The Wallet's Owner API (V3 Only) is extended with the following functions:
 
@@ -159,7 +159,7 @@ Previously, a situation such as this meant that the outputs associated with a tr
 To rectify these problems, the following changes are made:
 
 * A Time-To-Live (`TTL`) field is added to the Slate, which is defined as the last block height at which a wallet should attempt to complete a transaction. This field should be respected at the wallet-exchange level, but is not currently commit to at a consensus level. If a wallet detects a particlar transaction's TTL has expired, it will automatically cancel the transaction and unlock associated outputs. Note this doesn't prevent the other party sending the transaction to the node after this happens, but there is no guarantee the outputs will still be available. However, if this does happen the `scan` command will correct the wallet state.
-* The default output selection method is changed to `smallest`, to prevent all wallet amounts being locked on every transaction.
+* The default output selection method is changed to `smallest`, to prevent all wallet amounts being locked on every transaction. The `smallest` strategy prefers using the smallest (or 'dust') outputs as inputs to a transaction, and it is conjectured that the overall effect on Grin's UTXO size will be negligible in the longer term, provided users continue to transact. The `all` method of output selection also has privacy implications in that it makes it easier for an observer to identify a group of outputs as belonging to a single wallet (or indeed, representing the entire contents of a wallet in most cases).
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
