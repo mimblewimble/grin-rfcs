@@ -585,8 +585,32 @@ UTXO traversal. Retrieves last utxos since a start index until a max. Last boole
     }
   }
 }
-
 ```
+
+#### get_pmmr_indices
+
+Retrieves the PMMR indices based on the provided block height(s).
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "get_pmmr_indices",
+    "params": [1, 200],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": {
+      "highest_index": 398,
+      "last_retrieved_index": 2,
+      "outputs": []
+    }
+  }
+}
+```
+
 
 #### validate_chain
 
