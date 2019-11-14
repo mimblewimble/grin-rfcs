@@ -44,7 +44,7 @@
   * [Wallet support](#wallet-support)
   * [Legacy support](#legacy-support)
   * [API only](#api-only)
-  * [Node V1 Depreciation Timeline](#node-v1-depreciation-timeline)
+  * [Node V1 Deprecation Timeline](#node-v1-deprecation-timeline)
 - [Drawbacks](#drawbacks)
 - [Prior art](#prior-art)
 - [Future possibilities](#future-possibilities)
@@ -60,13 +60,13 @@ Create a v2 JSON-RPC API for the Node API.
 
 [motivation]: #motivation
 
-The current Node API (referred here as v1 API) is a REST API. This API while simple is:
+The previous Node API (referred to here as v1) was a REST API. This API while simple had a few drawbacks:
 
-- Documented manually (current documentation is available [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md).
+- Manually documented (current documentation is available [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md).
 - Contains call with heterogenous args such as `?byid=xxx` and `commitment/xxx` which can be confusing and lack some uniformity.
 - Uses REST which is bound to HTTP while v2 wallet API uses JSON-RPC.
 
-The goal of this RFC is to provide a new API with:
+This RFC provides a new v2 API with:
 - Cleaner methods and errors.
 - Generated documentation directly on docs.rs.
 - Automatic testing with doc tests.
@@ -82,9 +82,9 @@ This new API will be particularly useful for wallet developer and should ultimat
 
 [reference-level-explanation]: #reference-level-explanation
 
-## Current Endpoints with the v1 API
+## V1 Endpoints
 
-While the endpoints are documented in details [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md), here is an overview of the current REST API Endpoints of the v1 API.
+While the endpoints are documented in details [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md), here is an overview of the REST API Endpoints of the v1 API.
 
 ```JSON
 [
@@ -122,9 +122,9 @@ These endpoints can be grouped into 5 categories:
 - `pool` endpoints
 - `txhashset` endpoints
 
-## Proposed Endpoints
+## V2 Endpoints
 
-This RFC proposes to keep the logic of the following endpoints and refactor them:
+The following endpoints are kept and refactored:
 
 ```JSON
 [
@@ -1077,11 +1077,11 @@ or a block that doesn't exist:
 
 ## Authentication
 
-Like the v1 API, the v2 API will use basic auth with the same secret. This token is usually in `grin/main/.api_secret`.
+Like the v1 API, the v2 API uses basic auth with the same secret. This token is usually in `grin/main/.api_secret`.
 
 ## Wallet support
 
-The wallet currently uses the Grin Node API v1 so changes will be needed in the grin-wallet repository to make it compatible with the v2 Node API.
+For full compatibility, grin-wallet will migrate to use the v2 Node API.
 
 ## Legacy support
 
@@ -1089,9 +1089,9 @@ The v1 API will remain active for a time the mode of operation for its REST API 
 
 ## API only
 
-Note that this RFC does not propose making user-facing changes to the existing CLI (invoked by `grin client`) to invoke these functions. It's expected that the existing cli functionality will be modified to invoke the new API functions.
+Note that this RFC doe not make user-facing changes to the existing CLI (invoked by `grin client`) to invoke these functions. It's expected that the existing cli functionality will be modified to invoke the new API functions.
 
-## Node V1 Depreciation Timeline
+## Node V1 Deprecation Timeline
 
 - v3.0.0 (January 2020): Node API v1 is marked as deprecated and will be remove in next major version.
 - v4.0.0 (July 2020): Node API v1 is removed from the code.
@@ -1100,7 +1100,7 @@ Note that this RFC does not propose making user-facing changes to the existing C
 
 [drawbacks]: #drawbacks
 
-The implementation of this RFC will temporarily introduce some additional code complexity as v1 and v2 node API will need to coexist until a cutoff release is determined.
+This RFC temporarily introduces some additional code complexity as v1 and v2 node API will need to coexist for the duration of the deprecation period of v1.
 
 # Prior art
 
@@ -1117,7 +1117,7 @@ This kind of JSON-RPC API is widely used for cryptocurrencies. For instance:
 
 [future-possibilities]: #future-possibilities
 
-This new API will simplify the deployment of new methods and will drastically simplify the work of developers by providing a clear documentation directly on docs.rs.
+This API simplifies the deployment of new methods and drastically simplifies the work of developers by providing a clear documentation directly on docs.rs.
 
 # References
 
