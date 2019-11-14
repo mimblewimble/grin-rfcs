@@ -25,6 +25,7 @@
       - [get_kernel](#get_kernel)
       - [get_outputs](#get_outputs)
       - [get_unspent_outputs](#get_unspent_outputs)
+      - [get_pmmr_indices](#get_pmmr_indices)
       - [validate_chain](#validate_chain)
       - [compact_chain](#compact_chain)
     + [Peer endpoints](#peer-endpoints)
