@@ -183,6 +183,8 @@ The new endpoint methods are the following:
 
 NB: The following v2 endpoints are classified by categories solely to simplify the reading and understanding of the RFC.
 
+When running `grin` with defaults, the V2 api is available at `localhost:3413/v2`.
+
 ### Node endpoints
 
 #### get_status
