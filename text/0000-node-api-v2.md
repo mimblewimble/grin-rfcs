@@ -15,10 +15,16 @@
 - [Reference-level explanation](#reference-level-explanation)
   * [Current Endpoints with the v1 API](#current-endpoints-with-the-v1-api)
   * [Proposed Endpoints](#proposed-endpoints)
-    + [Node endpoints](#node-endpoints)
+    + [Owner API Endpoints](#owner-api-endpoints)
       - [get_status](#get_status)
+      - [validate_chain](#validate_chain)
+      - [compact_chain](#compact_chain)
+      - [get_peers](#get_peers)
+      - [get_connected_peers](#get_connected_peers)
+      - [ban_peer](#ban_peer)
+      - [unban_peer](#unban_peer)
+    + [Foreign API Endpoints](#foreign-api-endpoints)
       - [get_version](#get_version)
-    + [Chain endpoints](#chain-endpoints)
       - [get_header](#get_header)
       - [get_block](#get_block)
       - [get_tip](#get_tip)
@@ -26,14 +32,6 @@
       - [get_outputs](#get_outputs)
       - [get_unspent_outputs](#get_unspent_outputs)
       - [get_pmmr_indices](#get_pmmr_indices)
-      - [validate_chain](#validate_chain)
-      - [compact_chain](#compact_chain)
-    + [Peer endpoints](#peer-endpoints)
-      - [get_peers](#get_peers)
-      - [get_connected_peers](#get_connected_peers)
-      - [ban_peer](#ban_peer)
-      - [unban_peer](#unban_peer)
-    + [Pool endpoints](#pool-endpoints)
       - [get_pool_size](#get_pool_size)
       - [get_stempool_size](#get_stempool_size)
       - [get_unconfirmed_transactions](#get_unconfirmed_transactions)
@@ -66,9 +64,11 @@ The previous Node API (referred to here as v1) was a REST API. This API while si
 - Manually documented (current documentation is available [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md).
 - Contains call with heterogenous args such as `?byid=xxx` and `commitment/xxx` which can be confusing and lack some uniformity.
 - Uses REST which is bound to HTTP while v2 wallet API uses JSON-RPC.
+- No difference between node management and simple information endpoints (i.e. exposing the node on the internet would allow anyone to query sensitive endpoints)
 
 This RFC provides a new v2 API with:
 - Cleaner methods and errors.
+- Owner and Foreign API.
 - Generated documentation directly on docs.rs.
 - Automatic testing with doc tests.
 - Stronger basis for future improvements.
@@ -160,9 +160,18 @@ The logic of the following endpoints will NOT be implemented as they are purely 
   "get txhashset/merkleproof?n=1",
 ```
 
-The new endpoint methods are the following:
+The new Owner API endpoint methods are the following:
 
 - [get_status](#get_status)
+- [validate_chain](#validate_chain)
+- [compact_chain](#compact_chain)
+- [get_peers](#get_peers)
+- [get_connected_peers](#get_connected_peers)
+- [ban_peer](#ban_peer)
+- [unban_peer](#unban_peer)
+
+The new Foreign API endpoint methods are the following:
+
 - [get_version](#get_version)
 - [get_header](#get_header)
 - [get_block](#get_block)
@@ -170,22 +179,16 @@ The new endpoint methods are the following:
 - [get_kernel](#get_kernel)
 - [get_outputs](#get_outputs)
 - [get_unspent_outputs](#get_unspent_outputs)
-- [validate_chain](#validate_chain)
-- [compact_chain](#compact_chain)
-- [get_peers](#get_peers)
-- [get_connected_peers](#get_connected_peers)
-- [ban_peer](#ban_peer)
-- [unban_peer](#unban_peer)
 - [get_pool_size](#get_pool_size)
 - [get_stempool_size](#get_stempool_size)
 - [get_unconfirmed_transactions](#get_unconfirmed_transactions)
 - [push_transaction](#push_transaction)
 
-NB: The following v2 endpoints are classified by categories solely to simplify the reading and understanding of the RFC.
+When running `grin` with defaults, the V2 apis are available at
+- `localhost:3413/v2/owner` for the owner API.
+- `localhost:3413/v2/foreign` for the foreign API.
 
-When running `grin` with defaults, the V2 api is available at `localhost:3413/v2`.
-
-### Node endpoints
+### Owner API Endpoints
 
 #### get_status
 
@@ -222,6 +225,232 @@ Returns various information about the node, the network and the current sync sta
 }
 ```
 
+#### validate_chain
+
+Trigger a validation of the chain state.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "validate_chain",
+    "params": [],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": null
+  }
+}
+```
+
+#### compact_chain
+
+Trigger a compaction of the chain state to regain storage space.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "compact_chain",
+    "params": [],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": null
+  }
+}
+```
+
+
+### Peer endpoints
+
+#### get_peers
+
+Retrieves information about peers. If `null` is provided, `get_peers` will list all stored peers.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "get_peers",
+    "params": ["70.50.33.130:3414"],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": [
+      {
+        "addr": "70.50.33.130:3414",
+        "ban_reason": "None",
+        "capabilities": {
+          "bits": 15
+        },
+        "flags": "Defunct",
+        "last_banned": 0,
+        "last_connected": 1570129317,
+        "user_agent": "MW/Grin 2.0.0"
+      }
+    ]
+  }
+}
+```
+
+#### get_connected_peers
+
+Retrieves a list of all connected peers.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "get_connected_peers",
+    "params": [],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": [
+      {
+        "addr": "35.176.195.242:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "47.97.198.21:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "148.251.16.13:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "68.195.18.155:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "52.53.221.15:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 0,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "109.74.202.16:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "121.43.183.180:3414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      },
+      {
+        "addr": "35.157.247.209:23414",
+        "capabilities": {
+          "bits": 15
+        },
+        "direction": "Outbound",
+        "height": 374510,
+        "total_difficulty": 1133954621205750,
+        "user_agent": "MW/Grin 2.0.0",
+        "version": 1
+      }
+    ]
+  }
+}
+```
+
+#### ban_peer
+
+Bans a specific peer.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "ban_peer",
+    "params": ["70.50.33.130:3414"],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": null
+  }
+}
+```
+
+#### unban_peer
+
+Unbans a specific peer.
+
+```JSON
+{
+    "jsonrpc": "2.0",
+    "method": "unban_peer",
+    "params": ["70.50.33.130:3414"],
+    "id": 1
+}
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "result": {
+    "Ok": null
+  }
+}
+```
+
+### Foreign API Endpoints
+
 #### get_version
 
 Returns the node version and block header version (used by grin-wallet).
@@ -244,8 +473,6 @@ Returns the node version and block header version (used by grin-wallet).
   }
 }
 ```
-
-### Chain endpoints
 
 #### get_header
 
@@ -614,232 +841,6 @@ Retrieves the PMMR indices based on the provided block height(s).
 }
 ```
 
-
-#### validate_chain
-
-Trigger a validation of the chain state.
-
-```JSON
-{
-    "jsonrpc": "2.0",
-    "method": "validate_chain",
-    "params": [],
-    "id": 1
-}
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "result": {
-    "Ok": null
-  }
-}
-```
-
-#### compact_chain
-
-Trigger a compaction of the chain state to regain storage space.
-
-```JSON
-{
-    "jsonrpc": "2.0",
-    "method": "compact_chain",
-    "params": [],
-    "id": 1
-}
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "result": {
-    "Ok": null
-  }
-}
-```
-
-### Peer endpoints
-
-#### get_peers
-
-Retrieves information about peers. If `null` is provided, `get_peers` will list all stored peers.
-
-```JSON
-{
-    "jsonrpc": "2.0",
-    "method": "get_peers",
-    "params": ["70.50.33.130:3414"],
-    "id": 1
-}
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "result": {
-    "Ok": [
-      {
-        "addr": "70.50.33.130:3414",
-        "ban_reason": "None",
-        "capabilities": {
-          "bits": 15
-        },
-        "flags": "Defunct",
-        "last_banned": 0,
-        "last_connected": 1570129317,
-        "user_agent": "MW/Grin 2.0.0"
-      }
-    ]
-  }
-}
-```
-
-#### get_connected_peers
-
-Retrieves a list of all connected peers.
-
-```JSON
-{
-    "jsonrpc": "2.0",
-    "method": "get_connected_peers",
-    "params": [],
-    "id": 1
-}
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "result": {
-    "Ok": [
-      {
-        "addr": "35.176.195.242:3414",
-        "capabilities": {
-          "bits": 15
-        },
-        "direction": "Outbound",
-        "height": 374510,
-        "total_difficulty": 1133954621205750,
-        "user_agent": "MW/Grin 2.0.0",
-        "version": 1
-      },
-      {
-        "addr": "47.97.198.21:3414",
-        "capabilities": {
-          "bits": 15
-        },
-        "direction": "Outbound",
-        "height": 374510,
-        "total_difficulty": 1133954621205750,
-        "user_agent": "MW/Grin 2.0.0",
-        "version": 1
-      },
-      {
-        "addr": "148.251.16.13:3414",
-        "capabilities": {
-          "bits": 15
-        },
-        "direction": "Outbound",
-        "height": 374510,
-        "total_difficulty": 1133954621205750,
-        "user_agent": "MW/Grin 2.0.0",
-        "version": 1
-      },
-      {
-        "addr": "68.195.18.155:3414",
-        "capabilities": {
-          "bits": 15
-        },
-        "direction": "Outbound",
-        "height": 374510,
-        "total_difficulty": 1133954621205750,
-        "user_agent": "MW/Grin 2.0.0",
-        "version": 1
-      },
-      {
-        "addr": "52.53.221.15:3414",
-        "capabilities": {
-          "bits": 15
-        },
-        "direction": "Outbound",
-        "height": 0,
-        "total_difficulty": 1133954621205750,
-        "user_agent": "MW/Grin 2.0.0",
-        "version": 1
-      },
-      {
-        "addr": "109.74.202.16:3414",
-        "capabilities": {
-          "bits": 15
-        },
-        "direction": "Outbound",
-        "height": 374510,
-        "total_difficulty": 1133954621205750,
-        "user_agent": "MW/Grin 2.0.0",
-        "version": 1
-      },
-      {
-        "addr": "121.43.183.180:3414",
-        "capabilities": {
-          "bits": 15
-        },
-        "direction": "Outbound",
-        "height": 374510,
-        "total_difficulty": 1133954621205750,
-        "user_agent": "MW/Grin 2.0.0",
-        "version": 1
-      },
-      {
-        "addr": "35.157.247.209:23414",
-        "capabilities": {
-          "bits": 15
-        },
-        "direction": "Outbound",
-        "height": 374510,
-        "total_difficulty": 1133954621205750,
-        "user_agent": "MW/Grin 2.0.0",
-        "version": 1
-      }
-    ]
-  }
-}
-```
-
-#### ban_peer
-
-Bans a specific peer.
-
-```JSON
-{
-    "jsonrpc": "2.0",
-    "method": "ban_peer",
-    "params": ["70.50.33.130:3414"],
-    "id": 1
-}
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "result": {
-    "Ok": null
-  }
-}
-```
-
-#### unban_peer
-
-Unbans a specific peer.
-
-```JSON
-{
-    "jsonrpc": "2.0",
-    "method": "unban_peer",
-    "params": ["70.50.33.130:3414"],
-    "id": 1
-}
-{
-  "id": 1,
-  "jsonrpc": "2.0",
-  "result": {
-    "Ok": null
-  }
-}
-```
-
-### Pool endpoints
-
 #### get_pool_size
 
 Returns the number of transactions in the transaction pool.
@@ -1080,7 +1081,9 @@ or a block that doesn't exist:
 
 ## Authentication
 
-Like the v1 API, the v2 API uses basic auth with the same secret. This token is usually in `grin/main/.api_secret`.
+Like the v1 API, the v2 API uses basic auth. However, the foreign and owner API do not share the same secret.
+- The Owner API use the same token as the V1 Rest API, usually defined in `grin/main/.api_secret`.
+- The Foreign API use its own token, usually defined in `grin/main/.foreign_api_secret`.
 
 ## Wallet support
 
