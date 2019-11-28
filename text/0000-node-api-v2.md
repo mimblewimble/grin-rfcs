@@ -265,9 +265,6 @@ Trigger a compaction of the chain state to regain storage space.
 }
 ```
 
-
-### Peer endpoints
-
 #### get_peers
 
 Retrieves information about peers. If `null` is provided, `get_peers` will list all stored peers.
