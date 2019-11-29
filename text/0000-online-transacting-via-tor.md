@@ -6,7 +6,7 @@ Start date: September 1, 2019<br/>
 # Summary
 Describes a standardized addressing and communication protocol for building Grin transactions.<br/><br/>
 Wallets will attempt to connect to the recipient directly to build transactions over a TOR hidden service similar to how http(s) transaction building works today.<br/><br/>
-If the recipient is not online, or cannot be contacted directly, users have the option of falling back to an asynchronous communication system where slates are encrypted and stored, for a limited period of time, by “relay nodes” (described in 0000-asynchronous-transacting-via-relays).
+This RFC does not cover the offline transacting problem.
 
 # Motivation
 Grin is unique in that it requires the sender and receiver to interact in order to transact. This presents a lot of unique challenges that most coins don’t have to deal with. There are a number of different incompatible standards for sending and receiving, resulting in confusion and headaches for many users. The hope is that the addressing mechanism described here will become the new default method for sending and receiving, deprecating several less secure and less private methods in the process.
@@ -17,17 +17,16 @@ From an end-user perspective, there should no longer be a need to configure rout
 
 ## Reference-level explanation
 ### Addressing
-Onion addresses for TOR hidden services are generated from an ed25519 public key (32 bytes), and include a checksum and a version[1]. This provides an equivalent level of security as bitcoin addresses, and can be ephemeral or permanent, depending on the user’s needs. Grin addresses should be generated in the same way as TOR addresses, although we have the flexibility to decide whether we would like to encode them using base32 (like TOR), base58 (like Bitcoin), or even a far superior encoding based on emojis.<br/><br/>
-Although ed25519 is a different curve than used by the grin protocol, we can still use our HD wallets to generate deterministic ed25519 public keys (and therefore Grin addresses). We can decide to generate them from a special keychain path, or even using a different master seed [2], along with a KDF for converting those HD child keys to ed25519-compatible private keys.
+Onion addresses for TOR hidden services are generated from an ed25519 public key (32 bytes), and include a checksum and a version[1]. This provides an equivalent level of security as bitcoin addresses, and can be ephemeral or permanent, depending on the user’s needs. Grin addresses should be generated and base32 encoded in the same way as TOR v3 addresses.<br/><br/>
+Although ed25519 is a different curve than used by the grin protocol, we can still use our HD wallets to generate deterministic ed25519 public keys (and therefore Grin addresses). For account `m/0`, addresses will be generated using keychain paths `m/0/1/x`, for account `m/1`, addresses will be generated using `m/1/1/x`, etc. To generate addresses for a keychain path, we derive the private key in the usual way, but then blake2b hash the derived key to get the ed25519 secret key, which can then be used to calculate the public key and address.
 
 ### TOR Hidden Services
 TOR hidden services can be used to directly serve the existing foreign APIs. When configuring TOR (whether bundled with grin, or installed separately), you would just publish a hidden service and configure TOR to forward all traffic to port 3420. This means we can continue supporting http(s) sending/receiving with no disruption, though it’s advisable to avoid sending directly over http(s) asap.In future versions of Grin, we can stop allowing non-local connections to the foreign wallet APIs.
 
 # Drawbacks
-Requires users to setup and configure TOR, or bundle it with Grin, which could be non-trivial, and could conflict with locally installed/running versions.
+Requires users to setup TOR, or bundle it with Grin, which could be non-trivial, and could conflict with locally installed/running versions.
 
 # Unresolved questions
-* How should we encode addresses? base32, base58, emoji, etc.
 * How often should addresses change? Should users manually request a new address, or should they auto expire? Should we support multiple?
 
 # Future possibilities
