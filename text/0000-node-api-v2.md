@@ -1079,8 +1079,8 @@ or a block that doesn't exist:
 ## Authentication
 
 Like the v1 API, the v2 API uses basic auth. However, the foreign and owner API do not share the same secret.
-- The Owner API use the same token as the V1 Rest API, usually defined in `grin/main/.api_secret`.
-- The Foreign API use its own token, usually defined in `grin/main/.foreign_api_secret`.
+- The Owner API use the same token as the V1 Rest API, usually defined in `.grin/main/.api_secret`.
+- The Foreign API use its own token, usually defined in `.grin/main/.foreign_api_secret`.
 
 ## Wallet support
 
