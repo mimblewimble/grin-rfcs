@@ -2,7 +2,7 @@
 - Title: security-process
 - Authors: [John Woeltz](mailto:joltz@protonmail.com)
 - Start date : July 18, 2019
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#13](https://github.com/mimblewimble/grin-rfcs/pull/13)
+- RFC PR: [mimblewimble/grin-rfcs#13](https://github.com/mimblewimble/grin-rfcs/pull/13)
 - Tracking issue: [mimblewimble/grin-pm#178](https://github.com/mimblewimble/grin-pm/issues/178)
 
 ---
