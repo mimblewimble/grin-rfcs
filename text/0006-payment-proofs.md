@@ -2,7 +2,7 @@
 - Authors: [David Burkett](mailto:davidburkett38@gmail.com)
 - Start date: Nov 5, 2019
 - RFC PR: [mimblewimble/grin-rfcs#0006](https://github.com/mimblewimble/grin-rfcs/pull/31) 
-- Tracking issue: [mimblewimble/grin-wallet#265](https://github.com/mimblewimble/grin-wallet/issues/265)
+- Tracking issue: [mimblewimble/grin-wallet#230](https://github.com/mimblewimble/grin-wallet/issues/230)
 ---
 
 # Summary
