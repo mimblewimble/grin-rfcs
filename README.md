@@ -17,7 +17,8 @@ To begin writing your own RFC or to find out more about the process and the gene
 | [0002-grin-governance](text/0002-grin-governance.md) | Articulate community values, define core and sub-teams |
 | [0003-security-process](text/0003-security-process.md) | Define community standards for ethical disclosure behaviour |
 | [0004-full-wallet-lifecycle](text/0004-full-wallet-lifecycle.md) | Define API standard for sensitive wallet operations |
-| [0005-variable-size-kernels](text/0005-variable-size-kernels.md) | Introduce kernel variants that can be of different sizes  |
+| [0005-variable-size-kernels](text/0005-variable-size-kernels.md) | Introduce kernel variants that can be of different sizes |
+| [0006-payment-proofs](text/0006-payment-proofs.md) | Support generating and validating payment proofs for sender-initiated (i.e. non-invoice) transactions.
 
 
 ## License
