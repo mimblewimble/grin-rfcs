@@ -2,7 +2,7 @@
 - Title: improved-wallet-state-management
 - Authors: [Michael Cordner](mailto:yeastplume@protonmail.com)
 - Start date: Nov 4th, 2019
-- RFC PR: [mimblewimble/grin-rfcs#0007](https://github.com/mimblewimble/grin-rfcs/pull/30)
+- RFC PR: [mimblewimble/grin-rfcs#30](https://github.com/mimblewimble/grin-rfcs/pull/30)
 - Tracking issue: [mimblewimble/grin-wallet#244](https://github.com/mimblewimble/grin-wallet/issues/244)
 
 ---

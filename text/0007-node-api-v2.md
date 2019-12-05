@@ -2,7 +2,7 @@
 - Title: `node-api-v2`
 - Authors: [Quentin Le Sceller](mailto:q.lesceller@gmail.com)
 - Start date: September 30th, 2019
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#28](https://github.com/mimblewimble/grin-rfcs/pull/28) 
+- RFC PR: [mimblewimble/grin-rfcs#28](https://github.com/mimblewimble/grin-rfcs/pull/28) 
 - Tracking issue: [mimblewimble/grin#3158](https://github.com/mimblewimble/grin/issues/3158)
 
 ---
