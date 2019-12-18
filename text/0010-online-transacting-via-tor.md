@@ -1,7 +1,11 @@
-# 0000-online-transacting-via-tor<br/>
-Title: online-transacting-via-tor<br/>
-Authors: DavidBurkett<br/>
-Start date: September 1, 2019<br/>
+
+- Title: online-transacting-via-tor
+- Authors: [David Burkett](mailto:davidburkett38@gmail.com)
+- Start date: September 1, 2019
+- RFC PR: [mimblewimble/grin-rfcs#24](https://github.com/mimblewimble/grin-rfcs/pull/24) 
+- Tracking issue: [mimblewimble/grin-wallet#280](https://github.com/mimblewimble/grin-wallet/issues/280)
+
+---
 
 # Summary
 Describes a standardized addressing and communication protocol for building Grin transactions.<br/><br/>
