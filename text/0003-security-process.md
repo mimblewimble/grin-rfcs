@@ -173,7 +173,7 @@ subject to the deviations described in the 'Deviations from the Standard' sectio
 Here we would list any agreements we have with neighboring projects to share
 vulnerability information in accordance with the standard itself and the
 'Deviations from the Standard' section in the adoption of the standard.
-Agreements would be made by the core team or security sub-team based on capacity
+Agreements would be made by the core team or security team based on capacity
 to engage and relevance/impact on Grin's ecosystem and to an extent the greater
 cryptocurrency ecosystem.
 
@@ -327,8 +327,8 @@ relevant to the security process for Grin.
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-- Security sub-team
-    - If a security sub-team is adopted in the future it would likely maintain these processes
+- Security team
+    - If a security team is adopted in the future it would likely maintain these processes
 - On-chain governance/bug bounties
 - Bug bounty program
 - Formal verification

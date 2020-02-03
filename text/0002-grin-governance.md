@@ -12,7 +12,7 @@ Evolve Grin's governance:
 - Define general community principles;
 - Convert council into core team and define its responsibilities and processes;
 - Introduce RFC process;
-- Introduce self-governing sub-teams that steward and guide work in each of their focus areas.
+- Introduce self-governing teams that steward and guide work in each of their focus areas.
 
 # Motivation
 [motivation]: #motivation
@@ -70,11 +70,11 @@ The core team leads the wider Grin project as a whole. In particular:
 
 * **Sets overall direction and vision.** Values and philosophies. Steering towards use cases and targets.
 * **Sets priorities and plans releases.** Maintains high level planning, roadmaps, focus areas, decides on pace and the release schedule.
-* **Work on broader, cross-sectional issues.** What falls in-between sub-teams, taking a global view. 
-* **Adds and removes sub-teams.** While proposals for new sub-teams can come from anywhere, the core team is responsible to ensure structures are productive and make sense.
-* **Appoints initial sub-team leadership.** Once a new sub-team is established, core appoints a leader that has the responsibility to grow the sub-team.
+* **Work on broader, cross-sectional issues.** What falls in-between teams, taking a global view. 
+* **Adds and removes teams.** While proposals for new teams can come from anywhere, the core team is responsible to ensure structures are productive and make sense.
+* **Appoints initial team leadership.** Once a new team is established, core appoints a leader that has the responsibility to grow the team.
 * **Responsible for security.** Handles disclosures, vulnerabilities, audits, processes. 
-* **Handles multi-sig keys and takes high level spending decisions.** Spending proposals can be made by anyone, and sub-teams can have their own own budgets to deal with as they please.
+* **Handles multi-sig keys and takes high level spending decisions.** Spending proposals can be made by anyone, and teams can have their own own budgets to deal with as they please.
 
 #### Organization & Processes
 
@@ -87,26 +87,26 @@ The core team leads the wider Grin project as a whole. In particular:
 - The term of core members is currently undefined but may change in the future.
 - A core member can resign by notifying the rest of the team.
 - If unreachable for 30 days without any news, a core member can be removed through a core decision.
-- The core team *does not* make rulings on RFCs of other sub-teams, although individual team members might also participate in the discussions of sub teams or be members of those teams.
+- The core team *does not* make rulings on RFCs of other teams, although individual team members might also participate in the discussions of sub teams or be members of those teams.
 - Meeting notes should be published and made transparent to the community on a regular basis. 
 
 ### RFC process
 
 An RFC is a Request For Comments document, outlining a proposed improvement or design change to an area of Grin. The exact specifics for the template is TBD. They are kept in their own dedicated repo and need to be accepted before a pull request is merged. Their purpose is to outline a standardized way of making proposals and allow the community to discuss and evaluate whether something is worth doing. Having an RFC accepted means that there's support "in theory" for the suggestion. It does not mean that a change becomes implemented automatically or in the exact way it is proposed, it is high-level design. The work still needs to be carried out. Accepted RFCs guide the broader planning work.
 
-### Sub-teams
+### Teams
 
 #### Overview 
 
-Sub teams are groups organized around specific areas or knowledge fields. They are responsible for these areas, but do not do all the work. Anyone can contribute anywhere, and do not need to hold a particular title to do so. 
+Teams are groups organized around specific areas or knowledge fields. They are responsible for these areas, but do not do all the work. Anyone can contribute anywhere, and do not need to hold a particular title to do so. 
 
-Rather, sub-teams work on policies, processes, and workflows for their specific areas, as required. They are in charge of the RFC process in their specific field: They determine what requires an RFC in their area, they assign RFC shepherds that guide an RFC through its various stages and ensures the right stakeholders become aware of it and solicit their feedback. Ultimately, sub-teams decide whether an RFC in their area should be accepted or rejected. They are responsible to ensure that each RFC in their area has a tracked status, and that they progress towards an outcome.
+Rather, teams work on policies, processes, and workflows for their specific areas, as required. They are in charge of the RFC process in their specific field: They determine what requires an RFC in their area, they assign RFC shepherds that guide an RFC through its various stages and ensures the right stakeholders become aware of it and solicit their feedback. Ultimately, teams decide whether an RFC in their area should be accepted or rejected. They are responsible to ensure that each RFC in their area has a tracked status, and that they progress towards an outcome.
 
-Sub-teams self-organize, but should be inclusive and adhere to community values. They should have a leader, often this leader may be part of the core team. They determine how members get added to the team. They should include area experts, and stakeholders. The decision making process should be consensus-seeking where possible.
+Teams self-organize, but should be inclusive and adhere to community values. They should have a leader, often this leader may be part of the core team. They determine how members get added to the team. They should include area experts, and stakeholders. The decision making process should be consensus-seeking where possible.
 
-Sub-teams can be broken down into smaller working groups or sub-teams, permanent or temporary, as required and is seen necessary for them to be productive.
+Teams can be broken down into smaller working groups or teams, permanent or temporary, as required and is seen necessary for them to be productive.
 
-Each sub-team has a dedicated section on the forum, they should meet regularly, and keep some notes on what was covered and decided. Decisions do not need to happen in meetings, and could for example be handled asynchronously or in the RFC process.
+Each team has a dedicated section on the forum, they should meet regularly, and keep some notes on what was covered and decided. Decisions do not need to happen in meetings, and could for example be handled asynchronously or in the RFC process.
 
 Meeting notes should be published and made transparent to the community on a regular basis. 
 
@@ -126,22 +126,22 @@ In addition to Core team, the following teams are proposed to be created initial
 
 * **Fundraising.** Sponsorships, donations, activities to increase project funds.
 
-* **Moderation.** Code of conduct, handles violations, across all areas of the project.  To avoid biases and conflicts of interest, this sub-team _does not_ contain any member of the core team.
+* **Moderation.** Code of conduct, handles violations, across all areas of the project.  To avoid biases and conflicts of interest, this team _does not_ contain any member of the core team.
 
 ### In case of conflicts, disagreement, or dissent
 
-Sub-teams are created and appointed by the core, and core can decide to re-organize team structures and shut down dysfunctional teams. This is a "nuclear" option, such decisions should not be taken lightly. The repercussions of such actions can be worse than the initial situation.
+Teams are created and appointed by the core, and core can decide to re-organize team structures and shut down dysfunctional teams. This is a "nuclear" option, such decisions should not be taken lightly. The repercussions of such actions can be worse than the initial situation.
 
-In practice, core team members might be engaging with sub-teams as individual contributors. It is however not expected that "the core team" will become involved in the responsibilities of individual sub-teams. Core sets the overall direction for the project, but should not micro manage sub-teams as this defeats the entire purpose of having these teams in the first place.
+In practice, core team members might be engaging with teams as individual contributors. It is however not expected that "the core team" will become involved in the responsibilities of individual teams. Core sets the overall direction for the project, but should not micro manage teams as this defeats the entire purpose of having these teams in the first place.
 
-If there are conflicts within sub-teams, these should ideally be resolved within the sub-teams themselves. If this is not possible and there's contentious disagreements that need outside arbitration, sub-teams can invite core or another sub-team to become involved.
+If there are conflicts within teams, these should ideally be resolved within the teams themselves. If this is not possible and there's contentious disagreements that need outside arbitration, teams can invite core or another team to become involved.
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
 - Adds a lot more structure. This might create overhead.
 - Could lead to infighting and conflict between teams.
-- Could lead to situations where one sub-team does work that conflicts with other sub-teams, "left hand not talking to the right".
+- Could lead to situations where one team does work that conflicts with other teams, "left hand not talking to the right".
 
 
 # Rationale and alternatives
@@ -167,7 +167,7 @@ Far too many to all be listed here, but here are some:
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-- Introduce more sub-teams
+- Introduce more teams
 - Introduce an electorate
 - Introduce terms
 - Define firmer structures and organizational rules
