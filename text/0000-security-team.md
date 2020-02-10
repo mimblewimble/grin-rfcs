@@ -151,6 +151,7 @@ grin-governance[0] and security-process[1] RFCs lay groundwork for the security-
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
+- What are the security priorities of the Grin community and core team? (e.g. is privacy a higher priority than undetectable inflation?)
 - Is this the most minimal model that can have long-term success for Grin's security-related decision making process?
 - Is the single-veto model sufficient for a consistent, timely decision making process?
 - If core always has at least one appointed member, and one veto gives the decision to the core team, does this significantly weaken the security team's purpose?
