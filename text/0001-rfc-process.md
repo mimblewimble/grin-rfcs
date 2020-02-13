@@ -47,7 +47,7 @@ A hastily-proposed RFC can hurt its chances of acceptance. Low quality proposals
 Although there is no single way to prepare for submitting an RFC, it is generally a good idea to pursue feedback from other project contributors
 beforehand, to ascertain that the RFC may be desirable; having a consistent impact on the project requires concerted effort toward consensus-building.
 
-Ways to prepare and pave the way for writing and submitting an RFC include discussing the topic or posting "pre-RFCs" to our [forum](https://grin-forum.org) for feedback.
+Ways to prepare and pave the way for writing and submitting an RFC include discussing the topic or posting "pre-RFCs" to our [forum](https://forum.grin.mw) for feedback.
 
 As a rule of thumb, receiving encouraging feedback from long-standing project contributors, and particularly members of the relevant team (if applicable) is a good indication that the RFC is worth pursuing.
 
