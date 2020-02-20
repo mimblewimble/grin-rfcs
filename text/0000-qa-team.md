@@ -29,15 +29,15 @@ Over time, with many people contributing to many different areas of Grin, some t
 
 The QA team observes micro and macro changes occurring over time with various contributions to Grin. They help review PRs, have opinions on both development and governance decisions and provide tooling frameworks for contributors to use and maintain to ensure a consistent high level of quality of work across the Grin project. The QA team provides support for contributors to encourage them to continue to submit quality work.
 
-The day to day impact would be more attention for contributions and contributors. The long term impact would be more consistency in the level of quality work that makes it into the Grin project over time.
+The day to day impact is more resources to empower contributors to make successful contributions to Grin by performing quality assurance testing and review on their own work. The long term impact is more consistency in the level of quality work that makes it into the Grin project over time.
 
 ## Example
 
 In this example a large PR is submitted that makes a nontrivial change to the Grin node.
-* Before submitting the PR, the contributor reads and integrates the well-formed contribution documentation to assist and support their efforts
-* Before the PR is accepted the contributor may use the Grin testing harness framework provided by the QA team.
-* Members of the QA team may manually review to changes for quality at a micro level: does the code do a good job of implementing the feature, is it readable, are there any obvious security issues, does it follow our contribution guidelines for formatting etc.
-* The QA may also review the change for quality at a macro level: are the changes in line with the other pieces of the project, does it add inconsistencies when interacting with other parts, does it advance the expected overall quality of the project etc.
+* Before submitting the PR, the contributor:
+  * reads and integrates the well-formed contribution documentation to assist and support their efforts
+  * uses available testing frameworks to test their work
+* Reviewers of the PR may use the documentation and tooling support provided by the QA team to perform another round of quality assurance testing and review on the submission
 * Any necessary feedback is shared with the contributor to empower them to continue to make high quality contributions
 
 # Reference-level explanation
@@ -45,24 +45,27 @@ In this example a large PR is submitted that makes a nontrivial change to the Gr
 
 ## Membership
 
-* Membership is bootstrapped by @lehnberg
-* Minimum three, maximum seven members
-* New membership approved by majority decision of existing team members
-* Members may be removed by self-resignation, majority decision of QA team members or by core team
+* Membership is bootstrapped by @lehnberg and @j01tz
+* New membership approved with consensus of existing team members
+* Members may be removed by self-resignation, consensus decision by QA team members or by core team
 
 ## Decision Making
 
-* Contentious decisions are resolved by majority decision
-* In the event the team cannot reach a majority decision the core team will resolve the dispute
+* A consensus-seeking approach is used for decision making through dialogue and discussion, modeled after the general principle in the Grin governance RFC[1].
+* In the event the team cannot reach consensus on a required action, the core team will determine the outcome
 
 ## Responsibilities
 
-Roles and responsibilities of the QA team are listed here.
-* Establish and make clear the standards of quality for contributions such that contributors feel supported by the process and have a clear path to success
-* Review changes across mimblewimble organization repos for quality and provide feedback
-* Provide micro and macro input regarding quality for development and governance changes
-* Provide frameworks for test tooling in an effort of complete unit and integration coverage
-* Empower contributors to make high quality contributions with documentation, tools and constructive feedback
+The responsibilities of the QA team _do_ include:
+  * Establishing and providing the necessary support for contributors to have a clear path to success by empowering them to perform quality assurance testing and review on their own work
+  * Clarifying, monitoring and enforcing the following of best QA practices by contributors
+
+The responsibilities of the QA team _do not_ include:
+  * Doing the quality assurance testing and review work themselves
+  * Writing tests for code submissions and changes
+  * Keeping testing frameworks updated based on codebase changes
+  * Manually reviewing each submission for quality assurance
+  * _Was the codebase changed? Then the tests must also be changed or extended for full coverage- this is not the responsibility of the QA team!_
 
 ## Community Contributions
 
@@ -100,3 +103,4 @@ The QA team RFC is following the guidance of the establishment of teams in the g
 [references]: #references
 
 [0] https://github.com/mimblewimble/grin-rfcs/blob/master/text/0002-grin-governance.md#teams
+[1] https://github.com/mimblewimble/grin-rfcs/blob/master/text/0002-grin-governance.md#general-principles
