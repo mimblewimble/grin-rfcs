@@ -14,27 +14,34 @@ Grin supports a limited form of "relative timelocks" with the "No Recent Duplica
 Kernels can be reused multiple times across multiple transactions. An NRD kernel variant enforces a minimum block height (a delay)
 between two duplicate instances of that particular kernel. A pair of transactions can be constructed such that they behave as two "halves"
 of one logical "slow" transaction.
-Limiting this to "recent" transaction kernels restricts the maximum lock period (7 days) but with the benefit of only needing to maintain an index over a relatively small window of kernel activity.
+Limiting this to "recent" transaction kernels restricts the maximum lock period (7 days) but with the benefit of only needing to maintain an index over a short window of recent kernel activity.
 
 # Motivation
 [motivation]: #motivation
 
-A "slow" transaction can be used as a building block in a robust payment channel implementation.
-By implementing a non-cooperative channel close as a "slow" transaction we can enforce a mandatory revocation period, preventing any attempt to close an old invalid state.
-The first "half" of the channel close is itself a valid transaction and must be accepted and included on-chain. The "slow" transaction can only be completed once the revocation period has elapsed. An attempt to close an old invalid channel state can be safely revoked by any channel participant during this revocation period.
+Relative timelocks are a prerequisite for robust payment channels. NRD kernels can be used to implement a revocable channel close operation.
+Implementing a non-cooperative channel close as a "slow" transaction enforces a mandatory revocation period, preventing attempts to close old invalid state.
+The first "half" of the channel close is itself a valid transaction and must be accepted and included on-chain. An NRD kernel begins the revocation period and the close operation can only be completed after the revocation period has elapsed. Attempts to close an old invalid channel state can safely be revoked during the revocation period.
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-Explain the proposal as if it were already introduced into the Grin ecosystem and you were teaching it to another community member. That generally means:
+A "No Recent Duplicate" kernel has an associated _relative_ lock height. Once this kernel is included in a block on-chain the timelock starts.
+Another instance of the _same_ kernel will not be accepted as valid until the specified number of blocks has elapsed.
+For example if an NRD kernel is accepted at height 500,000 and specifies a relative lock height of 1,440 (24 hours) then a subsequent instance of the kernel will not be accepted as valid until block height 501,440.
+One instance of an NRD kernel can be said to slow a subsequent instance down by delaying it from being accepted and included in a block.
 
-- Introducing new named concepts.
-- Explaining the feature largely in terms of examples.
-- Explaining how Grin community members should *think* about the improvement, and how it should impact the way they interact with Grin. It should explain the impact as concretely as possible.
-- If applicable, provide sample error messages, deprecation warnings, or migration guidance.
-- If applicable, describe the differences between teaching this to existing Grin community members and new Grin community members.
+Each node maintains an index of recent NRD kernels to enable efficient validation of this rule.
 
-For implementation-oriented RFCs (e.g. for wallet), this section should focus on how wallet contributors should think about the change, and give examples of its concrete impact. For policy RFCs, this section should provide an example-driven introduction to the policy, and explain its impact in concrete terms.
+NRD lock heights are limited to a maximum of 10,080 (7 days). This limits the size of the window of recent kernel activity that must be indexed on each node.
+Locks cannot be created larger than 7 days but this is believed to cover all proposed use cases currently.
+
+The minimum value for a relative lock height is 1 meaning the subsequent kernel instance is valid in the _next_ block.
+NRD lock heights of 0 are not valid and it is never valid for two duplicate instances of the _same_ NRD kernel to exist in the same block.
+This implies that two transactions contaning duplicate instances of the same NRD kernel will not be accepted as valid concurrently in the txpool.
+"First one wins" semantics apply when validating transactions containing NRD kernels in a similar way to resolving double spends of unspent outputs.
+
+NRD kernels are similar to absolute height locked kernels in that both kernel variants specify a lock height. But they differ in one important aspect; an instance of an absolute height locked kernel is _itself_ not valid until the specified block height, whereas the presence of an NRD kernel on-chain will delay the _subsequent_ instance of that kernel.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
