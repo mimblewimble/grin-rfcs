@@ -53,6 +53,60 @@ This is the technical portion of the RFC. Explain the design in sufficient detai
 
 The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
 
+
+----
+
+The following kernel variants are supported in Grin -
+
+* Plain
+* Coinbase
+* HeightLocked
+* NoRecentDuplicate
+
+These are implemented as kernel "feature" variants -
+
+```
+pub enum KernelFeatures {
+	/// Plain kernel (default for Grin txs).
+	Plain = 0,
+	/// A coinbase kernel.
+	Coinbase = 1,
+	/// A kernel with an explicit absolute lock height.
+	HeightLocked = 2,
+	/// A relative height locked NRD kernel.
+	NoRecentDuplicate = 3,
+}
+```
+
+Each kernel variant includes feature specific data -
+
+```
+# Plain
+{    
+  "fee": 8
+}
+# Coinbase
+{
+  # empty
+}
+# Height Locked
+{
+  "fee": 8,
+  "lock_height": 295800
+}
+# No Recent Duplicate (NRD)
+{
+  "fee": 8,
+  "relative_height": 1440,
+}
+```
+
+Note that NRD kernels require no additional data beyond that required for absolute height locked kernels. The reference to the previous kernel is _implicit_ and based on a duplicate kernel excess commitment.
+
+The maximum supported NRD _relative_height_ is 10,080 (7 days) and can be safely represented as a `u16`.
+
+The minimum supported NRD _relative_height_ is 1 and a value of 0 is not valid. Two duplicate instances of a given NRD kernel cannot exist simultaneously in the same block. There must be a relative height of at least 1 block between them.
+
 ----
 
 [fail open]
