@@ -25,7 +25,7 @@ A minimum distance in block height is enforced between successive duplicate inst
 
 Transactions can be constructed around an existing transaction kernel by introducing either an additional kernel or in some cases by simply adjusting the kernel offset. This allows NRD kernels to be used across any pair of transactions.
 
-Grin does not support a general solution for arbitrary locks between arbitrary pairs of kernels. The implementation is restrictive for reasons of performance and long term scalability. References between (duplicate) kernels are _implicit_ to avoid storing references between kernels onchain. Locks are limited to _recent_ history to avoid nodes needing to look at the full historical kernel set.
+The NRD kernel implementation prioritizes simplicity and minimalism. Grin does not support a general solution for arbitrary locks between arbitrary pairs of kernels. The implementation is restrictive for reasons of performance and long term scalability. References between duplicate kernels are _implicit_, avoiding the need to store kernel references. Locks are limited in length to _recent_ history, avoiding the need to inspect the full historical kernel set.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -43,27 +43,21 @@ The section should return to the examples given in the previous section, and exp
 
 An NRD kernel is not valid within a specified number of blocks of a previous duplicate instance of the same NRD kernel. We define duplicate here as two NRD kernels sharing the same public excess commitment. NRD kernels with different excess commitments are not treated as duplicates. An NRD kernel and a non-NRD kernel (plain kernel, coinbase kernel etc.) sharing the same excess commitment are not treated as duplicates.
 
-[rewrite below from perspective or later kernel, not first kernel]
-A "No Recent Duplicate" kernel has an associated _relative_ lock height. Once this kernel is included in a block on-chain the timelock starts.
-Another instance of the _same_ kernel will not be accepted as valid until the specified number of blocks has elapsed.
-For example if an NRD kernel is accepted at height 500,000 and specifies a relative lock height of 1,440 (24 hours) then a subsequent instance of the kernel will not be accepted as valid until block height 501,440.
-One instance of an NRD kernel can be said to slow a subsequent instance down by delaying it from being accepted and included in a block.
+An NRD kernel has an associated _relative_ lock height. For a block containing this kernel to be valid, no duplicate instance of the kernel can exist in any previous block closer within this relative height.
+For example a transaction containing an NRD kernel with relative lock height 1440 (approx 24 hours) is included in a block at height 1000000. This block is only valid if no duplicate instance of this kernel exists in any block from height 998560 (h-1440) to height 999999 (h-1).
+If no duplicate instance of the kernel exists within this range then the lock criteria is met. If a duplicate exists outside of this range, earlier than block 998,560 then the lock criterai is still met and the block is valid. Thus the lock defaults to "fail open" and only recent history need be looked at. A kernel can be delayed by the existence of a previous kernel. The _non-existence_ of a previous kernel has no impact on the lock criteria. Note that this implies the _first_ occurrence of any NRD kernel meets the lock criteria trivially.
 
-Each node maintains an index of recent NRD kernels to enable efficient validation of this rule.
+Each node maintains an index of _recent_ NRD kernels to enable efficient checking of NRD relative lock heights. Note we only need to index NRD locks and we only need to index those within recent history. Relative locks longer than 7 days are not valid. This is believed to be sufficient to cover all proposed use cases.
 
-NRD lock heights are limited to a maximum of 10,080 (7 days). This limits the size of the window of recent kernel activity that must be indexed on each node.
-Locks cannot be created larger than 7 days but this is believed to cover all proposed use cases currently.
+The minimum value for a relative lock height is 1 meaning a prior instance of the kernel can exist in the previous block for the lock criteria to be met.
+An instance of the NRD kernel in the _same_ block will invalidate the block as the lock criteria will not be met.
 
-The minimum value for a relative lock height is 1 meaning the subsequent kernel instance is valid in the _next_ block.
-NRD lock heights of 0 are not valid and it is never valid for two duplicate instances of the _same_ NRD kernel to exist in the same block.
-This implies that two transactions contaning duplicate instances of the same NRD kernel will not be accepted as valid concurrently in the txpool.
-"First one wins" semantics apply when validating transactions containing NRD kernels in a similar way to resolving double spends of unspent outputs.
+NRD lock heights of 0 are invalid and it is never valid for two duplicate instances of the _same_ NRD kernel to exist in the same block.
 
-NRD kernels are similar to absolute height locked kernels in that both kernel variants specify a lock height. But they differ in one important aspect; an instance of an absolute height locked kernel is _itself_ not valid until the specified block height, whereas the presence of an NRD kernel on-chain will delay the _subsequent_ instance of that kernel.
+It follows that two transactions contaning duplicate instances of the same NRD kernel cannot be accepted as valid in the txpool concurrently.
+"First one wins" semantics apply when validating transactions containing NRD kernels in a similar way to resolving the spending of unspent outputs.
 
-
-
-
+Grin supports "rewind" back through recent history to handle fork and chain reorg scenarios. 1 week of full blocks are maintained on each node and up to 10080 blocks can be rewound. To support relative lockheights each node must maintain an index over sufficient kernel history for an _additional_ 10080 blocks beyond this rewind horizon. Each node should maintain 2 weeks of kernel history in the local NRD kernel index. This will cover the pathological case of a 1 week rewind and the validaton of a 1 week long relative lock beyond that.
 
 ----
 
@@ -114,13 +108,12 @@ Each kernel variant includes feature specific data -
 
 Note that NRD kernels require no additional data beyond that required for absolute height locked kernels. The reference to the previous kernel is _implicit_ and based on a duplicate kernel excess commitment.
 
-The maximum supported NRD _relative_height_ is 10,080 (7 days) and can be safely represented as a `u16`.
+The maximum supported NRD _relative_height_ is 10,080 (7 days) and the relative height can be safely and conveniently represented as a `u16` (2 bytes). This differs from absolute lock heights where `u64` (8 bytes) is necessary to specify the lock height.
 
 The minimum supported NRD _relative_height_ is 1 and a value of 0 is not valid. Two duplicate instances of a given NRD kernel cannot exist simultaneously in the same block. There must be a relative height of at least 1 block between them.
 
 ----
 
-[fail open]
 
 
 
@@ -128,7 +121,7 @@ The minimum supported NRD _relative_height_ is 1 and a value of 0 is not valid. 
 
 ----
 
-No additional data is introduced with NRD kernels. There is no opportunity to include spam or arbitrary data on the block chain. Any additional transaction kernel is still a full transaction kernel. The excess commitment is simply a commitment to 0 and the associated signature verifies this.
+No additional data is introduced with NRD kernels. There is no opportunity to include arbitrary data. Any additional kernel included in a transaction is itself still a fully valid kernel. There is no explicit reference necessary that could be misused to include arbitrary data.
 
 An additional NRD kernel in a transaction will increase the "weight" of the transaction by this single additonal kernel and allows for a simple way to deal with additional fees. A transaction with an additional kernel must provide additional fees to cover the additional "weight". NRD kernels cannot be added for free. Note that in some limited situations it is possible to _replace_ a kernel with an NRD kernel. If the NRD lock can be introduced without adding an additional kernel then the fee does not have to be increased and the lock is effectively added for free.
 
