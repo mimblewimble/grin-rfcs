@@ -25,6 +25,8 @@ A minimum distance in block height is enforced between successive duplicate inst
 
 Transactions can be constructed around an existing transaction kernel by introducing either an additional kernel or in some cases by simply adjusting the kernel offset. This allows NRD kernels to be used across any pair of transactions.
 
+Grin does not support a general solution for arbitrary locks between arbitrary pairs of kernels. The implementation is restrictive for reasons of performance and long term scalability. References between (duplicate) kernels are _implicit_ to avoid storing references between kernels onchain. Locks are limited to _recent_ history to avoid nodes needing to look at the full historical kernel set.
+
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
