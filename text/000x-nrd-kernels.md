@@ -1,5 +1,5 @@
 
-- Title: nrd-kernels-and-slow-transactions
+- Title: nrd-kernels
 - Authors: [Antioch Peverell](mailto:apeverell@protonmail.com)
 - Start date: Mar 24, 2020
 - RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
@@ -10,21 +10,20 @@
 # Summary
 [summary]: #summary
 
-Grin supports a limited form of "relative timelocks" with the "No Recent Duplicate" (NRD) transaction kernel variant.
-Kernels can be reused multiple times across multiple transactions. An NRD kernel variant enforces a minimum block height (a delay)
-between two duplicate instances of that particular kernel. A pair of transactions can be constructed such that they behave as two "halves"
-of one logical "slow" transaction.
-Limiting this to "recent" transaction kernels restricts the maximum lock period (7 days) but with the benefit of only needing to maintain an index over a short window of recent kernel activity.
+Grin supports a limited implementation of "relative timelocks" with the "No Recent Duplicate" (NRD) transaction kernel variant. Transactions can be constructed such that kernels are "reused" and duplicated. An NRD kernel instance is not valid within a specified number of blocks relative to a prior instance of the same (duplicate) kernel. A minimum number of blocks must therefore exist between two instances of an NRD kernel. This provides a relative timelock between transactions.
 
 # Motivation
 [motivation]: #motivation
 
-Relative timelocks are a prerequisite for robust payment channels. NRD kernels can be used to implement a revocable channel close operation.
-Implementing a non-cooperative channel close as a "slow" transaction enforces a mandatory revocation period, preventing attempts to close old invalid state.
-The first "half" of the channel close is itself a valid transaction and must be accepted and included on-chain. An NRD kernel begins the revocation period and the close operation can only be completed after the revocation period has elapsed. Attempts to close an old invalid channel state can safely be revoked during the revocation period.
+Relative timelocks are a prerequisite for robust payment channels. NRD kernels can be used to implement a _revocable_ channel close mechanism.
+A mandatory revocation period can be introduced through a relative timelock between two transactions. Any attempt to close an old invalid channel state can be safely revoked during the revocation period.
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
+
+
+
+[move a lot of this into reference level explanation]
 
 A "No Recent Duplicate" kernel has an associated _relative_ lock height. Once this kernel is included in a block on-chain the timelock starts.
 Another instance of the _same_ kernel will not be accepted as valid until the specified number of blocks has elapsed.
@@ -53,6 +52,65 @@ This is the technical portion of the RFC. Explain the design in sufficient detai
 - Corner cases are dissected by example.
 
 The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
+
+----
+
+[fail open]
+
+
+
+----
+
+----
+
+No additional data is introduced with NRD kernels. There is no opportunity to include spam or arbitrary data on the block chain. Any additional transaction kernel is still a full transaction kernel. The excess commitment is simply a commitment to 0 and the associated signature verifies this.
+
+An additional NRD kernel in a transaction will increase the "weight" of the transaction by this single additonal kernel and allows for a simple way to deal with additional fees. A transaction with an additional kernel must provide additional fees to cover the additional "weight". NRD kernels cannot be added for free. Note that in some limited situations it is possible to _replace_ a kernel with an NRD kernel. If the NRD lock can be introduced without adding an additional kernel then the fee does not have to be increased and the lock is effectively added for free.
+
+----
+
+
+----
+A transaction kernel consists of an excess commitment and an associated signature showing this excess is indeed a commitment to 0.
+
+A transaction with a single kernel can always be represented as a transaction with multiple kernels, provided the kernels excess commitments sum to the correct total excess.
+
+Given an existing NRD kernel with excess commitment -
+
+* _r'G + 0H_
+
+And a transaction with single excess commitment -
+
+* _rG + 0H_
+
+This transaction can be rewritten with a pair of kernels with excess commitments -
+
+* _rG + 0H = (r'G + 0H) + (r-r'G + 0H)_
+
+We take advantage of this to allow an arbitrary NRD kernel to be included in any transaction at construction time.
+
+Additionally the kernel offset incuded in each transaction can be used in certain situations to allow the replacement of a single transaction kernel with an NRD kernel without needing to introduce an additional kernel.
+
+Given an existing NRD kernel with excess commitment -
+
+* _r'G + 0H_
+
+And a transaction with single excess commitment and kernel offset -
+
+* _rG + 0H, o_
+
+This transaction can be rewritten to use the NRD kernel -
+
+* _r'G + 0H, o+r-r'_
+
+These two "degrees of freedom", introducing multiple kernels and adjusting the kernel offset, allowing for flexibility to introduce an NRD kernel in a variety of ways.
+
+* Introduce NRD kernel to transaction, compensating with additional kernel.
+* Introduce NRD kernel to transaction, compensating with kernel offset.
+
+----
+
+
 
 # Drawbacks
 [drawbacks]: #drawbacks
