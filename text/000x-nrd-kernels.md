@@ -21,10 +21,27 @@ A mandatory revocation period can be introduced through a relative timelock betw
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
+A minimum distance in block height is enforced between successive duplicate instances of a given NRD kernel. This can be used to enforce a relative lock height between two transactions. A transaction containing an NRD kernel will not be accepted as valid within the specified block height relative to any prior instance of the NRD kernel.
+
+Transactions can be constructed around an existing transaction kernel by introducing either an additional kernel or in some cases by simply adjusting the kernel offset. This allows NRD kernels to be used across any pair of transactions.
+
+# Reference-level explanation
+[reference-level-explanation]: #reference-level-explanation
+
+This is the technical portion of the RFC. Explain the design in sufficient detail that:
+
+- Its interaction with other features is clear.
+- It is reasonably clear how the feature would be implemented.
+- Corner cases are dissected by example.
+
+The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
 
 
-[move a lot of this into reference level explanation]
+----
 
+An NRD kernel is not valid within a specified number of blocks of a previous duplicate instance of the same NRD kernel. We define duplicate here as two NRD kernels sharing the same public excess commitment. NRD kernels with different excess commitments are not treated as duplicates. An NRD kernel and a non-NRD kernel (plain kernel, coinbase kernel etc.) sharing the same excess commitment are not treated as duplicates.
+
+[rewrite below from perspective or later kernel, not first kernel]
 A "No Recent Duplicate" kernel has an associated _relative_ lock height. Once this kernel is included in a block on-chain the timelock starts.
 Another instance of the _same_ kernel will not be accepted as valid until the specified number of blocks has elapsed.
 For example if an NRD kernel is accepted at height 500,000 and specifies a relative lock height of 1,440 (24 hours) then a subsequent instance of the kernel will not be accepted as valid until block height 501,440.
@@ -42,16 +59,8 @@ This implies that two transactions contaning duplicate instances of the same NRD
 
 NRD kernels are similar to absolute height locked kernels in that both kernel variants specify a lock height. But they differ in one important aspect; an instance of an absolute height locked kernel is _itself_ not valid until the specified block height, whereas the presence of an NRD kernel on-chain will delay the _subsequent_ instance of that kernel.
 
-# Reference-level explanation
-[reference-level-explanation]: #reference-level-explanation
 
-This is the technical portion of the RFC. Explain the design in sufficient detail that:
 
-- Its interaction with other features is clear.
-- It is reasonably clear how the feature would be implemented.
-- Corner cases are dissected by example.
-
-The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
 
 
 ----
