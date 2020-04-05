@@ -10,7 +10,7 @@
 # Summary
 [summary]: #summary
 
-Grin supports a limited implementation of "relative timelocks" with the "No Recent Duplicate" (NRD) transaction kernel variant. Transactions can be constructed such that kernels are "reused" and duplicated. An NRD kernel instance is not valid within a specified number of blocks relative to a prior instance of the same (duplicate) kernel. A minimum number of blocks must therefore exist between two instances of an NRD kernel. This provides a relative timelock between transactions.
+Grin supports a limited implementation of "relative timelocks" with "No Recent Duplicate" (NRD) transaction kernels. Transactions can be constructed such that they share duplicate kernels. An NRD kernel instance is not valid within a specified number of blocks relative to a prior duplicate instance of the kernel. A minimum number of blocks must therefore exist between two instances of an NRD kernel. This provides a relative timelock between transactions.
 
 # Motivation
 [motivation]: #motivation
@@ -57,7 +57,7 @@ NRD lock heights of 0 are invalid and it is never valid for two duplicate instan
 It follows that two transactions contaning duplicate instances of the same NRD kernel cannot be accepted as valid in the txpool concurrently.
 "First one wins" semantics apply when validating transactions containing NRD kernels in a similar way to resolving the spending of unspent outputs.
 
-Grin supports "rewind" back through recent history to handle fork and chain reorg scenarios. 1 week of full blocks are maintained on each node and up to 10080 blocks can be rewound. To support relative lockheights each node must maintain an index over sufficient kernel history for an _additional_ 10080 blocks beyond this rewind horizon. Each node should maintain 2 weeks of kernel history in the local NRD kernel index. This will cover the pathological case of a 1 week rewind and the validaton of a 1 week long relative lock beyond that.
+Grin supports "rewind" back through recent history to handle fork and chain reorg scenarios. 1 week of full blocks are maintained on each node and up to 10080 blocks can be rewound. To support relative lockheights each node must maintain an index over sufficient kernel history for an _additional_ 10080 blocks beyond this rewind horizon. Each node should maintain 2 weeks of kernel history in the local NRD kernel index. This will cover the pathological case of a 1 week rewind and the validaton of a 1 week long relative lock beyond that. The primary use case is for revocable payment channel close operations. We believe a 7 day period is more than sufficient for this. We do not require long, extended revocation periods and limiting this to a few days is preferable to keep the cost of verification low. The need for these revocable transactions to be included on chain should be low as these are only required in a non-cooperative situation but where required we want to minimize the cost of verification which must be performed across all nodes.
 
 ----
 
@@ -108,16 +108,54 @@ Each kernel variant includes feature specific data -
 
 Note that NRD kernels require no additional data beyond that required for absolute height locked kernels. The reference to the previous kernel is _implicit_ and based on a duplicate kernel excess commitment.
 
-The maximum supported NRD _relative_height_ is 10,080 (7 days) and the relative height can be safely and conveniently represented as a `u16` (2 bytes). This differs from absolute lock heights where `u64` (8 bytes) is necessary to specify the lock height.
+The maximum supported NRD _relative_height_ is 10080 (7 days) and the relative height can be safely and conveniently represented as a `u16` (2 bytes). This differs from absolute lock heights where `u64` (8 bytes) is necessary to specify the lock height.
 
 The minimum supported NRD _relative_height_ is 1 and a value of 0 is not valid. Two duplicate instances of a given NRD kernel cannot exist simultaneously in the same block. There must be a relative height of at least 1 block between them.
 
 ----
 
+Nodes on the Grin network currently support two serialization versions for transaction kernels -
 
+__V1 "fixed size kernels"__
 
+In V1 all kernels are serialized to the same "fixed" number of bytes.
+Every kernel includes 8 bytes for the fee with a 0 fee if not applicable.
+Every kernel also includes 8 bytes of feature specific data. This is used for the lock height and unused for all other kernel variants.
 
-----
+* kernel features
+	* feature byte: 1 byte
+	* fee: 8 bytes
+	* feature specific data: 8 bytes
+* excess commitment: 33 bytes
+* signature: 64 bytes
+
+V1 is supported for backward compatibility with older nodes and will be used as necessary, based on version negotiation during the peer connection setup process.
+
+__V2 "variable size kernels"__
+
+V2 kernels have been supported since Grin `v2.1.0` and V2 supports the notion of "variable size" kernels.
+
+In V2 we only serialize the data relevant for each kernel feature variant. Each kernel contains a 33 byte excess commitment and associated 64 byte signature. But the feature variant now defines the additional data.
+
+* Plain kernel:
+	* feature: 1 byte
+	* fee: 8 bytes
+* Coinbase kernel:
+	* feature: 1 byte
+* Height locked kernel:
+	* feature: 1 byte
+	* fee: 8 bytes
+	* lock height: 8 bytes
+* NRD kernel:
+	* feature: 1 byte
+	* fee: 8 bytes
+	* relative lock height: 2 bytes
+
+When taking advantage of variable size kernels, NRD kernels are only 2 bytes larger than plain kernels to account for the additional relative lock height information.
+
+Note that the serialization strategy is used for both network "on the wire" serialization of both transactions and full blocks, and local storage, both the database for full blocks and the kernel MMR backend files.
+Version negotiation occurs during the initial peer connection setup process and determines which version is used for p2p message serialization.
+Note that if a node uses V2 serialization for the kernel MMR backend file then it will provide a V2 txhashset based on these underlying files.
 
 ----
 
@@ -127,8 +165,6 @@ An additional NRD kernel in a transaction will increase the "weight" of the tran
 
 ----
 
-
-----
 A transaction kernel consists of an excess commitment and an associated signature showing this excess is indeed a commitment to 0.
 
 A transaction with a single kernel can always be represented as a transaction with multiple kernels, provided the kernels excess commitments sum to the correct total excess.
@@ -141,9 +177,10 @@ And a transaction with single excess commitment -
 
 * _rG + 0H_
 
-This transaction can be rewritten with a pair of kernels with excess commitments -
+This transaction can be represented as a pair of kernels with excess commitments -
 
-* _rG + 0H = (r'G + 0H) + (r-r'G + 0H)_
+* _rG + 0H =
+    (r'G + 0H) + (r-r'G + 0H)_
 
 We take advantage of this to allow an arbitrary NRD kernel to be included in any transaction at construction time.
 
@@ -159,28 +196,34 @@ And a transaction with single excess commitment and kernel offset -
 
 This transaction can be rewritten to use the NRD kernel -
 
-* _r'G + 0H, o+r-r'_
+* _r'G + 0H, (o+r-r')_
 
 These two "degrees of freedom", introducing multiple kernels and adjusting the kernel offset, allowing for flexibility to introduce an NRD kernel in a variety of ways.
 
-* Introduce NRD kernel to transaction, compensating with additional kernel.
-* Introduce NRD kernel to transaction, compensating with kernel offset.
+* Introduce NRD kernel to transaction, compensate with additional kernel.
+* Introduce NRD kernel to transaction, compensate with kernel offset.
 
 ----
-
-
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+NRD kernels are a limited and restricted form of "relative locks" between kernels. These locks are limited to a period of 7 days and "fail open" beyond that window. This approach meets the requirements for limited revocable payment channel operations but there are likely to be use cases where this approach is not sufficient or unsuitable.
+
+While it would be nice to provide a fully general purpose solution that would allow arbitrary locks to be implemented, it does appear to be hard, if not impossible, to do this in Grin/MW.
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not choosing them?
-- What is the impact of not doing this?
+Referencing historical data in Grin and in mimblewimble in general is difficult due to the possibility of pruning historical data. It is not possible to reference old outputs once they are spent. Historical validators must have access to any referenced data to validate consensus rules. This leaves transaction kernels as the only available data to be referenced. While arbitrary historical kernels _can_ be referenced this is not desirable as we do not want to impose additional constraints on nodes, requiring them to maintain historical data that would otherwise be prunable.
+
+An earlier design iteration was "No Such Kernel Recently" (NSKR) locks. Where NRD references were implicit, with duplicate kernel excess commitments, NSKR kernels referenced prior kernels explicitly. These explicit references were problematic for several reasons -
+
+* Additional overhead, both local storage and network traffic due to the explicit references
+* Optimization by referencing prior kernel based on MMR position introduced external data, making kernels harder to validate in soliation.
+* Permitting non-existence of references due to limited window of history, opened up a vector for "spam" where arbitrary data could be used in place of a valid reference.
+
+To prevent "spam" it was observed that we could use a signature to verify the reference was indeed a valid reference to a prior kernel excess commitment. This effectively made a reference a copy of a full kernel, with excess commitment and associated signature. At this point it was observed that "duplicate" kernels might solve the problem in an elegant way.
 
 # Prior art
 [prior-art]: #prior-art
@@ -201,22 +244,14 @@ Please also take into consideration that Grin sometimes intentionally diverges f
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the RFC process before this gets merged?
-- What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
+Some investigation is still needed around the conditions necessary to allow a kernel to simply be reused with an adjustment to the kernel offset and where an additional kernel is necessary. An adjustment to the kernel offset will expose the private excess under certain conditions and cannot be done safely for all transactions.
 
-# Future possibilities
-[future-possibilities]: #future-possibilities
-
-Think about what the natural extension and evolution of your proposal would be and how it would affect the project and ecosystem as a whole in a holistic way. Try to use this section as a tool to more fully consider all possible interactions with the project and language in your proposal. Also consider how it fits into the road-map of the project and of the relevant sub-team.
-
-This is also a good place to "dump ideas", if they are out of scope for the RFC you are writing but otherwise related.
-
-If you have tried and cannot think of any future possibilities, you may simply state that you cannot think of anything.
-
-Note that having something written down in the future-possibilities section is not a reason to accept the current or a future RFC; such notes should be in the section on motivation or rationale in this or subsequent RFCs. The section merely provides additional information.
+One outstanding question is whether NRD kernels are sufficient to cover all "relative timelock" requirements. We believe them to be sufficient for the revocable payment channel close mechanism. But they may not be sufficient for all use cases.
 
 # References
 [references]: #references
 
-Include any references such as links to other documents or reference implementations.
+[link to original "trigger" post on mailinglist]
+[link to NSKR writeup]
+[link to NSKR based Elder Channel writeup]
+[link to relative locks in bitcoin]
