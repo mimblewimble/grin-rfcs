@@ -25,21 +25,10 @@ A minimum distance in block height is enforced between successive duplicate inst
 
 Transactions can be constructed around an existing transaction kernel by introducing either an additional kernel or in some cases by simply adjusting the kernel offset. This allows NRD kernels to be used across any pair of transactions.
 
-The NRD kernel implementation prioritizes simplicity and minimalism. Grin does not support a general solution for arbitrary locks between arbitrary pairs of kernels. The implementation is restrictive for reasons of performance and long term scalability. References between duplicate kernels are _implicit_, avoiding the need to store kernel references. Locks are limited in length to _recent_ history, avoiding the need to inspect the full historical kernel set.
+The NRD kernel implementation aims for simplicity and a minimal approach to solving the problem of "relative locks". Grin does not support a general solution for arbitrary length locks between arbitrary kernels. The implementation is limited in scope to avoid adversely impacting performance and scalability. References between duplicate kernels are _implicit_, avoiding the need to store kernel references. Locks are limited in length to _recent_ history, avoiding the need to inspect the full historical kernel set during verification.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
-
-This is the technical portion of the RFC. Explain the design in sufficient detail that:
-
-- Its interaction with other features is clear.
-- It is reasonably clear how the feature would be implemented.
-- Corner cases are dissected by example.
-
-The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
-
-
-----
 
 An NRD kernel is not valid within a specified number of blocks of a previous duplicate instance of the same NRD kernel. We define duplicate here as two NRD kernels sharing the same public excess commitment. NRD kernels with different excess commitments are not treated as duplicates. An NRD kernel and a non-NRD kernel (plain kernel, coinbase kernel etc.) sharing the same excess commitment are not treated as duplicates.
 
@@ -223,35 +212,37 @@ An earlier design iteration was "No Such Kernel Recently" (NSKR) locks. Where NR
 * Optimization by referencing prior kernel based on MMR position introduced external data, making kernels harder to validate in soliation.
 * Permitting non-existence of references due to limited window of history, opened up a vector for "spam" where arbitrary data could be used in place of a valid reference.
 
-To prevent "spam" it was observed that we could use a signature to verify the reference was indeed a valid reference to a prior kernel excess commitment. This effectively made a reference a copy of a full kernel, with excess commitment and associated signature. At this point it was observed that "duplicate" kernels might solve the problem in an elegant way.
+To prevent "spam" a signature can be used to verify the reference was indeed a valid commitment. By including a singature along with the commitment, the reference is effectively a full transaction kernel.
+
+The idea of using Merkle proofs to verify inclusion of a historical referenced kernel in the kernel MMR was also considered. This gets expensive both in terms of transaction size and increased verification cost. There is also the problem of position not yet being known at transaction creation time, necessitating Merkle proof generation at block creation time by miners which adds complexity.
 
 # Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
+Bitcoin allows transaction inputs to be "encumbered" with a relative locktime based on the sequence number field. This restricts an input from spending the associated output until a certain number of blocks have passed. BIP112 describes the CHECKSEQUENCEVERIFY opcode in Bitcoin and BIP68 describes the underlying consensus changes around the sequence number field.
 
-- For core, node, wallet and infrastructure proposals: Does this feature exist in other projects and what experience have their community had?
-- For community, ecosystem and moderation proposals: Is this done by some other community and what were their experiences with it?
-- For other teams: What lessons can we learn from what other communities have done here?
-- Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
+* https://en.bitcoin.it/wiki/Timelock#CheckSequenceVerify
+* https://en.bitcoin.it/wiki/CheckSequenceVerify
+* https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki
+* https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki
 
-This section is intended to encourage you as an author to think about the lessons from other languages, provide readers of your RFC with a fuller picture. If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other projects.
-
-Note that while precedent set by other projects is some motivation, it does not on its own motivate an RFC.
-Please also take into consideration that Grin sometimes intentionally diverges from common project features.
+Note that relative locks in bitcin are based on _inputs_ and _outputs_, with inputs only able to spend outputs after they are confirmed beneath a certain number of blocks. We cannot do this in Grin due to the pruning of old data. Spent outputs will eventually be removed and will no longer be verified individually. So we cannot reference outputs in Grin for relative locks.
+Bitcoin encumbers individual outputs whereas in Grin we encumber transactions via transaction kernels.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
 Some investigation is still needed around the conditions necessary to allow a kernel to simply be reused with an adjustment to the kernel offset and where an additional kernel is necessary. An adjustment to the kernel offset will expose the private excess under certain conditions and cannot be done safely for all transactions.
 
-One outstanding question is whether NRD kernels are sufficient to cover all "relative timelock" requirements. We believe them to be sufficient for the revocable payment channel close mechanism. But they may not be sufficient for all use cases.
+One outstanding question is what use cases are not covered by NRD kernels. We believe them to be sufficient for the revocable payment channel close mechanism. But they may not be sufficient for all use cases.
 
 # References
 [references]: #references
 
-[link to original "trigger" post on mailinglist]
-[link to NSKR writeup]
-[link to NSKR based Elder Channel writeup]
-[link to relative locks in bitcoin]
+* https://lists.launchpad.net/mimblewimble/msg00025.html ("triggers" post by Ruben Somsen)
+* https://lists.launchpad.net/mimblewimble/msg00635.html ("No Such Kernel Recently" post by John Tromp)
+* https://gist.github.com/antiochp/78fe813b6c2c0612593f8747390a8aae (NSKR based payment channel design)
+* https://en.bitcoin.it/wiki/Timelock#CheckSequenceVerify
+* https://en.bitcoin.it/wiki/CheckSequenceVerify
+* https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki
+* https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki
