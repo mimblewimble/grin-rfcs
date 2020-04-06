@@ -15,11 +15,12 @@ This RFC describes the changes between version 3 and version 4 of the Slate tran
 # Motivation
 [motivation]: #motivation
 
-Previously, the definition of Slate versions up to V3 had been put together with no regard for its size or/and redundant/irrelevant content. In order to facilitate future exchange method possibilities, it's desirable to ensure the Slate is as compact as possible, particularly on the 'first leg' of a transaction exchange, which only actually requires minimal information from the transaction initiator. 
+Previously, the definition of Slate versions up to V3 had been put together with no regard for its size or/and redundant/irrelevant content. In order to facilitate future exchange method possibilities, it's desirable to ensure the Slate is as compact as possible, particularly on the 'first leg' of a transaction exchange which only actually requires minimal information from the transaction initiator. 
 
-This RFC aims to streamline the contents of the slate by:
+This RFC aims to define the contents of a streamlined "compact" slate by:
 
 * Removing all redundant or unnecessary Slate fields
+* Shortening the names of many Slate fields
 * Reducing the size of the Slate to be as minimal as possible, particularly on the first leg
 
 Although this RFC doesn't address any particular transaction exchange methods that might be facilitated by this streamlining, one could envisage possibilities such as:
@@ -27,20 +28,24 @@ Although this RFC doesn't address any particular transaction exchange methods th
 * An exchange placing the entire initial slate in a QR code
 * Encoding the initial slate as an easily-cut-and-paste chunk
 
-In addition to facilitating future exchange possibilites, compacting the slate also acts as a minor privacy-enhancer by hiding the initiator's outputs.
-
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
+There are two basic transaction workflows in a two-party Grin transaction:
 
+* In the Basic workflow, a sender adds their inputs and change outputs to a transaction, and sends them, along with the fee, the amount and their signature data to the recipient. The recipient adds a output for the amount to the transaction, adds their signature data and returns to the sender, who completes the transaction and posts.
 
-Previously, version 3 of the Slate on transaction initiation may have looked something like the following:
+* In the Invoice workflow, the invoice creator adds a new output to a transaction, and sends the amount and signature data to the payer. The payer adds their inputs and change outputs to the transaction along with their signature data and fee information, then returns to the invoicer, who completes the transaction and posts.
+
+Although previous versions of the Slate included every party's complete inputs and outputs at every stage of the transaction, it is not technically necessary for the initiator to provide their inputs and outputs to the other party. It suffices for the initiator to store the input/output listing in their local transaction context, and only provide the amount, fee, excess and signature data to the other party. Recognising this, it is possible to ensure that the 'first-leg' of a transaction stage is extremely compact.
+
+For instance, version 3 of the Slate on transaction initiation may have looked something like the following:
 
 ```
 {
   "version_info": {
-    "version": 2,
-    "orig_version": 2,
+    "version": 3,
+    "orig_version": 3,
     "block_header_version": 2
   },
   "num_participants": 2,
@@ -95,6 +100,7 @@ Previously, version 3 of the Slate on transaction initiation may have looked som
 }
 ```
 
+In version 4 of the Slate format, the initial Slate now looks like the following:
 
 ```
 {
@@ -112,6 +118,9 @@ Previously, version 3 of the Slate on transaction initiation may have looked som
 }
 ```
 
+The 'return' slate from the recipient to the originator is expected to be larger, as it must include the recipient's outputs/inputs and proofs (as the party who posts the transaction needs all of this information). However, compacting the first-leg journey allows for future possibilities that may have been more difficult in previous iterations of the slate format. For instance, an initiator taking Grin payments might be expected to be better equipped to receive Grin transactions. They could present the payer with an invoice transaction for the amount compacted to the size of a QR code, which the payer could scan, accept, and then post back to the invoicer's listening wallet infrastructure.
+
+Compacting the slate also acts as a minor privacy-enhancer by hiding the initiator's outputs from the other party.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -204,17 +213,9 @@ A description of all fields and their meanings is as follows:
 * `part_sig (part)` may be omitted from a `participant_data (sigs)` entry if it has not yet been filled out
 * `receiver_signature (rsig)` may be omitted from `payment_proof (proof)` if it has not yet been filled out
 
-# Drawbacks
-[drawbacks]: #drawbacks
+### Pretty-Printing
 
-Why should we *not* do this?
-
-# Rationale and alternatives
-[rationale-and-alternatives]: #rationale-and-alternatives
-
-
-# Prior art
-[prior-art]: #prior-art
+The examples above are pretty-printed for reference, but all Slates should remove all whitespace before sending to other parties. The whitespace and formatting can be re-added anywhere the Slate needs to be presented for debugging.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
@@ -225,6 +226,11 @@ Why should we *not* do this?
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
+This RFC is envasaged as a necessary first step for all slate-exchange possibilities that would benefit from compactness, e.g:
+
+* [Slate Serialization](https://github.com/j01tz/grin-rfcs/blob/slate-serialization/text/0000-slate-serialization.md)
+* QR Code encoding of slates
+* Armored slates
 
 # References
 [references]: #references
