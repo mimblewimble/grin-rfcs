@@ -33,8 +33,8 @@ The NRD kernel implementation aims for simplicity and a minimal approach to solv
 An NRD kernel is not valid within a specified number of blocks of a previous duplicate instance of the same NRD kernel. We define duplicate here as two NRD kernels sharing the same public excess commitment. NRD kernels with different excess commitments are not treated as duplicates. An NRD kernel and a non-NRD kernel (plain kernel, coinbase kernel etc.) sharing the same excess commitment are not treated as duplicates.
 
 An NRD kernel has an associated _relative_ lock height. For a block containing this kernel to be valid, no duplicate instance of the kernel can exist in any previous block closer within this relative height.
-For example a transaction containing an NRD kernel with relative lock height 1440 (approx 24 hours) is included in a block at height 1000000. This block is only valid if no duplicate instance of this kernel exists in any block from height 998560 (h-1440) to height 999999 (h-1).
-If no duplicate instance of the kernel exists within this range then the lock criteria is met. If a duplicate exists outside of this range, earlier than block 998,560 then the lock criterai is still met and the block is valid. Thus the lock defaults to "fail open" and only recent history need be looked at. A kernel can be delayed by the existence of a previous kernel. The _non-existence_ of a previous kernel has no impact on the lock criteria. Note that this implies the _first_ occurrence of any NRD kernel meets the lock criteria trivially.
+For example, a transaction containing an NRD kernel with relative lock height 1440 (24 hours) is included in a block at height 1000000. This block is only valid if no duplicate instance of this kernel exists in any block from height 998560 (h-1440) to height 999999 (h-1).
+If no duplicate instance of the kernel exists within this range then the lock criteria is met. If a duplicate exists outside of this range, earlier than block 998,560 then the lock criteria is still met and the block is valid. Thus, the lock defaults to "fail open" and only recent history need be looked at. A kernel can be delayed by the existence of a previous kernel. The _non-existence_ of a previous kernel has no impact on the lock criteria. Note that this implies the _first_ occurrence of any NRD kernel meets the lock criteria trivially.
 
 Each node maintains an index of _recent_ NRD kernels to enable efficient checking of NRD relative lock heights. Note we only need to index NRD locks and we only need to index those within recent history. Relative locks longer than 7 days are not valid. This is believed to be sufficient to cover all proposed use cases.
 
@@ -43,10 +43,10 @@ An instance of the NRD kernel in the _same_ block will invalidate the block as t
 
 NRD lock heights of 0 are invalid and it is never valid for two duplicate instances of the _same_ NRD kernel to exist in the same block.
 
-It follows that two transactions contaning duplicate instances of the same NRD kernel cannot be accepted as valid in the txpool concurrently.
+It follows that two transactions containing duplicate instances of the same NRD kernel cannot be accepted as valid in the transaction pool concurrently.
 "First one wins" semantics apply when validating transactions containing NRD kernels in a similar way to resolving the spending of unspent outputs.
 
-Grin supports "rewind" back through recent history to handle fork and chain reorg scenarios. 1 week of full blocks are maintained on each node and up to 10080 blocks can be rewound. To support relative lockheights each node must maintain an index over sufficient kernel history for an _additional_ 10080 blocks beyond this rewind horizon. Each node should maintain 2 weeks of kernel history in the local NRD kernel index. This will cover the pathological case of a 1 week rewind and the validaton of a 1 week long relative lock beyond that. The primary use case is for revocable payment channel close operations. We believe a 7 day period is more than sufficient for this. We do not require long, extended revocation periods and limiting this to a few days is preferable to keep the cost of verification low. The need for these revocable transactions to be included on chain should be low as these are only required in a non-cooperative situation but where required we want to minimize the cost of verification which must be performed across all nodes.
+Grin supports "rewind" back through recent history to handle fork and chain reorg scenarios. 1 week of full blocks are maintained on each node and up to 10080 blocks can be rewound. To support relative lock heights each node must maintain an index over sufficient kernel history for an _additional_ 10080 blocks beyond this rewind horizon. Each node should maintain 2 weeks of kernel history in the local NRD kernel index. This will cover the pathological case of a 1 week rewind and the validation of a 1 week long relative lock beyond that. The primary use case is for revocable payment channel close operations. We believe a 7 day period is more than sufficient for this. We do not require long, extended revocation periods and limiting this to a few days is preferable to keep the cost of verification low. The need for these revocable transactions to be included on chain should be low as these are only required in a non-cooperative situation but where required we want to minimize the cost of verification which must be performed across all nodes.
 
 ----
 
@@ -124,23 +124,20 @@ __V2 "variable size kernels"__
 
 V2 kernels have been supported since Grin `v2.1.0` and V2 supports the notion of "variable size" kernels.
 
-In V2 we only serialize the data relevant for each kernel feature variant. Each kernel contains a 33 byte excess commitment and associated 64 byte signature. But the feature variant now defines the additional data.
+In V2 we only serialize the data relevant for each kernel feature variant. All kernels require a single byte to define the feature variant, 33 bytes for the excess commitment and 64 bytes for the associated signature. Each kernel variant also includes data specific to the variant. Not all kernel variants will include a fee, for example.
 
 * Plain kernel:
-	* feature: 1 byte
 	* fee: 8 bytes
 * Coinbase kernel:
-	* feature: 1 byte
+	* no additional data
 * Height locked kernel:
-	* feature: 1 byte
 	* fee: 8 bytes
 	* lock height: 8 bytes
 * NRD kernel:
-	* feature: 1 byte
 	* fee: 8 bytes
 	* relative lock height: 2 bytes
 
-When taking advantage of variable size kernels, NRD kernels are only 2 bytes larger than plain kernels to account for the additional relative lock height information.
+When taking advantage of variable size kernels, NRD kernels are 2 bytes larger than plain kernels to account for the additional relative lock height information.
 
 Note that the serialization strategy is used for both network "on the wire" serialization of both transactions and full blocks, and local storage, both the database for full blocks and the kernel MMR backend files.
 Version negotiation occurs during the initial peer connection setup process and determines which version is used for p2p message serialization.
@@ -150,7 +147,7 @@ Note that if a node uses V2 serialization for the kernel MMR backend file then i
 
 No additional data is introduced with NRD kernels. There is no opportunity to include arbitrary data. Any additional kernel included in a transaction is itself still a fully valid kernel. There is no explicit reference necessary that could be misused to include arbitrary data.
 
-An additional NRD kernel in a transaction will increase the "weight" of the transaction by this single additonal kernel and allows for a simple way to deal with additional fees. A transaction with an additional kernel must provide additional fees to cover the additional "weight". NRD kernels cannot be added for free. Note that in some limited situations it is possible to _replace_ a kernel with an NRD kernel. If the NRD lock can be introduced without adding an additional kernel then the fee does not have to be increased and the lock is effectively added for free.
+An additional NRD kernel in a transaction will increase the "weight" of the transaction by this single additional kernel and allows for a simple way to deal with additional fees. A transaction with an additional kernel must provide additional fees to cover the additional "weight". NRD kernels cannot be added for free. Note that in some limited situations it is possible to _replace_ a kernel with an NRD kernel. If the NRD lock can be introduced without adding an additional kernel then the fee does not have to be increased and the lock is effectively added for free.
 
 ----
 
@@ -173,7 +170,7 @@ This transaction can be represented as a pair of kernels with excess commitments
 
 We take advantage of this to allow an arbitrary NRD kernel to be included in any transaction at construction time.
 
-Additionally the kernel offset incuded in each transaction can be used in certain situations to allow the replacement of a single transaction kernel with an NRD kernel without needing to introduce an additional kernel.
+Additionally the kernel offset included in each transaction can be used in certain situations to allow the replacement of a single transaction kernel with an NRD kernel without needing to introduce an additional kernel.
 
 Given an existing NRD kernel with excess commitment -
 
@@ -204,15 +201,15 @@ While it would be nice to provide a fully general purpose solution that would al
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-Referencing historical data in Grin and in mimblewimble in general is difficult due to the possibility of pruning historical data. It is not possible to reference old outputs once they are spent. Historical validators must have access to any referenced data to validate consensus rules. This leaves transaction kernels as the only available data to be referenced. While arbitrary historical kernels _can_ be referenced this is not desirable as we do not want to impose additional constraints on nodes, requiring them to maintain historical data that would otherwise be prunable.
+Referencing historical data in Grin and in Mimblewimble in general is difficult due to the possibility of pruning historical data. It is not possible to reference old outputs once they are spent. Historical validators must have access to any referenced data to validate consensus rules. This leaves transaction kernels as the only available data to be referenced. While arbitrary historical kernels _can_ be referenced this is not desirable as we do not want to impose additional constraints on nodes, requiring them to maintain historical data that would otherwise be prunable.
 
 An earlier design iteration was "No Such Kernel Recently" (NSKR) locks. Where NRD references were implicit, with duplicate kernel excess commitments, NSKR kernels referenced prior kernels explicitly. These explicit references were problematic for several reasons -
 
-* Additional overhead, both local storage and network traffic due to the explicit references
-* Optimization by referencing prior kernel based on MMR position introduced external data, making kernels harder to validate in soliation.
+* Additional overhead, both local storage and network traffic due to the explicit references.
+* Optimization by referencing prior kernel based on MMR position introduced a dependency on external data (kernels can no longer be validated in isolation).
 * Permitting non-existence of references due to limited window of history, opened up a vector for "spam" where arbitrary data could be used in place of a valid reference.
 
-To prevent "spam" a signature can be used to verify the reference was indeed a valid commitment. By including a singature along with the commitment, the reference is effectively a full transaction kernel.
+To prevent "spam" a signature can be used to verify the reference was indeed a valid commitment. By including a signature along with the commitment, the reference is effectively a full transaction kernel.
 
 The idea of using Merkle proofs to verify inclusion of a historical referenced kernel in the kernel MMR was also considered. This gets expensive both in terms of transaction size and increased verification cost. There is also the problem of position not yet being known at transaction creation time, necessitating Merkle proof generation at block creation time by miners which adds complexity.
 
@@ -226,8 +223,7 @@ Bitcoin allows transaction inputs to be "encumbered" with a relative locktime ba
 * https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki
 * https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki
 
-Note that relative locks in bitcin are based on _inputs_ and _outputs_, with inputs only able to spend outputs after they are confirmed beneath a certain number of blocks. We cannot do this in Grin due to the pruning of old data. Spent outputs will eventually be removed and will no longer be verified individually. So we cannot reference outputs in Grin for relative locks.
-Bitcoin encumbers individual outputs whereas in Grin we encumber transactions via transaction kernels.
+Note that relative locks in Bitcoin are based on transaction _inputs_ and _outputs_, with inputs only able to spend outputs after they are confirmed beneath a certain number of blocks. We cannot do this in Grin due to the pruning of old data. Spent outputs will eventually be removed and cannot be relied upon as part of the validation process. Bitcoin encumbers individual outputs whereas in Grin we encumber transactions via the constituent transaction kernels.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
