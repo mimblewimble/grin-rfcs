@@ -105,7 +105,7 @@ In version 4 of the Slate format, the initial Slate now looks like the following
 ```
 {
   "ver": "4.3",
-  "sta": 0,
+  "sta": "S1",
   "id": "mavTAjNm4NVztDwh4gdSrQ",
   "amt": "1000000000",
   "fee": "8000000",
@@ -132,7 +132,7 @@ Entries prefixed with `//` denote fields that may be omitted, as well as their d
 ```
 {
   "ver": "4.3",
-  "sta": 0,
+  "sta": "S1",
 //"num_parts: 2,
   "id": "mavTAjNm4NVztDwh4gdSrQ",
 //"tx": null,
