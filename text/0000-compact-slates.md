@@ -164,7 +164,14 @@ If included, the proof structure is:
 A description of all fields and their meanings is as follows:
 
 * `ver` - The slate version and supported block header version, separated by a `.`
-* `sta` - Stage
+* `sta` - 2 character String representing the current stage of the the transaction. This field should be completed by each participant before returning the Slate to another party. Valid values are:
+   * `S1` - Standard (payer to payee) transaction flow, new transaction that incorporates the sender's inputs and change output(s), if any. Sender's signature nonce, excess (with kernel offset) is included and ready for sending to recipient.
+   * `S2` - Standard transaction flow, recipient has created their outputs(s) and supplied their excess, nonce and partial signature, ready to return to recipient for completion.
+   * `S3` - Standard transaction flow, Slate complete, contains all inputs, outputs and final signatures, and is ready for posting
+   * `I1` - Invoice (payee to payer) transaction flow, new transaction that incorporates the Invoicer's output(s). Invoicer's signature nonce and excess (with kernel offset) is included and ready for sending to Invoicee.
+   * `I2` - Invoice workflow, Invoicee has added their inputs and change output(s).  Invoicee's signature, nonce and excess is included and ready for sending back to the invoicer.
+   * `I3` - Invoice workflow, Slate complete, contains all inputs, outputs and final signatures, and is ready for posting
+
 * `num_parts` - The option number of participants in the transaction, assumed to be 2 if omitted
 * `id` - The slate's UUID, encoded in Base-57 short form
 * `tx` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); may be omitted during the first part of a transaction exchange
@@ -173,13 +180,13 @@ A description of all fields and their meanings is as follows:
 * `lock_hgt` - Lock height of the transaction (for future use), assumed 0 if omitted
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction
 * `sigs` - An array of signature data for each participant. Each entry contains
-   * `excess` - The public blind excess for the participants inputs/outputs, (which incorporates the kernel offset created by the first participant to add their signature data
-   * `part` - The participant's partial sig, which may be omitted if the participant does not yet have enough data to create it
+   * `excess` - Hex-String encoded short form public key on the secp256k1 curve representing the public blind excess for the participants inputs/outputs. The first party to add signature data must also generate and add a random kernel offset to this value.
+   * `part` - Hex-String encoded Aggregated (Schnorr) secp2561k signature represeting the participant's partial sig. May be omitted if the participant does not yet have enough data to create it
    * `nonce` - The public key of the nonce chosen by the participant for their partial signature
 * `proof` - An optional payment proof requet that must be filled out by the recipient if requested (only valid for basic transaction flow). This contains:
-   * `saddr` - The sender's wallet address (see the [payment proofs rfc](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0006-payment-proofs.md) for details
-   * `raddr` - The recipient's wallet address
-   * `rsig` - The recipient's signature, omitted if this has not yet been filled out
+   * `saddr` - Hex-String encoded short-form public key on the ed25519 curve, representing the sender's wallet address (see the [payment proofs rfc](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0006-payment-proofs.md) for details.
+   * `raddr` - Hex-String encoded short-form public key on the ed25519 curve represnting the recipient's wallet address
+   * `rsig` - Hex-String encoded EdDSA ed25519 signature representing the recipient's payment-proof signature. Can be omitted if this has not yet been filled out
 
 ### Changes from existing V3 Slate
 
