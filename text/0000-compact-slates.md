@@ -105,10 +105,10 @@ In version 4 of the Slate format, the initial Slate now looks like the following
 ```
 {
   "ver": "4.3",
+  "sta": 0,
   "id": "mavTAjNm4NVztDwh4gdSrQ",
   "amt": "1000000000",
   "fee": "8000000",
-  "hgt": "437088",
   "sigs": [
     {
       "excess": "02ef37e5552a112f829e292bb031b484aaba53836cd6415aacbdb8d3d2b0c4bb9a",
@@ -132,12 +132,12 @@ Entries prefixed with `//` denote fields that may be omitted, as well as their d
 ```
 {
   "ver": "4.3",
+  "sta": 0,
 //"num_parts: 2,
   "id": "mavTAjNm4NVztDwh4gdSrQ",
 //"tx": null,
   "amt": "1000000000",
   "fee": "8000000",
-  "hgt": "437088",
 //"lock_hgt": 0,
 //"ttl": null,
   "sigs": [
@@ -164,12 +164,12 @@ If included, the proof structure is:
 A description of all fields and their meanings is as follows:
 
 * `ver` - The slate version and supported block header version, separated by a `.`
+* `sta` - Stage
 * `num_parts` - The option number of participants in the transaction, assumed to be 2 if omitted
 * `id` - The slate's UUID, encoded in Base-57 short form
 * `tx` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); may be omitted during the first part of a transaction exchange
 * `amt` - The transaction amount as a string parseable as a u64
 * `fee` - The transaction fee as a string parseable as a u64
-* `hgt` - The block height at which the slate was created
 * `lock_hgt` - Lock height of the transaction (for future use), assumed 0 if omitted
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction
 * `sigs` - An array of signature data for each participant. Each entry contains
@@ -186,7 +186,7 @@ A description of all fields and their meanings is as follows:
 * The `version_info` struct is removed, and is replaced with `ver`, which has the format <version>.<block header version>
 * `id` becomes a short-form base-57 encoding of the UUID
 * `amount` is renamed to `amt`
-* `height` is renamed to `hgt`
+* `height` is removed
 * `lock_height` is renamend to `lock_hgt`
 * `num_paricipants` is renamed to `num_parts`
 * `ttl_cutoff_height` is renamed to `ttl`
@@ -221,7 +221,6 @@ The examples above are pretty-printed for reference, but all Slates should remov
 [unresolved-questions]: #unresolved-questions
 
 - Is block header version needed?
-- Is height required (it represents the height at which the slate was created, still need to go throughthe code again to recall exactly how it's used
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
