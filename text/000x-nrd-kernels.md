@@ -34,7 +34,9 @@ An NRD kernel is not valid within a specified number of blocks of a previous dup
 
 An NRD kernel has an associated _relative_ lock height. For a block _B_ containing this kernel to be valid, no duplicate instance of the kernel can exist in the last _RH_ blocks (up to and including _B_), where _RH_ is the relative lock height.
 For example, a transaction containing an NRD kernel with relative lock height 1440 (24 hours) is included in a block at height 1000000. This block is only valid if no duplicate instance of this kernel exists in any block from height 998561 (h-1439) to height 1000000 (h-0) inclusive. A duplicate instance _is_ permitted at height 998560 (h-1440), with the transaction seen as valid.
-If no duplicate instance of the kernel exists within this range then the lock criteria is met. If a duplicate exists outside of this range, earlier than block 998,560 then the lock criteria is still met and the block is valid. Thus, the lock defaults to "fail open" and only recent history need be looked at. A kernel can be delayed by the existence of a previous kernel. The _non-existence_ of a previous kernel has no impact on the lock criteria. Note that this implies the _first_ singular occurrence of any NRD kernel meets the lock criteria trivially as it cannot, by definition, be locked by a previous kernel.
+If no duplicate instance of the kernel exists within this range then the lock criteria is met.
+
+A kernel can be delayed by the existence of a previous kernel. The _non-existence_ of a previous kernel has no impact on the lock criteria. Note that this implies the _first_ singular occurrence of any NRD kernel meets the lock criteria trivially as it cannot, by definition, be locked by a previous kernel. Thus, the relative lock defaults to "fail open" semantics.
 
 Each node maintains an index of _recent_ NRD kernels to enable efficient checking of NRD relative lock heights. Note we only need to index NRD locks and we only need to index those within recent history. Relative locks longer than 7 days are not valid. This is believed to be sufficient to cover all proposed use cases.
 
