@@ -120,6 +120,12 @@ Every kernel also includes 8 bytes of feature specific data. This is used for th
 
 V1 is supported for backward compatibility with older nodes and will be used as necessary, based on version negotiation during the peer connection setup process.
 
+```
+feature (1 byte) | fee (8 bytes) | additional_data (8 bytes) | excess commitment (33 bytes) | signature (64 bytes)
+
+03 | 00 00 00 00 01 f7 8a 40 | 00 00 00 00 00 00 05 A0 | 08 b1 ... 22 d8 | 33 11 ... b9 69
+```
+
 __V2 "variable size kernels"__
 
 V2 kernels have been supported since Grin `v2.1.0` and V2 supports the notion of "variable size" kernels.
@@ -143,9 +149,30 @@ Note that the serialization strategy is used for both network "on the wire" seri
 Version negotiation occurs during the initial peer connection setup process and determines which version is used for p2p message serialization.
 Note that if a node uses V2 serialization for the kernel MMR backend file then it will provide a V2 txhashset based on these underlying files.
 
+```
+feature (1 byte) | fee (8 bytes) | relative_height (2 bytes) | excess commitment (33 bytes) | signature (64 bytes)
+
+03 | 00 00 00 00 00 6a cf c0 | 05 A0 | 09 4d ... bb 9a | 09 c7 ... bd 54
+```
+
+__Kernel Signature Message__
+
+Every kernel contains a signature proving the excess commitment is a commitment to zero. The message being signed includes the features, fee and other associated data to prevent malleability of the transaction kernel and the overall transaction. The transaction fee cannot be modified after signing, for example.
+
+For legacy reasons, specifically to simplify V1 serialization support, the kernel signature message (before hashing) always includes 8 bytes for the fee and 8 bytes for additional data.
+
+For NRD kernels the message being signed is constructed as follows with
+the relative lock height serialized in the 8 bytes of additional data.
+
+```
+Hash(feature | fee | additional_data)
+
+Hash(03 | 00 00 00 00 01 f7 8a 40 | 00 00 00 00 00 00 05 A0)
+```
+
 ----
 
-No additional data is introduced with NRD kernels. There is no opportunity to include arbitrary data. Any additional kernel included in a transaction is itself still a fully valid kernel. There is no explicit reference necessary that could be misused to include arbitrary data.
+No additional data is introduced with NRD kernels beyond the 2 bytes representing the relative lock height. There is no opportunity to include arbitrary data. Any additional kernel included in a transaction is itself still a fully valid kernel. There is no explicit reference necessary that could be misused to include arbitrary data.
 
 An additional NRD kernel in a transaction will increase the "weight" of the transaction by this single additional kernel and allows for a simple way to deal with additional fees. A transaction with an additional kernel must provide additional fees to cover the additional "weight". NRD kernels cannot be added for free. Note that in some limited situations it is possible to _replace_ a kernel with an NRD kernel. If the NRD lock can be introduced without adding an additional kernel then the fee does not have to be increased and the lock is effectively added for free.
 
