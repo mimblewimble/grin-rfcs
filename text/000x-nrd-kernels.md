@@ -159,15 +159,13 @@ __Kernel Signature Message__
 
 Every kernel contains a signature proving the excess commitment is a commitment to zero. The message being signed includes the features, fee and other associated data to prevent malleability of the transaction kernel and the overall transaction. The transaction fee cannot be modified after signing, for example.
 
-For legacy reasons, specifically to simplify V1 serialization support, the kernel signature message (before hashing) always includes 8 bytes for the fee and 8 bytes for additional data.
-
 For NRD kernels the message being signed is constructed as follows with
-the relative lock height serialized in the 8 bytes of additional data.
+the relative lock height serialized as 2 bytes.
 
 ```
-Hash(feature | fee | additional_data)
+Hash(feature | fee | relative_height)
 
-Hash(03 | 00 00 00 00 01 f7 8a 40 | 00 00 00 00 00 00 05 A0)
+Hash(03 | 00 00 00 00 01 f7 8a 40 | 05 A0)
 ```
 
 ----
