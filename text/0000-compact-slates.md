@@ -104,18 +104,47 @@ In version 4 of the Slate format, the initial Slate now looks like the following
 
 ```
 {
-  "ver": "4.3",
+  "ver": "4:3",
   "sta": "S1",
   "id": "mavTAjNm4NVztDwh4gdSrQ",
   "amt": "1000000000",
   "fee": "8000000",
   "sigs": [
     {
-      "excess": "02ef37e5552a112f829e292bb031b484aaba53836cd6415aacbdb8d3d2b0c4bb9a",
-      "nonce": "03c78da42179b80bd123f5a39f5f04e2a918679da09cad5558ebbe20953a82883e"
+      "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
+      "nonce": "A1MbUjB5g4fjZ3fTYATVBA8TADHGG77D8gHpzbQTl/IE"
     }
   ]
 }
+```
+
+While a "return" slate might look something like the following:
+
+```
+{
+  "ver": "4:3",
+  "sta": "S2",
+  "id": "cmavTAjNm4NVztDwh4gdSrQ",
+  "outs": [
+    {
+      "com": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt",
+      "prf": "J+/eWsEWsOljOS5norAUhV9Ygzub4Vf6dxLl71w06sA5c0QHllDeFv0n9UbCPuIL2CoBtLAfgKHAjPV7OjQ5lwSZcK+lfBD3kziiY1iUdjH6ZctAE9D/DdNfQ7a4RdurQDdKbGtihnnnOkHbllutCyV1TDLyvvqyExuwQrK2QkJulhfArQVcBE2txtbWSDjfAAtxraU7UpCMg0MoGRP4v6bm/50hntwTHc9zHegcDblADpMhTNMGh1jlRaCP00n8/Lj520YvZNd0dedynD5U97cfXFTP5C2fjVwwZKCnMZqN90CDAxNuCTA5fFaGTOv2MHMvZrqoVFriuaa+jbjpeU9ifGOWAI5B3HXMeMiSUL0a8c451ohT7zcENCr8jTW+uwA2ejcidMZsL19EaDZX9w0cirdKW5mRI/YPRuw6zBkg8SmXvSLArW0vz94pERcaE0uK9pK/qlgvplmC3/Rv92A9AkyQVeWBieyCoFaxoDL5hGMQaLLc6G3slgCzBUZHX1idNwLhfWAb5mHF97GmqcJf/joEVKuhPpK/mAICLWDUzYQS9gH4GJDlgAz1Bv5KdHY9jo/kB6IDvtxOKnTkl+vK2eK3L178vp02lufgv29fblxSFN9Kw2ujh1j8eCh8RC3RDyAI8qVbHiRDN2N4ANk0fIlc6Gq37D/VChxlTCzd+MmiBJRpqDvYFnz0r2kjuic/xATPQ+G5QoyI30ftXWgLzhGqgZ7S33rywiAP1EsgsoRwUojYvx0skfuasZd+F/Dj2o4RzX32JDcROAh6S49mcr+VumVbPx5tEcZwsQNb6d2yrzCQ6j3x5skaydyaMxhdsMtzb7BOWGWl1GrZ8AALr96R2bdP2vL4mxLtym2qZ/Hh2P5MrnivthS8C+x57TFa"
+    }
+  ],
+  "sigs": [
+    {
+      "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
+      "nonce": "A1MbUjB5g4fjZ3fTYATVBA8TADHGG77D8gHpzbQTl/IE"
+    },
+    {
+      "xs": "AjfgKMS6AUzSDXKlKPMkxcbn4REDxynzFCxYARkalE6X",
+      "nonce": "A0djq2m2GOAtzWAtYi6EOoKbUc1li3x6OYSd3NH/52XT",
+      "part": "02Xn/9HcnYQ5enyLZc1Rm4I6hC5iLWDNLeAYtmmrY0c42DUkSXj1uLulQXfT+7Br/VhXD/r8kIQNMKrTpYmxew=="
+    }
+  ]
+}
+
+
 ```
 
 The 'return' slate from the recipient to the originator is expected to be larger, as it must include the recipient's outputs/inputs and proofs (as the party who posts the transaction needs all of this information). However, compacting the first-leg journey allows for future possibilities that may have been more difficult in previous iterations of the slate format. For instance, an initiator taking Grin payments might be expected to be better equipped to receive Grin transactions. They could present the payer with an invoice transaction for the amount compacted to the size of a QR code, which the payer could scan, accept, and then post back to the invoicer's listening wallet infrastructure.
@@ -131,25 +160,72 @@ Entries prefixed with `//` denote fields that may be omitted, as well as their d
 
 ```
 {
-  "ver": "4.3",
+  "ver": "4:3",
   "sta": "S1",
 //"num_parts: 2,
   "id": "mavTAjNm4NVztDwh4gdSrQ",
-//"tx": null,
-  "amt": "1000000000",
-  "fee": "8000000",
+//"amt": "1000000000",
+//"fee": "8000000",
 //"lock_hgt": 0,
 //"ttl": null,
+//"ins": null,
+//"outs": null,
   "sigs": [
     {
-      "excess": "02ef37e5552a112f829e292bb031b484aaba53836cd6415aacbdb8d3d2b0c4bb9a",
+      "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
 //    "part": null,
-      "nonce": "03c78da42179b80bd123f5a39f5f04e2a918679da09cad5558ebbe20953a82883e"
+      "nonce": "A1MbUjB5g4fjZ3fTYATVBA8TADHGG77D8gHpzbQTl/IE"
     }
   ]
 //"proof": null,
 }
 ```
+
+A description of all fields and their meanings is as follows:
+
+### Top-Level Slate Struct
+
+* `ver` - The slate version and supported block header version, separated by a `:`
+* `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status_codes)
+* `num_parts` - The option number of participants in the transaction, assumed to be 2 if omitted
+* `id` - The slate's UUID, encoded in Base-57 short form
+* `amt` - The transaction amount as a string parseable as a u64. May be omitted on a return journey.
+* `fee` - The transaction fee as a string parseable as a u64. May be omitted on a return journey, except during an invoice transaction.
+* `lock_hgt` - Lock height of the transaction (for future use), assumed 0 if omitted
+* `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction
+* `sigs` - An array of signature data for each participant. See [Signature Data](#signature_data)
+* `proof` - An optional payment proof request. See [Payment Proof Data](#payment_proof_data)
+* `ins`, `outs` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); is removed from the slate in favour of including top-level Slate fields that can be used to reconstruction the transaction object as expected by the Grin node. See [Transaction Object Fields](#transaction_object_fields)
+
+#### Status Codes
+
+Valid values of the `sta` field and their meanings are:
+
+   * `S1` - Standard (payer to payee) transaction flow, new transaction that incorporates the sender's inputs and change output(s), if any. Sender's signature nonce, excess (with kernel offset) is included and ready for sending to recipient.
+   * `S2` - Standard transaction flow, recipient has created their outputs(s) and supplied their excess, nonce and partial signature, ready to return to recipient for completion.
+   * `S3` - Standard transaction flow, Slate complete, contains all inputs, outputs and final signatures, and is ready for posting
+   * `I1` - Invoice (payee to payer) transaction flow, new transaction that incorporates the Invoicer's output(s). Invoicer's signature nonce and excess (with kernel offset) is included and ready for sending to Invoicee.
+   * `I2` - Invoice workflow, Invoicee has added their inputs and change output(s).  Invoicee's signature, nonce and excess is included and ready for sending back to the invoicer.
+   * `I3` - Invoice workflow, Slate complete, contains all inputs, outputs and final signatures, and is ready for posting
+
+#### Signature Data
+
+An entry in the `sigs` array is as follows:
+
+```
+{
+   "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
+   "part": null,
+   "nonce": "A1MbUjB5g4fjZ3fTYATVBA8TADHGG77D8gHpzbQTl/IE"
+}
+```
+
+The `sigs` struct contains is comprised of an array of participant signature data, with each entry comprising:
+   * `xs` - Base64 encoded short form public key on the secp256k1 curve representing the public blind excess for the participants inputs/outputs. The first party to add signature data must also generate and add a random kernel offset to this value.
+   * `part` - Base64 encoded Aggregated (Schnorr) secp2561k signature represeting the participant's partial sig. May be omitted if the participant does not yet have enough data to create it
+   * `nonce` - Base64 encoded The public key of the nonce chosen by the participant for their partial signature
+
+#### Payment Proof Data
 
 If included, the proof structure is:
 
@@ -161,64 +237,94 @@ If included, the proof structure is:
   }
 ```
 
-A description of all fields and their meanings is as follows:
+The `proof` struct is an optional payment proof request that must be filled out by the recipient if requested (only valid for basic transaction flow). Its fields are as follows:
 
-* `ver` - The slate version and supported block header version, separated by a `.`
-* `sta` - 2 character String representing the current stage of the the transaction. This field should be completed by each participant before returning the Slate to another party. Valid values are:
-   * `S1` - Standard (payer to payee) transaction flow, new transaction that incorporates the sender's inputs and change output(s), if any. Sender's signature nonce, excess (with kernel offset) is included and ready for sending to recipient.
-   * `S2` - Standard transaction flow, recipient has created their outputs(s) and supplied their excess, nonce and partial signature, ready to return to recipient for completion.
-   * `S3` - Standard transaction flow, Slate complete, contains all inputs, outputs and final signatures, and is ready for posting
-   * `I1` - Invoice (payee to payer) transaction flow, new transaction that incorporates the Invoicer's output(s). Invoicer's signature nonce and excess (with kernel offset) is included and ready for sending to Invoicee.
-   * `I2` - Invoice workflow, Invoicee has added their inputs and change output(s).  Invoicee's signature, nonce and excess is included and ready for sending back to the invoicer.
-   * `I3` - Invoice workflow, Slate complete, contains all inputs, outputs and final signatures, and is ready for posting
+   * `saddr` - Base64 encoded short-form public key on the ed25519 curve, representing the sender's wallet address (see the [payment proofs rfc](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0006-payment-proofs.md) for details.
+   * `raddr` - Base64 encoded short-form public key on the ed25519 curve represnting the recipient's wallet address
+   * `rsig` - Base64 encoded EdDSA ed25519 signature representing the recipient's payment-proof signature. Can be omitted if this has not yet been filled out
 
-* `num_parts` - The option number of participants in the transaction, assumed to be 2 if omitted
-* `id` - The slate's UUID, encoded in Base-57 short form
-* `tx` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); may be omitted during the first part of a transaction exchange
-* `amt` - The transaction amount as a string parseable as a u64
-* `fee` - The transaction fee as a string parseable as a u64
-* `lock_hgt` - Lock height of the transaction (for future use), assumed 0 if omitted
-* `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction
-* `sigs` - An array of signature data for each participant. Each entry contains
-   * `excess` - Hex-String encoded short form public key on the secp256k1 curve representing the public blind excess for the participants inputs/outputs. The first party to add signature data must also generate and add a random kernel offset to this value.
-   * `part` - Hex-String encoded Aggregated (Schnorr) secp2561k signature represeting the participant's partial sig. May be omitted if the participant does not yet have enough data to create it
-   * `nonce` - The public key of the nonce chosen by the participant for their partial signature
-* `proof` - An optional payment proof requet that must be filled out by the recipient if requested (only valid for basic transaction flow). This contains:
-   * `saddr` - Hex-String encoded short-form public key on the ed25519 curve, representing the sender's wallet address (see the [payment proofs rfc](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0006-payment-proofs.md) for details.
-   * `raddr` - Hex-String encoded short-form public key on the ed25519 curve represnting the recipient's wallet address
-   * `rsig` - Hex-String encoded EdDSA ed25519 signature representing the recipient's payment-proof signature. Can be omitted if this has not yet been filled out
+#### Transaction Object Fields
+
+The V4 Version of the Slate defines its own representation of Grin's internal Tranasction object, which defines its own serialization at [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871). Internally, the wallet will transform its VersionedSlate into the format expected by the Grin node, allowing the wallet to specify its own Transaction format.
+
+The `tx` struct in a V4 Slate is removed, and is replaced instead by the following Top-Level fields. Wallets recreate the transaction object as expected by the Grin node from these fields before posting.
+
+* `outs` is an array containing the outputs that have been added to the slate. These will appear duing the I1 or S2 phases of a transction. Each entry includes:
+   * `com`: The output commitment, Base64 Encoded
+   * `prf`: The output's range proof, Base64 Encoded
+   * `fea`: The output features, assumed to be 'Plain' if omitted
+* `ins` is an array containing the inputs that have been added to the Slate. These will appear buring the S3 or I2 phases of a transaction. Each entry includes:
+   * `com`: The input commitment, Base64 Encoded
+   * `fea`: The input's features, assumed to be 'Plain' if omitted
+
+When rebuilding the transaction kernel for the Node (done during the S3 or I3 phases,) the kernel is assumed to be 'Plain' unless the top-level `lock_hgt` field is non-zero. In this case, the kernel features becomes `HeightLocked` and the kernel's `lock_height` field is filled accordingly.
+
+In a typical S3 phase, these fields may look something like:
+
+```
+  "inouts": [
+    {
+      "com": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt",
+      "prf": "J+/eWsEWsOljOS5norAUhV9Ygzub4Vf6dxLl71w06sA5c0QHllDeFv0n9UbCPuIL2CoBtLAfgKHAjPV7OjQ5lwSZcK+lfBD3kziiY1iUdjH6ZctAE9D/DdNfQ7a4RdurQDdKbGtihnnnOkHbllutCyV1TDLyvvqyExuwQrK2QkJulhfArQVcBE2txtbWSDjfAAtxraU7UpCMg0MoGRP4v6bm/50hntwTHc9zHegcDblADpMhTNMGh1jlRaCP00n8/Lj520YvZNd0dedynD5U97cfXFTP5C2fjVwwZKCnMZqN90CDAxNuCTA5fFaGTOv2MHMvZrqoVFriuaa+jbjpeU9ifGOWAI5B3HXMeMiSUL0a8c451ohT7zcENCr8jTW+uwA2ejcidMZsL19EaDZX9w0cirdKW5mRI/YPRuw6zBkg8SmXvSLArW0vz94pERcaE0uK9pK/qlgvplmC3/Rv92A9AkyQVeWBieyCoFaxoDL5hGMQaLLc6G3slgCzBUZHX1idNwLhfWAb5mHF97GmqcJf/joEVKuhPpK/mAICLWDUzYQS9gH4GJDlgAz1Bv5KdHY9jo/kB6IDvtxOKnTkl+vK2eK3L178vp02lufgv29fblxSFN9Kw2ujh1j8eCh8RC3RDyAI8qVbHiRDN2N4ANk0fIlc6Gq37D/VChxlTCzd+MmiBJRpqDvYFnz0r2kjuic/xATPQ+G5QoyI30ftXWgLzhGqgZ7S33rywiAP1EsgsoRwUojYvx0skfuasZd+F/Dj2o4RzX32JDcROAh6S49mcr+VumVbPx5tEcZwsQNb6d2yrzCQ6j3x5skaydyaMxhdsMtzb7BOWGWl1GrZ8AALr96R2bdP2vL4mxLtym2qZ/Hh2P5MrnivthS8C+x57TFa"
+    }
+  ],
+  "ins": [
+    {
+      "com": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt"
+    }
+    {
+      "com": "A43jdi0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrxer3f"
+    }
+  ],
+```
 
 ### Changes from existing V3 Slate
 
-* The `version_info` struct is removed, and is replaced with `ver`, which has the format <version>.<block header version>
+#### Top-Level Slate Struct
+
+* The `version_info` struct is removed, and is replaced with `ver`, which has the format <version>:<block header version>
 * `id` becomes a short-form base-57 encoding of the UUID
 * `amount` is renamed to `amt`
+* `amt` may be removed from the slate on the S2 phase of a transaction.
+* `fees` may be removed from the slate on the S2 phase of a transaction. It may also be ommited when intiating an I1 transaction, and added during the I2 phase.
 * `height` is removed
 * `lock_height` is renamend to `lock_hgt`
-* `num_paricipants` is renamed to `num_parts`
+* `num_participants` is renamed to `num_parts`
+* `num_participants (num_parts)` becomes an Option
+* `num_participants (num_parts)` may be omitted from the slate if it is None (null), if `num_participants` is omitted, it's value is assumed to be 2
 * `ttl_cutoff_height` is renamed to `ttl`
+* `ttl_cutoff_height (ttl)` may be omitted from the slate if it is None (null),
 *  The `participant_data` struct is renamed to `sigs`
-* `public_blind_excess` in a `sigs` entry is renamed to `excess`
-* `public_nonce` in a `sigs` entry is renamed to `nonce`
-* `part_sig` in a `sigs` entry is renamed to `part`
 *  The `payment_proof` struct is renamed to `proof`
-*  The `sender_address` field in the `payment_proof (proof)` struct is renamed to `saddr`
-*  The `receiver_address` field in the `payment_proof (proof)` struct is renamed to `raddr`
-*  The `receiver_signature` field in the `payment_proof (proof)` struct is renamed to `rsig`
+* `payment_proof (proof)` may be omitted from the slate if it is None (null),
 * `tx` field becomes an Option
 * `tx` field is omitted from the slate if it is None (null)
 * `tx` field and enclosed inputs/outputs do not need to be included in the first leg of a transaction exchange. (All inputs/outputs naturally need to be present at time of posting).
-* `num_participants (num_parts)` becomes an Option
-* `num_participants (num_parts)` may be omitted from the slate if it is None (null), if `num_participants` is omitted, it's value is assumed to be 2
 * `lock_height (lock_hgt)` becomes an Option
 * `lock_height (lock_hgt)` may be omitted from the slate if it is None (null), if `lock_height` is omitted, it's value is assumed to be 0
-* `ttl_cutoff_height (ttl)` may be omitted from the slate if it is None (null),
-* `payment_proof (proof)` may be omitted from the slate if it is None (null),
-* `message` is removed from `participant_data (sigs)` entries
-* `message_sig` is removed from `participant_data (sigs)` entries
-* `id` is removed from `participant_data (sigs)` entries. Parties can identify themselves via private keys stored in the transaction context
-* `part_sig (part)` may be omitted from a `participant_data (sigs)` entry if it has not yet been filled out
-* `receiver_signature (rsig)` may be omitted from `payment_proof (proof)` if it has not yet been filled out
+
+#### Participant Data (`sigs`)
+
+* `public_blind_excess` is renamed to `xs`
+* `public_nonce` is renamed to `nonce`
+* `part_sig` is renamed to `part`
+* `part` may be omitted if it has not yet been filled out
+* `xs` becomes Base64 encoded instead of a hex string
+* `nonce` becomes Base64 encoded instead of a hex string
+* `part` becomes Base64 encoded instead of a hex string
+* `message` is removed
+* `message_sig` is removed
+* `id` is removed. Parties can identify themselves via private keys stored in the transaction context
+
+#### Payment Proof Data (`proof`)
+
+*  The `sender_address` field is renamed to `saddr`
+*  The `receiver_address` field is renamed to `raddr`
+*  The `receiver_signature` field is renamed to `rsig`
+* `saddr` is Base64 encoded instead of a hex string
+* `raddr` is Base64 encoded instead of a hex string
+* `rsig` is Base64 encoded instead of a hex string
+* `rsig` may be omitted if it has not yet been filled out
 
 ### Pretty-Printing
 
