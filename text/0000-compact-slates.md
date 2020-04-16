@@ -21,7 +21,7 @@ This RFC aims to define the contents of a streamlined "compact" slate by:
 
 * Removing all redundant or unnecessary Slate fields
 * Shortening the names of many Slate fields
-* Reducing the size of the Slate to be as minimal as possible, particularly on the first leg
+* Reducing the size of the Slate to be as minimal as possible at all phases of a transaction
 
 Although this RFC doesn't address any particular transaction exchange methods that might be facilitated by this streamlining, one could envisage possibilities such as:
 
@@ -125,10 +125,10 @@ While a "return" slate might look something like the following:
   "ver": "4:3",
   "sta": "S2",
   "id": "cmavTAjNm4NVztDwh4gdSrQ",
-  "outs": [
+  "coms": [
     {
-      "com": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt",
-      "prf": "J+/eWsEWsOljOS5norAUhV9Ygzub4Vf6dxLl71w06sA5c0QHllDeFv0n9UbCPuIL2CoBtLAfgKHAjPV7OjQ5lwSZcK+lfBD3kziiY1iUdjH6ZctAE9D/DdNfQ7a4RdurQDdKbGtihnnnOkHbllutCyV1TDLyvvqyExuwQrK2QkJulhfArQVcBE2txtbWSDjfAAtxraU7UpCMg0MoGRP4v6bm/50hntwTHc9zHegcDblADpMhTNMGh1jlRaCP00n8/Lj520YvZNd0dedynD5U97cfXFTP5C2fjVwwZKCnMZqN90CDAxNuCTA5fFaGTOv2MHMvZrqoVFriuaa+jbjpeU9ifGOWAI5B3HXMeMiSUL0a8c451ohT7zcENCr8jTW+uwA2ejcidMZsL19EaDZX9w0cirdKW5mRI/YPRuw6zBkg8SmXvSLArW0vz94pERcaE0uK9pK/qlgvplmC3/Rv92A9AkyQVeWBieyCoFaxoDL5hGMQaLLc6G3slgCzBUZHX1idNwLhfWAb5mHF97GmqcJf/joEVKuhPpK/mAICLWDUzYQS9gH4GJDlgAz1Bv5KdHY9jo/kB6IDvtxOKnTkl+vK2eK3L178vp02lufgv29fblxSFN9Kw2ujh1j8eCh8RC3RDyAI8qVbHiRDN2N4ANk0fIlc6Gq37D/VChxlTCzd+MmiBJRpqDvYFnz0r2kjuic/xATPQ+G5QoyI30ftXWgLzhGqgZ7S33rywiAP1EsgsoRwUojYvx0skfuasZd+F/Dj2o4RzX32JDcROAh6S49mcr+VumVbPx5tEcZwsQNb6d2yrzCQ6j3x5skaydyaMxhdsMtzb7BOWGWl1GrZ8AALr96R2bdP2vL4mxLtym2qZ/Hh2P5MrnivthS8C+x57TFa"
+      "c": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt",
+      "p": "J+/eWsEWsOljOS5norAUhV9Ygzub4Vf6dxLl71w06sA5c0QHllDeFv0n9UbCPuIL2CoBtLAfgKHAjPV7OjQ5lwSZcK+lfBD3kziiY1iUdjH6ZctAE9D/DdNfQ7a4RdurQDdKbGtihnnnOkHbllutCyV1TDLyvvqyExuwQrK2QkJulhfArQVcBE2txtbWSDjfAAtxraU7UpCMg0MoGRP4v6bm/50hntwTHc9zHegcDblADpMhTNMGh1jlRaCP00n8/Lj520YvZNd0dedynD5U97cfXFTP5C2fjVwwZKCnMZqN90CDAxNuCTA5fFaGTOv2MHMvZrqoVFriuaa+jbjpeU9ifGOWAI5B3HXMeMiSUL0a8c451ohT7zcENCr8jTW+uwA2ejcidMZsL19EaDZX9w0cirdKW5mRI/YPRuw6zBkg8SmXvSLArW0vz94pERcaE0uK9pK/qlgvplmC3/Rv92A9AkyQVeWBieyCoFaxoDL5hGMQaLLc6G3slgCzBUZHX1idNwLhfWAb5mHF97GmqcJf/joEVKuhPpK/mAICLWDUzYQS9gH4GJDlgAz1Bv5KdHY9jo/kB6IDvtxOKnTkl+vK2eK3L178vp02lufgv29fblxSFN9Kw2ujh1j8eCh8RC3RDyAI8qVbHiRDN2N4ANk0fIlc6Gq37D/VChxlTCzd+MmiBJRpqDvYFnz0r2kjuic/xATPQ+G5QoyI30ftXWgLzhGqgZ7S33rywiAP1EsgsoRwUojYvx0skfuasZd+F/Dj2o4RzX32JDcROAh6S49mcr+VumVbPx5tEcZwsQNb6d2yrzCQ6j3x5skaydyaMxhdsMtzb7BOWGWl1GrZ8AALr96R2bdP2vL4mxLtym2qZ/Hh2P5MrnivthS8C+x57TFa"
     }
   ],
   "sigs": [
@@ -143,11 +143,9 @@ While a "return" slate might look something like the following:
     }
   ]
 }
-
-
 ```
 
-The 'return' slate from the recipient to the originator is expected to be larger, as it must include the recipient's outputs/inputs and proofs (as the party who posts the transaction needs all of this information). However, compacting the first-leg journey allows for future possibilities that may have been more difficult in previous iterations of the slate format. For instance, an initiator taking Grin payments might be expected to be better equipped to receive Grin transactions. They could present the payer with an invoice transaction for the amount compacted to the size of a QR code, which the payer could scan, accept, and then post back to the invoicer's listening wallet infrastructure.
+The 'return' slate from the recipient to the originator is expected to be larger, as it must include the recipient's outputs/inputs and proofs (as the party who posts the transaction needs all of this information). However, compacting the slate at each stage of its journey allows for future possibilities that may have been more difficult in previous iterations of the slate format. For instance, an initiator taking Grin payments might be expected to be better equipped to receive Grin transactions. They could present the payer with an invoice transaction for the amount compacted to the size of a QR code, which the payer could scan, accept, and then post back to the invoicer's listening wallet infrastructure.
 
 Compacting the slate also acts as a minor privacy-enhancer by hiding the initiator's outputs from the other party.
 
@@ -168,8 +166,7 @@ Entries prefixed with `//` denote fields that may be omitted, as well as their d
 //"fee": "8000000",
 //"lock_hgt": 0,
 //"ttl": null,
-//"ins": null,
-//"outs": null,
+//"coms": null,
   "sigs": [
     {
       "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
@@ -195,7 +192,7 @@ A description of all fields and their meanings is as follows:
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction
 * `sigs` - An array of signature data for each participant. See [Signature Data](#signature_data)
 * `proof` - An optional payment proof request. See [Payment Proof Data](#payment_proof_data)
-* `ins`, `outs` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); is removed from the slate in favour of including top-level Slate fields that can be used to reconstruction the transaction object as expected by the Grin node. See [Transaction Object Fields](#transaction_object_fields)
+* `coms` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); is removed from the slate in favour of including this top-level Slate field that can be used to reconstruction the transaction object as expected by the Grin node. See [Transaction Object Fields](#transaction_object_fields)
 
 #### Status Codes
 
@@ -249,31 +246,26 @@ The V4 Version of the Slate defines its own representation of Grin's internal Tr
 
 The `tx` struct in a V4 Slate is removed, and is replaced instead by the following Top-Level fields. Wallets recreate the transaction object as expected by the Grin node from these fields before posting.
 
-* `outs` is an array containing the outputs that have been added to the slate. These will appear duing the I1 or S2 phases of a transction. Each entry includes:
-   * `com`: The output commitment, Base64 Encoded
-   * `prf`: The output's range proof, Base64 Encoded
-   * `fea`: The output features, assumed to be 'Plain' if omitted
-* `ins` is an array containing the inputs that have been added to the Slate. These will appear buring the S3 or I2 phases of a transaction. Each entry includes:
-   * `com`: The input commitment, Base64 Encoded
-   * `fea`: The input's features, assumed to be 'Plain' if omitted
+* `coms` is an array containing the outputs and inputs that have been added to the slate. These will appear duing the I1 or S2 phases of a transction. Each entry includes:
+   * `f`: The output features, assumed to be 'Plain' if omitted
+   * `c`: The output/input commitment, Base64 Encoded
+   * `p`: The output's range proof, Base64 Encoded. If this is included, the entry is assumed to be an output. If not, it is an input.
 
 When rebuilding the transaction kernel for the Node (done during the S3 or I3 phases,) the kernel is assumed to be 'Plain' unless the top-level `lock_hgt` field is non-zero. In this case, the kernel features becomes `HeightLocked` and the kernel's `lock_height` field is filled accordingly.
 
 In a typical S3 phase, these fields may look something like:
 
 ```
-  "inouts": [
+  "coms": [
     {
-      "com": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt",
-      "prf": "J+/eWsEWsOljOS5norAUhV9Ygzub4Vf6dxLl71w06sA5c0QHllDeFv0n9UbCPuIL2CoBtLAfgKHAjPV7OjQ5lwSZcK+lfBD3kziiY1iUdjH6ZctAE9D/DdNfQ7a4RdurQDdKbGtihnnnOkHbllutCyV1TDLyvvqyExuwQrK2QkJulhfArQVcBE2txtbWSDjfAAtxraU7UpCMg0MoGRP4v6bm/50hntwTHc9zHegcDblADpMhTNMGh1jlRaCP00n8/Lj520YvZNd0dedynD5U97cfXFTP5C2fjVwwZKCnMZqN90CDAxNuCTA5fFaGTOv2MHMvZrqoVFriuaa+jbjpeU9ifGOWAI5B3HXMeMiSUL0a8c451ohT7zcENCr8jTW+uwA2ejcidMZsL19EaDZX9w0cirdKW5mRI/YPRuw6zBkg8SmXvSLArW0vz94pERcaE0uK9pK/qlgvplmC3/Rv92A9AkyQVeWBieyCoFaxoDL5hGMQaLLc6G3slgCzBUZHX1idNwLhfWAb5mHF97GmqcJf/joEVKuhPpK/mAICLWDUzYQS9gH4GJDlgAz1Bv5KdHY9jo/kB6IDvtxOKnTkl+vK2eK3L178vp02lufgv29fblxSFN9Kw2ujh1j8eCh8RC3RDyAI8qVbHiRDN2N4ANk0fIlc6Gq37D/VChxlTCzd+MmiBJRpqDvYFnz0r2kjuic/xATPQ+G5QoyI30ftXWgLzhGqgZ7S33rywiAP1EsgsoRwUojYvx0skfuasZd+F/Dj2o4RzX32JDcROAh6S49mcr+VumVbPx5tEcZwsQNb6d2yrzCQ6j3x5skaydyaMxhdsMtzb7BOWGWl1GrZ8AALr96R2bdP2vL4mxLtym2qZ/Hh2P5MrnivthS8C+x57TFa"
-    }
-  ],
-  "ins": [
+      "c": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt",
+      "p": "J+/eWsEWsOljOS5norAUhV9Ygzub4Vf6dxLl71w06sA5c0QHllDeFv0n9UbCPuIL2CoBtLAfgKHAjPV7OjQ5lwSZcK+lfBD3kziiY1iUdjH6ZctAE9D/DdNfQ7a4RdurQDdKbGtihnnnOkHbllutCyV1TDLyvvqyExuwQrK2QkJulhfArQVcBE2txtbWSDjfAAtxraU7UpCMg0MoGRP4v6bm/50hntwTHc9zHegcDblADpMhTNMGh1jlRaCP00n8/Lj520YvZNd0dedynD5U97cfXFTP5C2fjVwwZKCnMZqN90CDAxNuCTA5fFaGTOv2MHMvZrqoVFriuaa+jbjpeU9ifGOWAI5B3HXMeMiSUL0a8c451ohT7zcENCr8jTW+uwA2ejcidMZsL19EaDZX9w0cirdKW5mRI/YPRuw6zBkg8SmXvSLArW0vz94pERcaE0uK9pK/qlgvplmC3/Rv92A9AkyQVeWBieyCoFaxoDL5hGMQaLLc6G3slgCzBUZHX1idNwLhfWAb5mHF97GmqcJf/joEVKuhPpK/mAICLWDUzYQS9gH4GJDlgAz1Bv5KdHY9jo/kB6IDvtxOKnTkl+vK2eK3L178vp02lufgv29fblxSFN9Kw2ujh1j8eCh8RC3RDyAI8qVbHiRDN2N4ANk0fIlc6Gq37D/VChxlTCzd+MmiBJRpqDvYFnz0r2kjuic/xATPQ+G5QoyI30ftXWgLzhGqgZ7S33rywiAP1EsgsoRwUojYvx0skfuasZd+F/Dj2o4RzX32JDcROAh6S49mcr+VumVbPx5tEcZwsQNb6d2yrzCQ6j3x5skaydyaMxhdsMtzb7BOWGWl1GrZ8AALr96R2bdP2vL4mxLtym2qZ/Hh2P5MrnivthS8C+x57TFa"
+    },
     {
-      "com": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt"
-    }
+      "c": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt"
+    },
     {
-      "com": "A43jdi0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrxer3f"
+      "c": "A43jdi0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrxer3f"
     }
   ],
 ```
@@ -297,9 +289,8 @@ In a typical S3 phase, these fields may look something like:
 *  The `participant_data` struct is renamed to `sigs`
 *  The `payment_proof` struct is renamed to `proof`
 * `payment_proof (proof)` may be omitted from the slate if it is None (null),
-* `tx` field becomes an Option
-* `tx` field is omitted from the slate if it is None (null)
-* `tx` field and enclosed inputs/outputs do not need to be included in the first leg of a transaction exchange. (All inputs/outputs naturally need to be present at time of posting).
+* The `tx` field is removed
+* The `coms` (commitments) array is added, from which the final transaction object can be reconstructed
 * `lock_height (lock_hgt)` becomes an Option
 * `lock_height (lock_hgt)` may be omitted from the slate if it is None (null), if `lock_height` is omitted, it's value is assumed to be 0
 
