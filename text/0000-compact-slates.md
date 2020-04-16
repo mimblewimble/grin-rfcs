@@ -274,7 +274,7 @@ In a typical S3 phase, these fields may look something like:
 
 #### Top-Level Slate Struct
 
-* The `version_info` struct is removed, and is replaced with `ver`, which has the format <version>:<block header version>
+* The `version_info` struct is removed, and is replaced with `ver`, which has the format "[version]:[block header version]"
 * `id` becomes a short-form base-57 encoding of the UUID
 * `amount` is renamed to `amt`
 * `amt` may be removed from the slate on the S2 phase of a transaction.
