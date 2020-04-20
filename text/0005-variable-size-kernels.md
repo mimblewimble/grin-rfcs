@@ -22,7 +22,7 @@ We were originally including both fee and lock_height on _every_ kernel in the b
 
 Each transaction kernel variant may have associated data. For example, height locked kernels include an associated lock height and non-coinbase kernels have an associated fee. Each kernel variant serializes to a fixed size in bytes but this size may be different for each kernel variants. This allows kernels to be serialized efficiently and provides flexibility to introduce new kernel variants that have additional associated data in the future.
 
-A plain kernel is 105 bytes compared to 113 bytes for a height locked kernel. Omitting the lock height from plain kernels saves approximately 7% in kernel storage costs.
+A plain kernel is 106 bytes compared to 114 bytes for a height locked kernel. Omitting the lock height from plain kernels saves approximately 7% in kernel storage costs.
 
 These changes affect serialization/deserialization of transaction kernels. Kernels are included in p2p messages for transactions and full blocks. Older nodes will serialize transaction kernels differently so nodes on the network need to be able to handle old and new serialization formats. The kernel MMR is also included in the txhashset state file during fast sync so nodes need to be able to support old and new formats of the state file.
 
@@ -34,12 +34,12 @@ These changes affect serialization/deserialization of transaction kernels. Kerne
 In protocol version 1 all transaction kernels are serialized using the same structure, regardless of kernel variant. All kernels include 8 bytes for the fee and 8 bytes for the lock_height, even if unused.
 
 ```
-features (1 byte) | fee (8 bytes) | lock_height (8 bytes) | excess (32 bytes) | signature (64 bytes)
+features (1 byte) | fee (8 bytes) | lock_height (8 bytes) | excess (33 bytes) | signature (64 bytes)
 
 00 | 00 00 00 00 01 f7 8a 40 | 00 00 00 00 00 00 00 00 | 08 b1 ... 22 d8 | 33 11 ... b9 69
 ```
 
-All kernels contain a feature byte to determine the variant. Kernels always include an excess commitment and signature, 32 bytes and 64 bytes respectively. The proposal is to have variant specific data follow the feature byte.
+All kernels contain a feature byte to determine the variant. Kernels always include an excess commitment and signature, 33 bytes and 64 bytes respectively. The proposal is to have variant specific data follow the feature byte.
 
 The initial feature byte would determine the number of subsequent bytes to read for variant specific data.
 
@@ -49,14 +49,14 @@ The initial feature byte would determine the number of subsequent bytes to read 
 02 (height locked): following 8 bytes for the fee and additional 8 bytes for the lock height.
 ```
 
-This would always be followed by a fixed 32 bytes for the excess commitment and 64 bytes for the kernel signature.
+This would always be followed by a fixed 33 bytes for the excess commitment and 64 bytes for the kernel signature.
 
 ### Protocol Version 2 (Current Version)
 
 Plain kernel, includes fee.
 
 ```
-features (1 byte) | fee (8 bytes) | excess (32 bytes) | signature (64 bytes)
+features (1 byte) | fee (8 bytes) | excess (33 bytes) | signature (64 bytes)
 
 00 | 00 00 00 00 01 f7 8a 40 | 08 b1 ... 22 d8 | 33 11 ... b9 69
 ```
@@ -64,7 +64,7 @@ features (1 byte) | fee (8 bytes) | excess (32 bytes) | signature (64 bytes)
 Coinbase kernel, no fee, no lock height.
 
 ```
-features (1 byte) | excess (32 bytes) | signature (64 bytes)
+features (1 byte) | excess (33 bytes) | signature (64 bytes)
 
 01 | 08 b2 ... 15 36 | 08 14 ... 98 96
 ```
@@ -72,7 +72,7 @@ features (1 byte) | excess (32 bytes) | signature (64 bytes)
 Height locked kernel, include fee and lock height.
 
 ```
-features (1 byte) | fee (8 bytes) | lock_height (8 bytes) | excess (32 bytes) | signature (64 bytes)
+features (1 byte) | fee (8 bytes) | lock_height (8 bytes) | excess (33 bytes) | signature (64 bytes)
 
 02 | 00 00 00 00 00 6a cf c0 | 00 00 00 00 00 00 04 14 | 09 4d ... bb 9a | 09 c7 ... bd 54
 ```
@@ -146,12 +146,12 @@ To minimize compatibility issues between wallets we have maintained this existin
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-Support for variable size kernels allows new kernel variants to be introduced in the future. One concrete example of this is [relative kernels][0]. Kernels with relative lock heights will have an associated reference to a prior kernel in addition to a lock height based on that prior kernel.
+Support for variable size kernels allows new kernel variants to be introduced in the future. One proposed kernel variant is [No Recent Duplicate (NRD) kernels][0]. Kernels with relative lock heights will have an associated reference to a prior kernel in addition to a lock height based on that prior kernel.
 
 # References
 [references]: #references
 
-* [RFC 0000-relative-kernels][0] [fix link once RFC merged]
+* [RFC 0000-nrd-kernels][0] [fix link once RFC merged]
 * [PR #2734 Support for variable size MMRs][1]
 * [PR #2824 Protocol version support][2]
 * [PR #2859 Kernel feature variants][3]
