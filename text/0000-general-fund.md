@@ -88,6 +88,14 @@ Everyone is welcome to weigh in on the merits of a funding request in the forum 
 * Be specific, professional and thorough with your proposal.
 * Be respectful and professional in your response to any feedback and criticism on the proposal thread 
 
+# Payout Process
+
+* At the time of payout, an amount of Bitcoin equivalent to the funding amount is paid out to an address provided by the funding requestor only.
+* The payout address should be provided to the core team by the requestor via a secure, verifiable channel (with cryptographic proof of identity if deemed necessary).
+* The exchange rate between BTC and the target currency is determined by the exchange rate at the time of the funding transaction, without exception.
+* To minimize the effects of currency fluctuations on accounting transparency, all payments should be performed at pre-arranged "signing parties" in which mu-sig holders sample the current exchange rate. The transaction should be created, signed and broadcast as quickly as possible, with the transaction and rate reported back to the core team for tracking.
+* Mu-sig holders will verify the address provided by the funding requestor several times during transction creation and broadcasting. However, the core team is not responsible for errors or incorrect addresses provided by the requestor.
+
 ## Transparency and processes
 
 The result of all funding decisions will be published in the meeting notes found in the [Grin Project Management](https://github.com/mimblewimble/grin-pm) repository.
