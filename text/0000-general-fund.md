@@ -64,7 +64,7 @@ There is no set template for what the contents of the funding request should inc
     * The expected deliverable, if applicable (for a research project, for instance)
 * Background information on the person making the request
 
-Amounts can be stated in local currency equivalents, if desired, with the exact Cryptocurrency amount determined by the rate at the time of transfer.
+Amounts should be stated using fiat currency equivalents, if desired, with the exact Cryptocurrency amount determined by the rate at the time of transfer. To assist others with conceptualizing the amounts, fiat currencies used should be reasonably global, e.g. USD, EUR, RMB, GBP.
 
 All community discussion on the funding request should be made within the forum thread itself, and the final decision on the request will be made by members of the core team at a public governance meeting, to take place at least one week after the request is made. The community is encouraged to display their support (or lack thereof) of a funding request at these Governance meetings, however the decision rests with the core team.
 
