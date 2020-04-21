@@ -1,6 +1,6 @@
 
 - Title: parallel-ibd
-- Authors: [Jasper van der Maarel](mailto:j@sper.dev)
+- Authors: [Jasper van der Maarel](mailto:j@sper.dev), [Antioch Peverell](apeverell@protonmail.com)
 - Start date: Apr 02, 2020
 - RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
 - Tracking issue: [Edit if merged with link to tracking github issue]
