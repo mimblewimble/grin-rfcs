@@ -193,24 +193,24 @@ A description of all fields and their meanings is as follows:
 
 ### Top-Level Slate Struct
 
-#### Always present
+##### Fields - Always present
 * `ver` - The slate version and supported block header version, separated by a `:`
 * `id` - The slate's UUID, encoded in Base-57 short form
 * `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status_codes)
 
-##### Optional, depending on State and transaction options
+##### Fields - Optional, depending on State and transaction options
 * `num_parts` - The number of participants in the transaction, assumed to be 2 if omitted
 * `amt` - The transaction amount as a string parseable as a u64. May be omitted on a return journey.
 * `fee` - The transaction fee as a string parseable as a u64. May be omitted on a return journey, except during an invoice transaction.
 * `lock_hgt` - Lock height of the transaction (for future use), assumed 0 if omitted
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction. Assumed 0 (no ttl) if omitted
 
-##### Always present
+##### Structs - Always present
 * `sigs` - An array of signature data for each participant. See [Signature Data](#signature_data)
 
-##### Optional, depending on state of transaction
+##### Structs - Optional, depending on state of transaction
 * `proof` - An optional payment proof request. See [Payment Proof Data](#payment_proof_data)
-* `coms` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); is removed from the slate in favour of including this top-level Slate field that can be used to reconstruction the transaction object as expected by the Grin node. See [Transaction Object Fields](#transaction_object_fields)
+* `coms` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); is removed from the slate in favour of including this top-level Slate field that can be used to reconstruction the transaction object as expected by the Grin node. See [Transaction Object Fields](#transaction-object-fields)
 
 #### Status Codes
 
@@ -348,18 +348,18 @@ All integer values are Big-Endian.
 | `ver.slate_version`        | u16    | 2        |                                                       |
 | `ver.block_header_version` | u16    | 2        |                                                       |
 | `id`                       | Uuid   | 16       | binary Uuid representation                            |
-| `sta`                      | u8     | 1        | See [Status Byte](#status_byte)                       |
-| Optional field status      | u8     | 1        | See [Optional Field Status](#optional_field_status)   |
+| `sta`                      | u8     | 1        | See [Status Byte](#status-byte)                       |
+| Optional field status      | u8     | 1        | See [Optional Field Status](#optional-field-status)   |
 | `num_parts`                | u8     | (1)      | If present                                            |
 | `amt`                      | u64    | (4)      | If present                                            |
 | `fee`                      | u64    | (4)      | If present                                            |
 | `lock_hgt`                 | u64    | (4)      | If present                                            |
 | `ttl`                      | u64    | (4)      | If present                                            |
 | `sigs` length              | u8     | 1        | Number of entries in the `sigs` struct                |
-| `sigs` entries             | struct | varies   | See [Sigs Entries](#sigs_entires)                     |
-| Optional struct status     | u8     | 1        | See [Optional Struct Status](#optional_struct_status) |
+| `sigs` entries             | struct | varies   | See [Sigs Entries](#sigs-entires)                     |
+| Optional struct status     | u8     | 1        | See [Optional Struct Status](#optional-struct-status) |
 | `coms` length              | u8     | (1)      | If present                                            |
-| `coms` entries             | struct | (varies) | If present. See [Coms Entries](#coms_entires)         |
+| `coms` entries             | struct | (varies) | If present. See [Coms Entries](#coms-entires)         |
 | `proof`                    | struct | (64)     | If present. See [Proof](#proof)                       |
 
 #### Status Byte
@@ -392,7 +392,7 @@ If the corresponding field for a bit is 1, the field is present and must be read
 Sigs Entries contains a length-prefixed array of entries corresponding to the `sigs` struct.
 
 | Field   | type   | len    | notes                       |
-| ------: | --------------- | --------------------------- |
+| ------: | ------ | ------ | --------------------------- |
 | length  | u8     | 1      |                             |
 | entries | struct | varies | array of entries, see below |
 
@@ -421,14 +421,14 @@ If the corresponding field for a struct is 1, the struct is present and must be 
 Coms Entries contains a length-prefixed array of entries corresponding to the `coms` struct.
 
 | Field   | type   | len    | notes                       |
-| ------: | --------------- | --------------------------- |
+| ------: | ------ | ------ | --------------------------- |
 | length  | u8     | 1      |                             |
 | entries | struct | varies | array of entries, see below |
 
 Each Coms Entry is structured as follows:
 
 | Field       | type       | len  | notes                                                 |
-| ----------: | -----------| ---- | ----------------------------------------------------- |
+| ----------: | ---------- | ---- | ----------------------------------------------------- |
 | output flag | u8         | 1    | If non-zero, entry is output and contains `p` (proof) |
 | `f`         | u8         | 1    | features (1 = Coinbase, 0 = Plain)                    |
 | `c`         | Commitment | 33   |                                                       |
