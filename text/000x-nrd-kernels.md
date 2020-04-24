@@ -218,6 +218,58 @@ These two "degrees of freedom", introducing multiple kernels and adjusting the k
 
 ----
 
+#### Payment Channel Implementation
+
+We can implement a limited form of "script" with alternate branches of the script via conflicting transactions.
+Delay can be introduced to a particular branch through the use of NRD kernels.
+A payment channel can be implemented as a series of state transitions, with alternate "close then settle" and "close then revoke" branches for each state.
+
+A relative height lock between a pair of NRD kernels can be used to introduce a delay on the "close then settle" branch.
+This delay allows the conflicting "close then revoke" branch to be taken for revocation of old invalid state.
+
+The "close then settle" branch is implemented as a pair of "close" and "settle" transactions -
+
+* _X -> Y, K<sub>nrd</sub>_
+* _Y -> [Z<sub>a</sub>, Z<sub>b</sub>], K<sub>nrd</sub>_
+
+The funds are held in the intermediate multi-party output _Y_ created by the initial "close" transaction.
+The subsequent "settle" transaction is delayed by the shared NRD kernel.
+The kernel offset on both transactions can be used to compensate for the shared NRD kernel.
+
+The conflicting "close then revoke" branch is as follows -
+
+* _X -> Y, K<sub>nrd</sub>_
+* _Y -> X, K_
+
+This branch begins with the same initial "close" transaction but followed by a "revoke" transaction that can be accepted immediately.
+An attempt to close old invalid state via "close then settle" can be observed on-chain and safely revoked via "close then revoke"
+_before_ the "settle" transaction can be accepted.
+
+We can extend this approach to prevent a channel participant from revoking their _own_ attempt to close old invalid state.
+This prevents a participant locking channel funds up indefinitely through repeated use of "close then revoke".
+
+We introduce "attribution" through endpoint (participant) specific close transactions and NRD kernels.
+
+* _X -> Y, K<sub>nrd_a</sub>_
+* _Y -> X, K<sub>nrd_b</sub>_
+
+Alice can attempt to close old invalid state but Bob can immediately revoke as Bob's revoke transaction uses a different NRD kernel.
+
+Alice cannot revoke here because Alice's revoke transaction is delayed via the shared NRD kernel.
+
+In fact if Alice were to attempt this the kernel excess would actually be revealed in the offset adjustments
+due to the transactions effectively cancelling each other out.
+[This needs explaining more clearly...]
+
+* _X -> Y, K<sub>nrd_a</sub>, offset<sub>1</sub>_
+* _Y -> X, K<sub>nrd_a</sub>, offset<sub>2</sub>_
+
+----
+
+#### Rollout/Deployment (HF3)
+
+[tbd]
+
 # Drawbacks
 [drawbacks]: #drawbacks
 
