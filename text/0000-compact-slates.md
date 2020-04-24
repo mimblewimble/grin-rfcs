@@ -356,10 +356,10 @@ All integer values are Big-Endian.
 | `lock_hgt`                 | u64    | (4)      | If present                                            |
 | `ttl`                      | u64    | (4)      | If present                                            |
 | `sigs` length              | u8     | 1        | Number of entries in the `sigs` struct                |
-| `sigs` entries             | struct | varies   | See [Sigs Entries](#sigs-entires)                     |
+| `sigs` entries             | struct | varies   | See [Sigs Entries](#sigs-entries)                     |
 | Optional struct status     | u8     | 1        | See [Optional Struct Status](#optional-struct-status) |
 | `coms` length              | u8     | (1)      | If present                                            |
-| `coms` entries             | struct | (varies) | If present. See [Coms Entries](#coms-entires)         |
+| `coms` entries             | struct | (varies) | If present. See [Coms Entries](#coms-entries)         |
 | `proof`                    | struct | (64)     | If present. See [Proof](#proof)                       |
 
 #### Status Byte
