@@ -1,5 +1,5 @@
 
-- Title: compact-slates
+- Title: Slate V4 (Compact Slates)
 - Authors: [Michael Cordner](mailto:yeastplume@protonmail.com)
 - Start date: April 3, 2020 
 - RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
@@ -195,7 +195,7 @@ A description of all fields and their meanings is as follows:
 
 ##### Fields - Always present
 * `ver` - The slate version and supported block header version, separated by a `:`
-* `id` - The slate's UUID, encoded in Base-57 short form
+* `id` - The slate's UUID, encoded as Base64
 * `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status_codes)
 
 ##### Fields - Optional, depending on State and transaction options
