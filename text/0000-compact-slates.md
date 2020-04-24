@@ -22,6 +22,7 @@ This RFC aims to define the contents of a streamlined "compact" slate by:
 * Removing all redundant or unnecessary Slate fields
 * Shortening the names of many Slate fields
 * Reducing the size of the Slate to be as minimal as possible at all phases of a transaction
+* Defining an optional highly-minimized binary format for Slate otuput
 
 Although this RFC doesn't address any particular transaction exchange methods that might be facilitated by this streamlining, one could envisage possibilities such as:
 
@@ -123,23 +124,23 @@ While a "return" slate might look something like the following:
 ```
 {
   "ver": "4:3",
+  "id": "7haE++9ZScKLOqM2jvRsjA==",
   "sta": "S2",
-  "id": "cmavTAjNm4NVztDwh4gdSrQ",
-  "coms": [
-    {
-      "c": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt",
-      "p": "J+/eWsEWsOljOS5norAUhV9Ygzub4Vf6dxLl71w06sA5c0QHllDeFv0n9UbCPuIL2CoBtLAfgKHAjPV7OjQ5lwSZcK+lfBD3kziiY1iUdjH6ZctAE9D/DdNfQ7a4RdurQDdKbGtihnnnOkHbllutCyV1TDLyvvqyExuwQrK2QkJulhfArQVcBE2txtbWSDjfAAtxraU7UpCMg0MoGRP4v6bm/50hntwTHc9zHegcDblADpMhTNMGh1jlRaCP00n8/Lj520YvZNd0dedynD5U97cfXFTP5C2fjVwwZKCnMZqN90CDAxNuCTA5fFaGTOv2MHMvZrqoVFriuaa+jbjpeU9ifGOWAI5B3HXMeMiSUL0a8c451ohT7zcENCr8jTW+uwA2ejcidMZsL19EaDZX9w0cirdKW5mRI/YPRuw6zBkg8SmXvSLArW0vz94pERcaE0uK9pK/qlgvplmC3/Rv92A9AkyQVeWBieyCoFaxoDL5hGMQaLLc6G3slgCzBUZHX1idNwLhfWAb5mHF97GmqcJf/joEVKuhPpK/mAICLWDUzYQS9gH4GJDlgAz1Bv5KdHY9jo/kB6IDvtxOKnTkl+vK2eK3L178vp02lufgv29fblxSFN9Kw2ujh1j8eCh8RC3RDyAI8qVbHiRDN2N4ANk0fIlc6Gq37D/VChxlTCzd+MmiBJRpqDvYFnz0r2kjuic/xATPQ+G5QoyI30ftXWgLzhGqgZ7S33rywiAP1EsgsoRwUojYvx0skfuasZd+F/Dj2o4RzX32JDcROAh6S49mcr+VumVbPx5tEcZwsQNb6d2yrzCQ6j3x5skaydyaMxhdsMtzb7BOWGWl1GrZ8AALr96R2bdP2vL4mxLtym2qZ/Hh2P5MrnivthS8C+x57TFa"
-    }
-  ],
   "sigs": [
     {
-      "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
-      "nonce": "A1MbUjB5g4fjZ3fTYATVBA8TADHGG77D8gHpzbQTl/IE"
+      "xs": "AiBno0pVPUubLtWtdNQWPEQJyKj6zSWrsC61dO2oywEj",
+      "nonce": "AtTavgG37tyTUqsjPZyYCIRonukDjXCqefeR5FQy3j17"
     },
     {
-      "xs": "AjfgKMS6AUzSDXKlKPMkxcbn4REDxynzFCxYARkalE6X",
-      "nonce": "A0djq2m2GOAtzWAtYi6EOoKbUc1li3x6OYSd3NH/52XT",
-      "part": "02Xn/9HcnYQ5enyLZc1Rm4I6hC5iLWDNLeAYtmmrY0c42DUkSXj1uLulQXfT+7Br/VhXD/r8kIQNMKrTpYmxew=="
+      "xs": "Ai+QL7rLMl1GC6UmKoMyy9bzsSJPasLzLWzIzjFA1eMY",
+      "nonce": "AzXE1/dlRaI66gEiTGrQF4h3v4zORFG7Hi5r7/xb0p1k",
+      "part": "ZJ3SW/zvay4eu1FEzoy/d4gX0GpMIgHqOqJFZffXxDXD7Bt8tc8dVq/p9n0Wei38mVtKTuMaSMNXBSo49TQ06A=="
+    }
+  ],
+  "coms": [
+    {
+      "c": "CfdTW8wOTGEsSs76A90BTpRzo9gixyfx+jJrhvIt//ua",
+      "p": "geV4V00oPT+QSZBppHhVTqm0EhHTApAUBG+CZIsPdQ1Qj4gzGlPs6KbgVrqssYpcDzLCjDchIHZSd9WLX0QPJwXh2Tt7yA+kep7vkAMgsjjtjkYpDMk+twTztQkNyTPoaFmMbBf2WTxkuT2ohFZqcNS9mnEkW5gwuC/WEDilO9AD+d7lqbApZV0nbkp1zquE6oL9+017gyliTKl4LhYzM8zaRCacaTFjLaWhJAEvR5c0RH37qiLEu1NsVqN3Ik0FXbVqHPoqB5EduDYeB375MKTAdyr+n0XCpj5oKKq+9qXRd3ftbOeB8m+H3IiGX0UTDDU7ackUYF++1J2d+FzswxxGine/eMyizkq6yqq/hkwqp2Lht+N0zgogY6aA67x+w9C03f+ZMxfvSatxBwf392AcLZ2liM/Px45CbeIyoUpotoI+AbN6Rfvip5zIbZBAy0R4+KBxXVeGjrw1hdcvpdH2AROItob2rc7pU3eHZaQj/dcfv2CAkNP7bF3cKuQe55gBCuhFKsneD8xayoX9MwtNcvWgQVrm9hw+1K7OsHrYMJ9fe59JpPC74s0vaE0zSDWpDkh3sf8ru6ADR8CsRoBo2YPVZrCX39sPtMqd7SFS66s/tO8Jn9rDqljDmvdjtRiD28UZitwAZEKxXCU5PztkcKC5FWQdIcVviNdVo5nCYI+GXaMhQDhuTqo5pftGlwjeB1aIDX3K3rxdB8wHuvtQefBTuzKGxW0iumYF2/Uy7oHOwVBCEI+BzJHLmqttYy0gDIgrNZoxTVTl8U8vugVOsk6+MYDvC9LRFQZ7hgheRiCnE1wVka7BCKYsk30h26RwV6LKWLkM0n6HBVX9gIKtNvnyWaC1C7o2KnsTNxo+G3K44LYhc2+hAG3vOaFGP14a"
     }
   ]
 }
@@ -152,21 +153,27 @@ Compacting the slate also acts as a minor privacy-enhancer by hiding the initiat
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
-### Slate Definition
+### Slate Definition - JSON
 
-Entries prefixed with `//` denote fields that may be omitted, as well as their default assumed values
+Entries prefixed with `//` denote fields that may be omitted, as well as their default assumed values. `#` denotes a comment for the purposes of illustration.
+
+Field ordering is canonical.
 
 ```
 {
+# These fields are always present
   "ver": "4:3",
-  "sta": "S1",
-//"num_parts: 2,
   "id": "mavTAjNm4NVztDwh4gdSrQ",
-//"amt": "1000000000",
+  "sta": "S1",
+
+# These fields may or may not be present
+//"num_parts: 2,
 //"fee": "8000000",
+//"amt": "1000000000",
 //"lock_hgt": 0,
 //"ttl": null,
-//"coms": null,
+
+# Sigs is always present
   "sigs": [
     {
       "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
@@ -174,6 +181,10 @@ Entries prefixed with `//` denote fields that may be omitted, as well as their d
       "nonce": "A1MbUjB5g4fjZ3fTYATVBA8TADHGG77D8gHpzbQTl/IE"
     }
   ]
+
+# These structs may or may not be present
+
+//"coms": null,
 //"proof": null,
 }
 ```
@@ -182,15 +193,22 @@ A description of all fields and their meanings is as follows:
 
 ### Top-Level Slate Struct
 
+#### Always present
 * `ver` - The slate version and supported block header version, separated by a `:`
-* `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status_codes)
-* `num_parts` - The option number of participants in the transaction, assumed to be 2 if omitted
 * `id` - The slate's UUID, encoded in Base-57 short form
+* `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status_codes)
+
+##### Optional, depending on State and transaction options
+* `num_parts` - The number of participants in the transaction, assumed to be 2 if omitted
 * `amt` - The transaction amount as a string parseable as a u64. May be omitted on a return journey.
 * `fee` - The transaction fee as a string parseable as a u64. May be omitted on a return journey, except during an invoice transaction.
 * `lock_hgt` - Lock height of the transaction (for future use), assumed 0 if omitted
-* `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction
+* `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction. Assumed 0 (no ttl) if omitted
+
+##### Always present
 * `sigs` - An array of signature data for each participant. See [Signature Data](#signature_data)
+
+##### Optional, depending on state of transaction
 * `proof` - An optional payment proof request. See [Payment Proof Data](#payment_proof_data)
 * `coms` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); is removed from the slate in favour of including this top-level Slate field that can be used to reconstruction the transaction object as expected by the Grin node. See [Transaction Object Fields](#transaction_object_fields)
 
@@ -247,7 +265,7 @@ The V4 Version of the Slate defines its own representation of Grin's internal Tr
 The `tx` struct in a V4 Slate is removed, and is replaced instead by the following Top-Level fields. Wallets recreate the transaction object as expected by the Grin node from these fields before posting.
 
 * `coms` is an array containing the outputs and inputs that have been added to the slate. These will appear duing the I1 or S2 phases of a transction. Each entry includes:
-   * `f`: The output features, assumed to be 'Plain' if omitted
+   * `f`: The output features, assumed to be 'Plain' if omitted. 0 denotes Plain, 1 denotes Coinbase
    * `c`: The output/input commitment, Base64 Encoded
    * `p`: The output's range proof, Base64 Encoded. If this is included, the entry is assumed to be an output. If not, it is an input.
 
@@ -275,24 +293,22 @@ In a typical S3 phase, these fields may look something like:
 #### Top-Level Slate Struct
 
 * The `version_info` struct is removed, and is replaced with `ver`, which has the format "[version]:[block header version]"
-* `id` becomes a short-form base-57 encoding of the UUID
+* `id` becomes a short-form base-64 encoding of the UUID binary
+* `sta` is added, with possible values S1|S2|S3|I1|I2|I3|NA
+* `num_participants` is renamed to `num_parts`
+* `num_parts` may be omitted from the slate. If omitted its value is assumed to be 2.
 * `amount` is renamed to `amt`
 * `amt` may be removed from the slate on the S2 phase of a transaction.
-* `fees` may be removed from the slate on the S2 phase of a transaction. It may also be ommited when intiating an I1 transaction, and added during the I2 phase.
-* `height` is removed
+* `fee` may be removed from the slate on the S2 phase of a transaction. It may also be ommited when intiating an I1 transaction, and added during the I2 phase.
 * `lock_height` is renamend to `lock_hgt`
-* `num_participants` is renamed to `num_parts`
-* `num_participants (num_parts)` becomes an Option
-* `num_participants (num_parts)` may be omitted from the slate if it is None (null), if `num_participants` is omitted, it's value is assumed to be 2
+* `lock_hgt` may be omitted from the slate. If omitted its value is assumed to be 0 (not height locked)
 * `ttl_cutoff_height` is renamed to `ttl`
-* `ttl_cutoff_height (ttl)` may be omitted from the slate if it is None (null),
+* `ttl` may be omitted from the slate. If omitted its value is assumed to be 0 (no TTL).
 *  The `participant_data` struct is renamed to `sigs`
+* `tx` is removed 
+*  The `coms` (commitments) array is added, from which the final transaction object can be reconstructed
 *  The `payment_proof` struct is renamed to `proof`
-* `payment_proof (proof)` may be omitted from the slate if it is None (null),
-* The `tx` field is removed
-* The `coms` (commitments) array is added, from which the final transaction object can be reconstructed
-* `lock_height (lock_hgt)` becomes an Option
-* `lock_height (lock_hgt)` may be omitted from the slate if it is None (null), if `lock_height` is omitted, it's value is assumed to be 0
+* `proof` may be omitted from the slate if it is None (null),
 
 #### Participant Data (`sigs`)
 
@@ -305,7 +321,7 @@ In a typical S3 phase, these fields may look something like:
 * `part` becomes Base64 encoded instead of a hex string
 * `message` is removed
 * `message_sig` is removed
-* `id` is removed. Parties can identify themselves via private keys stored in the transaction context
+* `id` is removed. Parties can identify themselves via the keys stored in their transaction context
 
 #### Payment Proof Data (`proof`)
 
@@ -320,6 +336,114 @@ In a typical S3 phase, these fields may look something like:
 ### Pretty-Printing
 
 The examples above are pretty-printed for reference, but all Slates should remove all whitespace before sending to other parties. The whitespace and formatting can be re-added anywhere the Slate needs to be presented for debugging.
+
+### Slate Definition - Binary
+
+while the JSON slate remains the first-order slate definition, and should be accepted by all wallets and APIs, wallets should also be have the ability to transform slates between the JSON format and a reduced binary format suitable for armoring or direct transfer. The definition of the V4 binary slate format follows.
+
+All integer values are Big-Endian.
+
+| Slate V4 Field             | type   | len      | notes                                                 |
+| ------------------------:  | ------ | -------- | ----------------------------------------------------- |
+| `ver.slate_version`        | u16    | 2        |                                                       |
+| `ver.block_header_version` | u16    | 2        |                                                       |
+| `id`                       | Uuid   | 16       | binary Uuid representation                            |
+| `sta`                      | u8     | 1        | See [Status Byte](#status_byte)                       |
+| Optional field status      | u8     | 1        | See [Optional Field Status](#optional_field_status)   |
+| `num_parts`                | u8     | (1)      | If present                                            |
+| `amt`                      | u64    | (4)      | If present                                            |
+| `fee`                      | u64    | (4)      | If present                                            |
+| `lock_hgt`                 | u64    | (4)      | If present                                            |
+| `ttl`                      | u64    | (4)      | If present                                            |
+| `sigs` length              | u8     | 1        | Number of entries in the `sigs` struct                |
+| `sigs` entries             | struct | varies   | See [Sigs Entries](#sigs_entires)                     |
+| Optional struct status     | u8     | 1        | See [Optional Struct Status](#optional_struct_status) |
+| `coms` length              | u8     | (1)      | If present                                            |
+| `coms` entries             | struct | (varies) | If present. See [Coms Entries](#coms_entires)         |
+| `proof`                    | struct | (64)     | If present. See [Proof](#proof)                       |
+
+#### Status Byte
+
+Encodes slate status (`sta`) field, mapped as follows:
+
+| State          | value |
+| -------------: | ----- |
+| `NA` (Unknown) | 0     |
+| `S1`           | 1     |
+| `S2`           | 2     |
+| `S3`           | 3     |
+| `I1`           | 4     |
+| `I2`           | 5     |
+| `I3`           | 6     |
+
+#### Optional Field Status
+
+A bit field that denotes the presence or absence of the optional slate fields. Each bit is
+mapped to particular slate field as follows:
+
+| Bit   | 7 | 6 | 5 | 4      | 3          | 2     | 1     | 0           |
+| ----: | - | - | - | ------ | ---------- | ----- | ----- | ----------- |
+| field |   |   |   | `ttl`  | `lock_hgt` | `fee` | `amt` | `num_parts` |
+
+If the corresponding field for a bit is 1, the field is present and must be read accordingly.
+
+#### Sigs Entries
+
+Sigs Entries contains a length-prefixed array of entries corresponding to the `sigs` struct.
+
+| Field   | type   | len    | notes                       |
+| ------: | --------------- | --------------------------- |
+| length  | u8     | 1      |                             |
+| entries | struct | varies | array of entries, see below |
+
+Each Sigs Entry is structured as follows:
+
+| Field         | type                 | len  | notes                              |
+| ------------: | -------------------- | ---- | ---------------------------------- |
+| complete flag | u8                   | 1    | If non-zero, entry contains `part` |
+| `xs`          | secp256k1 Public Key | 32   |                                    |
+| `nonce`       | secp256k1 Public Key | 32   |                                    |
+| `part`        | secp256k1 AggSig     | (64) | If present                         |
+
+#### Optional Struct Status
+
+A bit field that denotes the presence or absence of the optional slate structures. Each bit is
+mapped to particular slate structure as follows:
+
+| Bit    | 7 | 6 | 5 | 4 | 3 | 2 | 1       | 0     |
+| -----: | - | - | - | - | - | - | ------- | ----- |
+| struct |   |   |   |   |   |   | `proof` | `coms`|
+
+If the corresponding field for a struct is 1, the struct is present and must be read accordingly.
+
+#### Coms Entries
+
+Coms Entries contains a length-prefixed array of entries corresponding to the `coms` struct.
+
+| Field   | type   | len    | notes                       |
+| ------: | --------------- | --------------------------- |
+| length  | u8     | 1      |                             |
+| entries | struct | varies | array of entries, see below |
+
+Each Coms Entry is structured as follows:
+
+| Field       | type       | len  | notes                                                 |
+| ----------: | -----------| ---- | ----------------------------------------------------- |
+| output flag | u8         | 1    | If non-zero, entry is output and contains `p` (proof) |
+| `f`         | u8         | 1    | features (1 = Coinbase, 0 = Plain)                    |
+| `c`         | Commitment | 33   |                                                       |
+| `p`         | Rangeproof | 675  | If present                                            |
+
+#### Proof
+
+Optional Payment proof, with fields as follows
+
+| Proof Field | type               | len  | notes                                |
+| ----------: | ------------------ | ---- | ------------------------------------ |
+| `saddr`     | ed25519 Public Key | 32   |                                      |
+| `raddr`     | ed25519 Public Key | 32   |                                      |
+| rsig flag   | u8                 | 1    | If non-zero, `rsig` field is present |
+| `rsig`      | ed25519 EDCSA Sig  | (64) | If present                           |
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
