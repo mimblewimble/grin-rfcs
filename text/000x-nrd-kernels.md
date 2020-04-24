@@ -255,6 +255,8 @@ We introduce "attribution" through endpoint (participant) specific close transac
 
 Alice can attempt to close old invalid state but Bob can immediately revoke as Bob's revoke transaction uses a different NRD kernel.
 
+**[Q. Do we need additional kernel here for security?]**
+
 Alice cannot revoke here because Alice's revoke transaction is delayed via the shared NRD kernel.
 
 In fact if Alice were to attempt this the kernel excess would actually be revealed in the offset adjustments
