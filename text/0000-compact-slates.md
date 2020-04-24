@@ -422,7 +422,7 @@ Coms Entries contains a length-prefixed array of entries corresponding to the `c
 
 | Field   | type   | len    | notes                       |
 | ------: | ------ | ------ | --------------------------- |
-| length  | u8     | 1      |                             |
+| length  | u16    | 2      |                             |
 | entries | struct | varies | array of entries, see below |
 
 Each Coms Entry is structured as follows:
