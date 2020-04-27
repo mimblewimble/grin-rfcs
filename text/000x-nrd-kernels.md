@@ -220,51 +220,35 @@ These two "degrees of freedom", introducing multiple kernels and adjusting the k
 
 #### Payment Channel Implementation
 
-We can implement a limited form of "script" with alternate branches of the script via conflicting transactions.
-Delay can be introduced to a particular branch through the use of NRD kernels.
-A payment channel can be implemented as a series of state transitions, with alternate "close then settle" and "close then revoke" branches for each state.
+NRD kernels can be used to delay alternate "branches" of conflicting transactions, enabling a payment channel implementation.
 
-A relative height lock between a pair of NRD kernels can be used to introduce a delay on the "close then settle" branch.
-This delay allows the conflicting "close then revoke" branch to be taken for revocation of old invalid state.
+A payment channel is represented as a single multi-party output. Each channel state transition is represented as a pair of "close" and "settle" transactions with an NRD kernel enforcing a delay between them. Funds are held in an intermediate multi-party output while delayed. The NRD kernel is reused across both transactions by adjusting kernel offsets.
 
-The "close then settle" branch is implemented as a pair of "close" and "settle" transactions -
+_X -> Y, K<sub>nrd_a</sub>_
+_Y -> [Z<sub>a</sub>, Z<sub>b</sub>], K<sub>nrd_a</sub>_
 
-* _X -> Y, K<sub>nrd</sub>_
-* _Y -> [Z<sub>a</sub>, Z<sub>b</sub>], K<sub>nrd</sub>_
+Alice closes the channel _X_ with their "close" transaction. After a delay Alice can "settle" the funds out to Alice and Bob.
 
-The funds are held in the intermediate multi-party output _Y_ created by the initial "close" transaction.
-The subsequent "settle" transaction is delayed by the shared NRD kernel.
-The kernel offset on both transactions can be used to compensate for the shared NRD kernel.
+_Attribution_ of "close" and "settle" transactions for each channel state is provided through endpoint specific NRD kernels. This allows the other party to "revoke" old invalid state without the NRD delay.
 
-The conflicting "close then revoke" branch is as follows -
+Each channel state transition involves a new pair of "close" and "settle" transactions for each participant along with a shared "revoke" transaction. The "revoke" transaction simply spends funds back to the channel output and a plain kernel suffices.
 
-* _X -> Y, K<sub>nrd</sub>_
-* _Y -> X, K_
+_[Z<sub>a</sub>, Z<sub>b</sub>] -> X, K<sub>rev</sub>_
 
-This branch begins with the same initial "close" transaction but followed by a "revoke" transaction that can be accepted immediately.
-An attempt to close old invalid state via "close then settle" can be observed on-chain and safely revoked via "close then revoke"
-_before_ the "settle" transaction can be accepted.
+Alice attempts to close old invalid state (_Y<sub>1</sub>_):
 
-We can extend this approach to prevent a channel participant from revoking their _own_ attempt to close old invalid state.
-This prevents a participant locking channel funds up indefinitely through repeated use of "close then revoke".
+_X -> Y<sub>1</sub>, K<sub>nrd_a1</sub>_
 
-We introduce "attribution" through endpoint (participant) specific close transactions and NRD kernels.
+Bob can immediately revoke and close current state (_Y<sub>1</sub> -> Y<sub>2</sub>_):
 
-* _X -> Y, K<sub>nrd_a</sub>_
-* _Y -> X, K<sub>nrd_b</sub>_
+_Y<sub>1</sub> -> ~[Z<sub>a</sub>, Z<sub>b</sub>]~, K<sub>nrd_b1</sub>_
+_~[Z<sub>a</sub>, Z<sub>b</sub>]~ -> ~X~, K<sub>rev_1</sub>_
+_~X~ -> Y<sub>2</sub>, K<sub>nrd_b2</sub>_
+_=> Y<sub>1</sub> -> Y<sub>2</sub>, [K<sub>nrd_b1</sub>, K<sub>rev_1</sub>, K<sub>nrd_b2</sub>]_
 
-Alice can attempt to close old invalid state but Bob can immediately revoke as Bob's revoke transaction uses a different NRD kernel.
+Bob publishes only the final cut-through multi-kernel transaction (_Y<sub>1</sub> -> Y<sub>2</sub>_). This avoids the individual settle transaction being revealed.
 
-**[Q. Do we need additional kernel here for security?]**
-
-Alice cannot revoke here because Alice's revoke transaction is delayed via the shared NRD kernel.
-
-In fact if Alice were to attempt this the kernel excess would actually be revealed in the offset adjustments
-due to the transactions effectively cancelling each other out.
-[This needs explaining more clearly...]
-
-* _X -> Y, K<sub>nrd_a</sub>, offset<sub>1</sub>_
-* _Y -> X, K<sub>nrd_a</sub>, offset<sub>2</sub>_
+Neither party can self-revoke without introducing the NRD delay. The other party always has the opportunity to revoke first. Self-revocation cannot be used to lock funds up indefinitely.
 
 ----
 
