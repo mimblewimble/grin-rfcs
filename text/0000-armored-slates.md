@@ -27,7 +27,7 @@ Armoring Grin transaction slates means to encode a traditional transaction slate
 
 Armored slates have a simple construction. A human readable framing is at the beginning and end of each armored slate (e.g. `BEGINSLATEPACK.` and `. ENDSLATEPACK.`). The framing also contains periods `.` to denote when the payload begins and ends as well as when the message is over.
 
-The payload itself is the serialized slate encoded with a `SimpleBase58Check` encoding similar to bitcoin addresses. This encoding method includes an error check code to ensure that the slate contents have not been accidentally corrupted in transit. Finally the payload is split up into words to make armored slates friendlier for human readability.
+The payload itself is the serialized slate encoded with a `SimpleBase58Check` encoding similar to bitcoin addresses. This encoding method includes an error check code to ensure that the slate contents have not been accidentally corrupted in transit. Finally, the payload is split up into words to make armored slates friendlier for human readability.
 
 Example armored slate:
 ```
@@ -163,7 +163,7 @@ The steps below walk through encoding a serialized slate as an armored slate.
 
 ```
 // Start with bytes of a binary serialized slate as serialized_slate_bytes
-// Generate the four byte error code by taking the first four bytes of a
+// Generate the four byte error code by taking the first four_bytes of a
 // double sha256 hash of the binary serialized slate bytes
 let error_check_bytes = sha256(sha256(serialized_slate_bytes))[0..4];
 
@@ -254,7 +254,7 @@ Ok(slate_bytes)
 In this example we will armor an actual slate according to the rules of this RFC.
 
 1. Generate a binary serialized slate stored in a file with `grin-wallet send -m binfile`
-    - This ouputs a file storing the binary serialized slate
+    - The output is a file storing the binary serialized slate
     - The actual bytes are:
       - `[0, 4, 0, 3, 120, 208, 191, 149, 249, 149, 79, 56, 136, 148, 187, 170, 211, 119, 39, 247, 1, 6, 0, 0, 0, 0, 79, 177, 0, 64, 0, 0, 0, 0, 0, 106, 207, 192, 1, 0, 3, 76, 29, 45, 39, 151, 148, 10, 25, 152, 182, 250, 220, 26, 214, 165, 170, 78, 219, 67, 226, 40, 14, 174, 252, 163, 152, 227, 230, 70, 144, 167, 118, 3, 127, 107, 57, 241, 153, 184, 238, 46, 194, 208, 17, 34, 81, 196, 164, 197, 36, 103, 240, 37, 206, 237, 207, 114, 236, 126, 108, 86, 11, 89, 115, 120, 0]`
 
@@ -284,11 +284,11 @@ In this example we will armor an actual slate according to the rules of this RFC
   - Frame the output from the previous step with a header and footer and periods
     - `BEGINSLATEPACK. 2bcEgR296VvB73o fxoXt1UMnugeTi6 EKgt7oCbJjhp6nq A2ZrqewY92upA4g 1eFTsqrZM4Vqk7b w7NtUYFdNL5x5GJ FEGbjtWXtEVHrMy cWHKYiPHnYn5DBE d8vuBdRpcT4QN8b fGuBWR5Tt2BYMMo yR. ENDSLATEPACK.`
 
-5. The steps should be reversible to return the original binary serialzied slate bytes
+5. The steps should be reversible to return the original binary serialized slate bytes
 
 ## Handling Edge Cases
 
-Armored slates need to be able to represent any possible valid slate if they are to be considered as a default transaction method. Some slates that contain many outputs, for example a mining pool payout, could potentially become so large that they exceed the maximum armored slate size. In these cases armored slate payloads may require multiple messages. Slate payloads that would exceed the `MESSAGE_BREAK` parameter are split into multiple armored messages:
+Armored slates need to be able to represent any possible valid slate if they are to be considered as a default transaction method. Some slates that contain many outputs, for example a mining pool payout, could potentially become so large that they exceed the maximum armored slate size. In these cases, armored slate payloads may require multiple messages. Slate payloads that would exceed the `MESSAGE_BREAK` parameter are split into multiple armored messages:
 
 `BEGINSLATEPACK 1/2. tqoYgqt6NfMLieE ... W2uuNA6RSPineET. ENDSLATEPACK 1/2.`
 
