@@ -128,10 +128,6 @@ While a "return" slate might look something like the following:
   "sta": "S2",
   "sigs": [
     {
-      "xs": "AiBno0pVPUubLtWtdNQWPEQJyKj6zSWrsC61dO2oywEj",
-      "nonce": "AtTavgG37tyTUqsjPZyYCIRonukDjXCqefeR5FQy3j17"
-    },
-    {
       "xs": "Ai+QL7rLMl1GC6UmKoMyy9bzsSJPasLzLWzIzjFA1eMY",
       "nonce": "AzXE1/dlRaI66gEiTGrQF4h3v4zORFG7Hi5r7/xb0p1k",
       "part": "ZJ3SW/zvay4eu1FEzoy/d4gX0GpMIgHqOqJFZffXxDXD7Bt8tc8dVq/p9n0Wei38mVtKTuMaSMNXBSo49TQ06A=="
@@ -173,7 +169,7 @@ Field ordering is canonical.
 //"lock_hgt": 0,
 //"ttl": null,
 
-# Sigs is always present
+# Sigs is always present with at least one entry
   "sigs": [
     {
       "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
@@ -206,7 +202,7 @@ A description of all fields and their meanings is as follows:
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction. Assumed 0 (no ttl) if omitted
 
 ##### Structs - Always present
-* `sigs` - An array of signature data for each participant. See [Signature Data](#signature_data)
+* `sigs` - An array of signature data containing the signature information of the last participant. See [Signature Data](#signature_data)
 
 ##### Structs - Optional, depending on state of transaction
 * `proof` - An optional payment proof request. See [Payment Proof Data](#payment_proof_data)
@@ -239,6 +235,8 @@ The `sigs` struct contains is comprised of an array of participant signature dat
    * `xs` - Base64 encoded short form public key on the secp256k1 curve representing the public blind excess for the participants inputs/outputs. The first party to add signature data must also generate and add a random kernel offset to this value.
    * `part` - Base64 encoded Aggregated (Schnorr) secp2561k signature represeting the participant's partial sig. May be omitted if the participant does not yet have enough data to create it
    * `nonce` - Base64 encoded The public key of the nonce chosen by the participant for their partial signature
+
+The other party's `sig` entry is removed from the slate before sending it back to the transaction initiator during the S2 and I2 phases.
 
 #### Payment Proof Data
 
