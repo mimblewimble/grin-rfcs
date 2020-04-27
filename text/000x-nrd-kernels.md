@@ -224,7 +224,7 @@ NRD kernels can be used to delay alternate "branches" of conflicting transaction
 
 A payment channel is represented as a single multi-party output. Each channel state transition is represented as a pair of "close" and "settle" transactions with an NRD kernel enforcing a delay between them. Funds are held in an intermediate multi-party output while delayed. The NRD kernel is reused across both transactions by adjusting kernel offsets.
 
-_X -> Y, K<sub>nrd_a</sub>_
+_X -> Y, K<sub>nrd_a</sub>_ \
 _Y -> [Z<sub>a</sub>, Z<sub>b</sub>], K<sub>nrd_a</sub>_
 
 Alice closes the channel _X_ with their "close" transaction. After a delay Alice can "settle" the funds out to Alice and Bob.
@@ -241,12 +241,12 @@ _X -> Y<sub>1</sub>, K<sub>nrd_a1</sub>_
 
 Bob can immediately revoke and close current state (_Y<sub>1</sub> -> Y<sub>2</sub>_):
 
-_Y<sub>1</sub> -> ~[Z<sub>a</sub>, Z<sub>b</sub>]~, K<sub>nrd_b1</sub>_
-_~[Z<sub>a</sub>, Z<sub>b</sub>]~ -> ~X~, K<sub>rev_1</sub>_
-_~X~ -> Y<sub>2</sub>, K<sub>nrd_b2</sub>_
+_Y<sub>1</sub> -> ~[Z<sub>a</sub>, Z<sub>b</sub>]~, K<sub>nrd_b1</sub>_ \
+_~[Z<sub>a</sub>, Z<sub>b</sub>]~ -> ~X~, K<sub>rev_1</sub>_ \
+_~X~ -> Y<sub>2</sub>, K<sub>nrd_b2</sub>_ \
 _=> Y<sub>1</sub> -> Y<sub>2</sub>, [K<sub>nrd_b1</sub>, K<sub>rev_1</sub>, K<sub>nrd_b2</sub>]_
 
-Bob publishes only the final cut-through multi-kernel transaction (_Y<sub>1</sub> -> Y<sub>2</sub>_). This avoids the individual settle transaction being revealed.
+Bob publishes only the final cut-through multi-kernel transaction (_Y<sub>1</sub> -> Y<sub>2</sub>_). Bob's individual settle transaction is not revealed.
 
 Neither party can self-revoke without introducing the NRD delay. The other party always has the opportunity to revoke first. Self-revocation cannot be used to lock funds up indefinitely.
 
