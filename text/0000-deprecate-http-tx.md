@@ -14,6 +14,12 @@ Deprecating HTTP(S) as a transaction method helps preserve privacy for Grin user
 # Motivation
 [motivation]: #motivation
 
+Previously, Grin slates could be exchanged over HTTP(S) as a convenient method to take the required steps to exchange slate data between wallets to build a transaction. This method was commonly adopted by exchanges and services who already had infrastructure in place to configure wallets to listen for incoming HTTPS requests.
+
+Unfortunately, while convenient, this method of exchange requires the sender and receiver to reveal their IP addresses to route the network packets. This is bad for user privacy because without taking extra obfuscating steps, an IP address can often be traced to an individual.
+
+While steps can be taken to obfuscate a users true IP (like using a VPN), it is undesirable for a privacy-preserving technology like Grin to rely on this method for conventional use. It does not seem natural for users that are concerned about their privacy enough to use a technology like Grin to at the same time accept that their IP address is revealed when exchanging Grin with many services.
+
 Deprecating HTTP(S) provides a few benefits:
   - User experience is improved by not having to manage firewall settings like port forwarding to accept Grin transactions from most users
   - Wallet developer experience is improved with the need to support fewer transaction methods
@@ -25,25 +31,17 @@ The overall expected outcome is a privacy improvement for users that may otherwi
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-Previously, Grin slates could be exchanged over HTTP(S) as a convenient method to take the required steps to exchange slate data between wallets to build a transaction. This method was commonly adopted by exchanges and services who already had infrastructure in place to configure wallets to listen for incoming HTTPS requests.
-
-Unfortunately, while convenient, this method of exchange requires the sender and receiver to reveal their IP addresses to route the network packets. This is bad for user privacy because without taking extra obfuscating steps, an IP address can often be traced to an individual.
-
-While steps can be taken to obfuscate a users true IP (like using a VPN), it is undesirable for a privacy-preserving technology like Grin to rely on this method for conventional use. It does not seem natural for users that are concerned about their privacy enough to use a technology like Grin to at the same time accept that their IP address is revealed when exchanging Grin with many services.
-
 Deprecating HTTP(S) means that the old method of sending and listening for transactions over traditional HTTP(S) is no longer supported to help preserve privacy for Grin users who may not be aware of the risk to privacy using HTTP(S) poses.
 
 This reduces the overall number of transaction transport methods that need to be supported but requires that all services and wallets that previously only accepted/sent HTTP(S) transactions to upgrade at least to the version this RFC is implemented in to support their users.
 
-For the average user this means that to send or receive Grin they can use the Tor method, armored slate string exchange or file exchange. It is no longer possible to send and receive Grin via the HTTP(S) method without custom configuration.
+For the average user this means that to send or receive Grin they can use the Tor method or file exchange (potentially to be replaced with armored slates). It is no longer possible to send and receive Grin via the HTTP(S) method without custom configuration.
 
 For wallet developers, it is no longer necessary to be concerned about managing HTTP(S) endpoints. All transactions will be conducted via Tor or asynchronous exchange of armored slate strings or files. It can no longer be assumed that the counterparty in the transaction supports HTTP(S).
 
 Previously, some services like exchanges _only_ supported HTTP(S) Grin transactions. This change impacts these services significantly.
 
-Tor is the closest replacement to HTTP(S), but for some services the use of Tor is unacceptable. These services will will need to refactor the user flow to allow supporting armored slate strings instead, as the HTTP(S) method is no longer supported by default for `grin-wallet`.
-
-This up-front cost should be worth the reduced complexity required in supporting the alternative transaction methods as well as the privacy benefits provided to the users of the services.
+Tor is the closest replacement to HTTP(S), but for some services the use of Tor is unacceptable, not possible or not allowed. These services will will need to refactor the user flow to allow supporting file (potentially to be be replaced with armored slates) transactions instead, as the HTTP(S) method is no longer supported by default for `grin-wallet`.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -55,6 +53,18 @@ The technical and implementation details for this RFC are simple: no new feature
 - `grin-wallet listen` no longer accepts `-e` argument
 
 - `grin-wallet send -d` provides a strong warning if the destination is not a valid .onion address
+
+## Deprecation Timeline
+
+If this RFC is adopted before v4.0.0 release:
+
+- With v4.0.0 a public announcement will be made to notify the Grin ecosystem that HTTP(S) will be fully deprecated in v5.0.0
+
+- With v4.0.0 wallets will warn users that their privacy may be at risk when sending or listening via HTTP(S) and that the method will be deprecated in next major release
+
+- With v5.0.0 wallets will warn users when sending transactions via HTTP(S)
+
+- With v5.0.0 wallets will only accept connections from localhost by default.
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -74,14 +84,14 @@ The technical and implementation details for this RFC are simple: no new feature
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-Instead of looking for a best possible transaction method, this proposal comes down to favoring the least worst transaction methods by removing the worst transaction methods from the perspectives of privacy, security, censorship resistance and minimalism.
+By not deprecating HTTP(S) an opportunity is lost to provide an additional layer of privacy to present and future Grin supporters.
 
-In this case, HTTP(S) is the least desirable transaction method. It actively jeopardizes user privacy when services only accept payments via HTTP(S), can jeapardize security when not configured properly, is not censorship resistant as IPs can be blocked and domains can be seized and is not minimal once the additional configuration requirements are factored in.
-
-By not deprecating HTTP(S) we lose an opportunity to provide an additional layer of privacy to present and future Grin supporters. While there will likely be a fair amount of friction to the adoption of this RFC, most will agree it is something that will need to be done eventually and will only become more difficult to do with time.
+Deprecating HTTP only while continuing to support HTTPS would not likely be viable. As currently implemented, removing HTTP support would also mean removing HTTPS support. Allowing HTTPS while blocking HTTP may beyond the scope of `grin-wallet` configuration.
 
 # Prior art
 [prior-art]: #prior-art
+
+A [general comparison of transaction methods for Grin](https://github.com/mimblewimble/grin-pm/issues/283) is available and provides many considerations when weighing possible transaction methods, including HTTP(S).
 
 Bitcoin previously used a similar transaction method (send to IP) which was deprecated as well for many valid reasons. While the arguments presented in this RFC are primarily derived from the objective of delivering privacy, there are other good reasons previously discussed in the context of Bitcoin. These discussions can be found partially in the [bitcointalk post](https://bitcointalk.org/index.php?topic=9334.0) accompanying the [PR](https://github.com/bitcoin/bitcoin/pull/253) that removed this feature for Bitcoin.
 
@@ -96,6 +106,8 @@ Note that Grin is not quite in the same position as Bitcoin was when they deprec
 
 - Will deprecating HTTP(S) grow or reduce adoption in the next 6-12 months? 1-3 years? 5-10 years?
 
+- Should sending to non-onion addresses via `grin-wallet send -d` be blocked once HTTP(S) is fully deprecated or should it only prompt a warning as written above?
+
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
@@ -107,3 +119,5 @@ This RFC along with others can eventually support ecosystem convergence around a
 https://bitcointalk.org/index.php?topic=9334.0
 
 https://github.com/bitcoin/bitcoin/pull/253
+
+https://github.com/mimblewimble/grin-pm/issues/283
