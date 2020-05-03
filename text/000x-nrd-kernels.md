@@ -254,7 +254,25 @@ Neither party can self-revoke without introducing the NRD delay. The other party
 
 #### Rollout/Deployment (HF3)
 
-[tbd]
+The following rules will be enforced during rollout as part of HF3 -
+
+__Assumptions:__
+
+1. HF3 will occur at height 786,240.
+2. Blocks at height >= 786,240 will have block version >= 4.
+
+__Block Specific Rules:__
+
+1. Blocks containing NRD kernel(s) are only be valid if block version >= 4.
+2. Blocks will be subject to NRD relative lock height rules.
+
+__Transaction Specific Rules:__
+
+1. Transactions containing NRD kernel(s) will not be accepted by either txpool or stempool, nor will they be broadcast to other nodes unless the block header 60 blocks earlier (relative to current chain head) is at version >= 4.
+2. The txpool and stempool will not accept a transaction containing an NRD kernel if the NRD relative lock height rule would prevent the transaction being included in the next block.
+3. A miner selecting transactions from the txpool must not select any transactions that contain NRD kernels unless the block header 60 blocks earlier (relative to current chain head) is at version >= 4.
+
+The 60 block period provides a window of safety beyond the block at HF3 to minimize any disruption from a fork/rewind scenario close to the HF3 block height. This avoids the situation where a transaction is accepted into the txpool (and broadcast) at HF3 and then a forked block is mined at a height prior to HF3.
 
 # Drawbacks
 [drawbacks]: #drawbacks
