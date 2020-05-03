@@ -268,11 +268,8 @@ __Block Specific Rules:__
 
 __Transaction Specific Rules:__
 
-1. Transactions containing NRD kernel(s) will not be accepted by either txpool or stempool, nor will they be broadcast to other nodes unless the block header 60 blocks earlier (relative to current chain head) is at version >= 4.
-2. The txpool and stempool will not accept a transaction containing an NRD kernel if the NRD relative lock height rule would prevent the transaction being included in the next block.
-3. A miner selecting transactions from the txpool must not select any transactions that contain NRD kernels unless the block header 60 blocks earlier (relative to current chain head) is at version >= 4.
-
-The 60 block period provides a window of safety beyond the block at HF3 to minimize any disruption from a fork/rewind scenario close to the HF3 block height. This avoids the situation where a transaction is accepted into the txpool (and broadcast) at HF3 and then a forked block is mined at a height prior to HF3.
+1. Transactions containing NRD kernel(s) will not be relayed or broadcast unless the current chain head version >= 4.
+2. Transaction selection from the txpool when building a candidate block, must not select any transactions containing NRD kernel(s) unless the block version >= 4.
 
 # Drawbacks
 [drawbacks]: #drawbacks
