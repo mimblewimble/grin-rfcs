@@ -166,8 +166,9 @@ Field ordering is canonical.
 //"num_parts: 2,
 //"fee": "8000000",
 //"amt": "1000000000",
-//"lock_hgt": 0,
+//"feat": 0,
 //"ttl": null,
+//"offset": 0,
 
 # Sigs is always present with at least one entry
   "sigs": [
@@ -182,6 +183,7 @@ Field ordering is canonical.
 
 //"coms": null,
 //"proof": null,
+//"feat_args": null
 }
 ```
 
@@ -198,7 +200,8 @@ A description of all fields and their meanings is as follows:
 * `num_parts` - The number of participants in the transaction, assumed to be 2 if omitted
 * `amt` - The transaction amount as a string parseable as a u64. May be omitted on a return journey.
 * `fee` - The transaction fee as a string parseable as a u64. May be omitted on a return journey, except during an invoice transaction.
-* `lock_hgt` - Lock height of the transaction (for future use), assumed 0 if omitted
+* `feat` - Kernel Features ID. If omitted, kernel is assumed to be Plain (0). If set to 1 or otherwise, any arguments required for a
+particular kernel feature set will be found in the `feat_args` struct.
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction. Assumed 0 (no ttl) if omitted
 * `offset` - Transaction offset, which can optionally be added during S3 and I3 to ensure the underlying transaction can be rebuilt and posted
 from the slate. To be used when delayed transaction posting is desired.
@@ -209,6 +212,7 @@ from the slate. To be used when delayed transaction posting is desired.
 ##### Structs - Optional, depending on state of transaction
 * `proof` - An optional payment proof request. See [Payment Proof Data](#payment_proof_data)
 * `coms` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); is removed from the slate in favour of including this top-level Slate field that can be used to reconstruction the transaction object as expected by the Grin node. See [Transaction Object Fields](#transaction-object-fields)
+* `feat_args` - Optional arguments for Kernel features.
 
 #### Status Codes
 
@@ -269,7 +273,7 @@ The `tx` struct in a V4 Slate is removed, and is replaced instead by the followi
    * `c`: The output/input commitment, Base64 Encoded
    * `p`: The output's range proof, Base64 Encoded. If this is included, the entry is assumed to be an output. If not, it is an input.
 
-When rebuilding the transaction kernel for the Node (done during the S3 or I3 phases,) the kernel is assumed to be 'Plain' unless the top-level `lock_hgt` field is non-zero. In this case, the kernel features becomes `HeightLocked` and the kernel's `lock_height` field is filled accordingly.
+When rebuilding the transaction kernel for the Node (done during the S3 or I3 phases,) the kernel is assumed to be 'Plain' unless the top-level `feat` field is non-zero. In this case, the kernel features are filled accorginly with any needed values from the `feat_args` struct.
 
 In a typical S3 phase, these fields may look something like:
 
@@ -288,6 +292,19 @@ In a typical S3 phase, these fields may look something like:
   ],
 ```
 
+#### Feature arguments
+
+Depending on the chosen Kernel Feature set, `feat_args` may be populated with
+arguments specific to the kernel. The exact arguments that will be present here
+depend on the value of 'feat'. Currently, the only supported kernel is HeightLocked
+(value 1) which has the arguments:
+
+```
+"feat_args": {
+   "lock_hgt": "2343234" // For HeightLocked kernels (1)
+}
+```
+
 ### Changes from existing V3 Slate
 
 #### Top-Level Slate Struct
@@ -300,14 +317,15 @@ In a typical S3 phase, these fields may look something like:
 * `amount` is renamed to `amt`
 * `amt` may be removed from the slate on the S2 phase of a transaction.
 * `fee` may be removed from the slate on the S2 phase of a transaction. It may also be ommited when intiating an I1 transaction, and added during the I2 phase.
-* `lock_height` is renamend to `lock_hgt`
-* `lock_hgt` may be omitted from the slate. If omitted its value is assumed to be 0 (not height locked)
+* `lock_height` is removed
+* `feat` is added to the slate denoting the Kernel feature set. May be omitted from the slate if kernel is plain
 * `ttl_cutoff_height` is renamed to `ttl`
 * `ttl` may be omitted from the slate. If omitted its value is assumed to be 0 (no TTL).
 *  The `participant_data` struct is renamed to `sigs`
 * `tx` is removed 
 *  The `coms` (commitments) array is added, from which the final transaction object can be reconstructed
 *  The `payment_proof` struct is renamed to `proof`
+*  The `feat_args` struct is added, which may be populated for non-Plain kernels
 * `proof` may be omitted from the slate if it is None (null),
 * `offset` is added, which may be optionally included during S3 and I3 to ensure the transaction can be re-built entirely
 from the slate information. Used for delayed transaction posting.
@@ -355,7 +373,7 @@ All integer values are Big-Endian.
 | `num_parts`                | u8             | (1)      | If present                                            |
 | `amt`                      | u64            | (4)      | If present                                            |
 | `fee`                      | u64            | (4)      | If present                                            |
-| `lock_hgt`                 | u64            | (4)      | If present                                            |
+| `feat`                     | u8             | (1)      | If present                                            |
 | `ttl`                      | u64            | (4)      | If present                                            |
 | `offset`                   | BlindingFactor | (33)     | If present                                            |
 | `sigs` length              | u8             | 1        | Number of entries in the `sigs` struct                |
@@ -364,6 +382,7 @@ All integer values are Big-Endian.
 | `coms` length              | u8             | (1)      | If present                                            |
 | `coms` entries             | struct         | (varies) | If present. See [Coms Entries](#coms-entries)         |
 | `proof`                    | struct         | (64)     | If present. See [Proof](#proof)                       |
+| `feat_args` entries        | struct         | (varies) | If present. See [Feature Args](#feature-args)         |
 
 #### Status Byte
 
@@ -384,9 +403,9 @@ Encodes slate status (`sta`) field, mapped as follows:
 A bit field that denotes the presence or absence of the optional slate fields. Each bit is
 mapped to particular slate field as follows:
 
-| Bit   | 7 | 6 | 5        | 4      | 3          | 2     | 1     | 0           |
-| ----: | - | - | -------- | ------ | ---------- | ----- | ----- | ----------- |
-| field |   |   | `offset` | `ttl`  | `lock_hgt` | `fee` | `amt` | `num_parts` |
+| Bit   | 7 | 6 | 5        | 4      | 3      | 2     | 1     | 0           |
+| ----: | - | - | -------- | ------ | ------ | ----- | ----- | ----------- |
+| field |   |   | `offset` | `ttl`  | `feat` | `fee` | `amt` | `num_parts` |
 
 If the corresponding field for a bit is 1, the field is present and must be read accordingly.
 
@@ -448,10 +467,20 @@ Optional Payment proof, with fields as follows
 | rsig flag   | u8                 | 1    | If non-zero, `rsig` field is present |
 | `rsig`      | ed25519 EDCSA Sig  | (64) | If present                           |
 
+#### Feature Args
+
+Optional feature args, presence or absence of which should be determined by the
+value of the `feat` field. Currently only present if `feat` is 1.
+
+|       Field | type  | len | notes                                |
+| ----------: | ----- | --  | ------------------------------------ |
+| `lock_hgt`  | u64   | 4   | Lock height, present if `feat` is 1  |
+|
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
 - Is block header version needed?
+- Nerd Kernels need to be included
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
