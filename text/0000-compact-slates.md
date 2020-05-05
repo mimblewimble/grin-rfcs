@@ -191,7 +191,7 @@ A description of all fields and their meanings is as follows:
 
 ##### Fields - Always present
 * `ver` - The slate version and supported block header version, separated by a `:`
-* `id` - The slate's UUID, encoded as Base64
+* `id` - The slate's UUID, standard hex-string encoding for UUIDs
 * `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status_codes)
 
 ##### Fields - Optional, depending on State and transaction options
@@ -200,6 +200,8 @@ A description of all fields and their meanings is as follows:
 * `fee` - The transaction fee as a string parseable as a u64. May be omitted on a return journey, except during an invoice transaction.
 * `lock_hgt` - Lock height of the transaction (for future use), assumed 0 if omitted
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction. Assumed 0 (no ttl) if omitted
+* `offset` - Transaction offset, which can optionally be added during S3 and I3 to ensure the underlying transaction can be rebuilt and posted
+from the slate. To be used when delayed transaction posting is desired.
 
 ##### Structs - Always present
 * `sigs` - An array of signature data containing the signature information of the last participant. See [Signature Data](#signature_data)
@@ -307,6 +309,8 @@ In a typical S3 phase, these fields may look something like:
 *  The `coms` (commitments) array is added, from which the final transaction object can be reconstructed
 *  The `payment_proof` struct is renamed to `proof`
 * `proof` may be omitted from the slate if it is None (null),
+* `offset` is added, which may be optionally included during S3 and I3 to ensure the transaction can be re-built entirely
+from the slate information. Used for delayed transaction posting.
 
 #### Participant Data (`sigs`)
 
@@ -341,24 +345,25 @@ while the JSON slate remains the first-order slate definition, and should be acc
 
 All integer values are Big-Endian.
 
-| Slate V4 Field             | type   | len      | notes                                                 |
-| ------------------------:  | ------ | -------- | ----------------------------------------------------- |
-| `ver.slate_version`        | u16    | 2        |                                                       |
-| `ver.block_header_version` | u16    | 2        |                                                       |
-| `id`                       | Uuid   | 16       | binary Uuid representation                            |
-| `sta`                      | u8     | 1        | See [Status Byte](#status-byte)                       |
-| Optional field status      | u8     | 1        | See [Optional Field Status](#optional-field-status)   |
-| `num_parts`                | u8     | (1)      | If present                                            |
-| `amt`                      | u64    | (4)      | If present                                            |
-| `fee`                      | u64    | (4)      | If present                                            |
-| `lock_hgt`                 | u64    | (4)      | If present                                            |
-| `ttl`                      | u64    | (4)      | If present                                            |
-| `sigs` length              | u8     | 1        | Number of entries in the `sigs` struct                |
-| `sigs` entries             | struct | varies   | See [Sigs Entries](#sigs-entries)                     |
-| Optional struct status     | u8     | 1        | See [Optional Struct Status](#optional-struct-status) |
-| `coms` length              | u8     | (1)      | If present                                            |
-| `coms` entries             | struct | (varies) | If present. See [Coms Entries](#coms-entries)         |
-| `proof`                    | struct | (64)     | If present. See [Proof](#proof)                       |
+| Slate V4 Field             | type           | len      | notes                                                 |
+| ------------------------:  | ------         | -------- | ----------------------------------------------------- |
+| `ver.slate_version`        | u16            | 2        |                                                       |
+| `ver.block_header_version` | u16            | 2        |                                                       |
+| `id`                       | Uuid           | 16       | binary Uuid representation                            |
+| `sta`                      | u8             | 1        | See [Status Byte](#status-byte)                       |
+| Optional field status      | u8             | 1        | See [Optional Field Status](#optional-field-status)   |
+| `num_parts`                | u8             | (1)      | If present                                            |
+| `amt`                      | u64            | (4)      | If present                                            |
+| `fee`                      | u64            | (4)      | If present                                            |
+| `lock_hgt`                 | u64            | (4)      | If present                                            |
+| `ttl`                      | u64            | (4)      | If present                                            |
+| `offset`                   | BlindingFactor | (33)     | If present                                            |
+| `sigs` length              | u8             | 1        | Number of entries in the `sigs` struct                |
+| `sigs` entries             | struct         | varies   | See [Sigs Entries](#sigs-entries)                     |
+| Optional struct status     | u8             | 1        | See [Optional Struct Status](#optional-struct-status) |
+| `coms` length              | u8             | (1)      | If present                                            |
+| `coms` entries             | struct         | (varies) | If present. See [Coms Entries](#coms-entries)         |
+| `proof`                    | struct         | (64)     | If present. See [Proof](#proof)                       |
 
 #### Status Byte
 
@@ -379,9 +384,9 @@ Encodes slate status (`sta`) field, mapped as follows:
 A bit field that denotes the presence or absence of the optional slate fields. Each bit is
 mapped to particular slate field as follows:
 
-| Bit   | 7 | 6 | 5 | 4      | 3          | 2     | 1     | 0           |
-| ----: | - | - | - | ------ | ---------- | ----- | ----- | ----------- |
-| field |   |   |   | `ttl`  | `lock_hgt` | `fee` | `amt` | `num_parts` |
+| Bit   | 7 | 6 | 5        | 4      | 3          | 2     | 1     | 0           |
+| ----: | - | - | -------- | ------ | ---------- | ----- | ----- | ----------- |
+| field |   |   | `offset` | `ttl`  | `lock_hgt` | `fee` | `amt` | `num_parts` |
 
 If the corresponding field for a bit is 1, the field is present and must be read accordingly.
 
