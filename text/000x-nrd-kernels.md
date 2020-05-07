@@ -325,7 +325,9 @@ One outstanding question is what use cases are not covered by NRD kernels. We be
 
 * https://lists.launchpad.net/mimblewimble/msg00025.html ("triggers" post by Ruben Somsen)
 * https://lists.launchpad.net/mimblewimble/msg00635.html ("No Such Kernel Recently" post by John Tromp)
-* https://gist.github.com/antiochp/78fe813b6c2c0612593f8747390a8aae (NSKR based payment channel design)
+* https://lists.launchpad.net/mimblewimble/msg00635.html ("Duplicate Kernels" post by Antioch)
+* https://lists.launchpad.net/mimblewimble/msg00636.html ("NRD based payment channel" post by John Tromp)
+* https://gist.github.com/antiochp/78fe813b6c2c0612593f8747390a8aae (earlier NSKR based payment channel design)
 * https://en.bitcoin.it/wiki/Timelock#CheckSequenceVerify
 * https://en.bitcoin.it/wiki/CheckSequenceVerify
 * https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki
