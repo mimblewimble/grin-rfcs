@@ -271,6 +271,14 @@ __Transaction Specific Rules:__
 1. Transactions containing NRD kernel(s) will not be relayed or broadcast unless the current chain head version >= 4.
 2. Transaction selection from the txpool when building a candidate block, must not select any transactions containing NRD kernel(s) unless the block version >= 4.
 
+#### Weights & Fees
+
+For the purpose of block weight calculations, each kernel is treated as 3 "weight units" where each unit is approximately 32 bytes. This covers the excess commitment and the associated signature common across all kernel variants.
+The additional 2 bytes of "relative height" on NRD kernels are ignored for the purposes of calculating block weight.
+
+For the purpose of minimum transaction relay fees all kernels are treated as 1 "fee unit" with each unit being 1 milligrin.
+We plan to revisit the entire transaction fee structure in a future RFC. Kernel variants may affect the transaction fee calculations differently in the future.
+
 # Drawbacks
 [drawbacks]: #drawbacks
 
