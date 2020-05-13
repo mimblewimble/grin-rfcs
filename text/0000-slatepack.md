@@ -173,10 +173,12 @@ The payload that will be armored is a binary serialized `SlatePack` JSON object.
 
 Armor uses specific `Headers`, `Footers` and `Periods` as `Framing` to contain its `Payload`.
 
+(Note that the regex for `header` and `footer` below need to reviewed and verified before before FCP)
+
 - `Header`
   - Supported Headers:
     - `BEGINSLATEPACK`
-    - `ENDSLATEPACK X/Y`
+    - `BEGINSLATEPACK X/Y`
       - `Y` is the total number of message parts for a given multipart message and `X` is the number of the current partial message
       - Only used if there is more than one message part
   - Regex: `^[>\n\r\t ]*BEGINSLATEPACK[>\n\r\t ]*([1-9]\/[1-9])*$`
@@ -357,12 +359,15 @@ Beam handles this problem by...
   - `sp1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
   - `g1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
 
+- Should we still use double-sha256 in `SimpleBase58Check` or take the opportunity to use a BCH or CRC code which may be more appropriate for error detection on slatepack messages?
+  - Is additional engineering desired here if there will always be further validation of the slate payload before a spend can occur?
+
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
 - Extended to support future modes (payment channel, payjoin etc)
 
-- An entirely different standard could be adopted in the future if interactive transactions become the default, eliminating the need for SlatePack
+- An entirely different standard could be adopted in the future if non-interactive transactions become the default, eliminating the need for SlatePack
   - It might be possible for a new standard to remain compatible with existing `SlatePack Addresses` to allow a more generic `Grin Address`
 
 # References
