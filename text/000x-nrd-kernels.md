@@ -10,7 +10,7 @@
 # Summary
 [summary]: #summary
 
-Grin supports a limited implementation of "relative timelocks" with "No Recent Duplicate" (NRD) transaction kernels. Transactions can be constructed such that they share duplicate kernels. An NRD kernel instance is not valid within a specified number of blocks relative to a prior duplicate instance of the kernel. A minimum number of blocks must therefore exist between two instances of an NRD kernel. This provides a relative timelock between transactions.
+Grin supports a limited implementation of "relative timelocks" with "No Recent Duplicate" (NRD) transaction kernels. Transactions can be constructed such that they share duplicate kernels. An NRD kernel instance is not valid within a specified number of blocks relative to a prior duplicate instance of the kernel. A minimum height difference must therefore exist between two instances of an NRD kernel. This provides the relative height lock between transactions.
 
 # Motivation
 [motivation]: #motivation
@@ -46,7 +46,7 @@ An instance of the NRD kernel in the _same_ block will invalidate the block as t
 NRD lock heights of 0 are invalid and it is never valid for two duplicate instances of the _same_ NRD kernel to exist in the same block.
 
 It follows that two transactions containing duplicate instances of the same NRD kernel cannot be accepted as valid in the transaction pool concurrently.
-"First one wins" semantics apply when validating transactions containing NRD kernels in a similar way to resolving the spending of unspent outputs.
+Current txpool behavior is "first one wins" semantics when receiving transactions and this will also apply to transactions containing NRD kernels. We plan to revisit this in a future "fee" RFC and plan to investigate the feasibility of introducing "replace by fee" semantics at that time.
 
 Grin supports "rewind" back through recent history to handle fork and chain reorg scenarios. 1 week of full blocks are maintained on each node and up to 10080 blocks can be rewound. To support relative lock heights each node must maintain an index over sufficient kernel history for an _additional_ 10080 blocks beyond this rewind horizon. Each node should maintain 2 weeks of kernel history in the local NRD kernel index. This will cover the pathological case of a 1 week rewind and the validation of a 1 week long relative lock beyond that. The primary use case is for revocable payment channel close operations. We believe a 7 day period is more than sufficient for this. We do not require long, extended revocation periods and limiting this to a few days is preferable to keep the cost of verification low. The need for these revocable transactions to be included on chain should be low as these are only required in a non-cooperative situation but where required we want to minimize the cost of verification which must be performed across all nodes.
 
@@ -97,7 +97,7 @@ Each kernel variant includes feature specific data -
 }
 ```
 
-Note that NRD kernels require no additional data beyond that required for absolute height locked kernels. The reference to the previous kernel is _implicit_ and based on a duplicate kernel excess commitment.
+Note that NRD kernels require no additional data beyond that required for absolute height locked kernels. The reference to the previous kernel is _implicit_ and based on a duplicate NRD kernel excess commitment.
 
 The maximum supported NRD _relative_height_ is 10080 (7 days) and the relative height can be safely and conveniently represented as a `u16` (2 bytes). This differs from absolute lock heights where `u64` (8 bytes) is necessary to specify the lock height.
 
@@ -263,13 +263,17 @@ __Assumptions:__
 
 __Block Specific Rules:__
 
-1. Blocks containing NRD kernel(s) are only be valid if block version >= 4.
-2. Blocks will be subject to NRD relative lock height rules.
+1. A block containing NRD kernel(s) is only be valid if block version >= 4.
+2. A block containing NRD kernel(s) is only valid if all defined relative lock height rules are met.
+3. Two duplicate NRD kernel instances cannot exist in the same block.
 
 __Transaction Specific Rules:__
 
-1. Transactions containing NRD kernel(s) will not be relayed or broadcast unless the current chain head version >= 4.
-2. Transaction selection from the txpool when building a candidate block, must not select any transactions containing NRD kernel(s) unless the block version >= 4.
+1. A transaction containing NRD kernel(s) will not be accepted by the local txpool/stempool unless chain head version >= 4.
+2. A transaction containing NRD kernel(s) will not be relayed or broadcast to other nodes unless chain head version >= 4.
+3. A transaction containing NRD kernel(s) will not be accepted by the local txpool/stempool unless it meets the defined relative lock height rule in the next block.
+4. A transaction containing NRD kernel(s) will not be relayed or broadcast to other nodes unless it meets the defined relative lock height rule in the next block.
+5. Two duplicate NRD kernel instances cannot exist in the txpool/stempool concurrently.
 
 #### Weights & Fees
 
