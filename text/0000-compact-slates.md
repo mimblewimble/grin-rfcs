@@ -161,6 +161,7 @@ Field ordering is canonical.
   "ver": "4:3",
   "id": "mavTAjNm4NVztDwh4gdSrQ",
   "sta": "S1",
+  "off": "0gKWSQAAAADTApZJAAAAANQClkkAAAAA1QKWSQAAAAA=",
 
 # These fields may or may not be present
 //"num_parts: 2,
@@ -168,7 +169,6 @@ Field ordering is canonical.
 //"amt": "1000000000",
 //"feat": 0,
 //"ttl": null,
-//"offset": 0,
 
 # Sigs is always present with at least one entry
   "sigs": [
@@ -195,6 +195,8 @@ A description of all fields and their meanings is as follows:
 * `ver` - The slate version and supported block header version, separated by a `:`
 * `id` - The slate's UUID, standard hex-string encoding for UUIDs
 * `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status_codes)
+* `off` - The running transaction offset total, base-64 encoded. All parties select a random offset at the beginning of the transaction and subtract their offset from the excess value of their outputs.
+They then subtract the value of the inputs from the offset when committing to inputs, updating the total offset before sending to the next stage.
 
 ##### Fields - Optional, depending on State and transaction options
 * `num_parts` - The number of participants in the transaction, assumed to be 2 if omitted
@@ -203,7 +205,6 @@ A description of all fields and their meanings is as follows:
 * `feat` - Kernel Features ID. If omitted, kernel is assumed to be Plain (0). If set to 1 or otherwise, any arguments required for a
 particular kernel feature set will be found in the `feat_args` struct.
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction. Assumed 0 (no ttl) if omitted
-* `offset` - Transaction offset, which can optionally be added during S3 and I3 to ensure the underlying transaction can be rebuilt and posted
 from the slate. To be used when delayed transaction posting is desired.
 
 ##### Structs - Always present
@@ -238,7 +239,7 @@ An entry in the `sigs` array is as follows:
 ```
 
 The `sigs` struct contains is comprised of an array of participant signature data, with each entry comprising:
-   * `xs` - Base64 encoded short form public key on the secp256k1 curve representing the public blind excess for the participants inputs/outputs. The first party to add signature data must also generate and add a random kernel offset to this value.
+   * `xs` - Base64 encoded short form public key on the secp256k1 curve representing the public blind excess for the participants outputs subtracted from each party's part of the offset.
    * `part` - Base64 encoded Aggregated (Schnorr) secp2561k signature represeting the participant's partial sig. May be omitted if the participant does not yet have enough data to create it
    * `nonce` - Base64 encoded The public key of the nonce chosen by the participant for their partial signature
 
@@ -327,8 +328,7 @@ depend on the value of 'feat'. Currently, the only supported kernel is HeightLoc
 *  The `payment_proof` struct is renamed to `proof`
 *  The `feat_args` struct is added, which may be populated for non-Plain kernels
 * `proof` may be omitted from the slate if it is None (null),
-* `offset` is added, which may be optionally included during S3 and I3 to ensure the transaction can be re-built entirely
-from the slate information. Used for delayed transaction posting.
+* `offset` is added, which keeps track of the running offset total as it's modified by the participants
 
 #### Participant Data (`sigs`)
 
@@ -369,13 +369,13 @@ All integer values are Big-Endian.
 | `ver.block_header_version` | u16            | 2        |                                                       |
 | `id`                       | Uuid           | 16       | binary Uuid representation                            |
 | `sta`                      | u8             | 1        | See [Status Byte](#status-byte)                       |
+| `offset`                   | BlindingFactor | 33       |
 | Optional field status      | u8             | 1        | See [Optional Field Status](#optional-field-status)   |
 | `num_parts`                | u8             | (1)      | If present                                            |
 | `amt`                      | u64            | (4)      | If present                                            |
 | `fee`                      | u64            | (4)      | If present                                            |
 | `feat`                     | u8             | (1)      | If present                                            |
 | `ttl`                      | u64            | (4)      | If present                                            |
-| `offset`                   | BlindingFactor | (33)     | If present                                            |
 | `sigs` length              | u8             | 1        | Number of entries in the `sigs` struct                |
 | `sigs` entries             | struct         | varies   | See [Sigs Entries](#sigs-entries)                     |
 | Optional struct status     | u8             | 1        | See [Optional Struct Status](#optional-struct-status) |
@@ -405,7 +405,7 @@ mapped to particular slate field as follows:
 
 | Bit   | 7 | 6 | 5        | 4      | 3      | 2     | 1     | 0           |
 | ----: | - | - | -------- | ------ | ------ | ----- | ----- | ----------- |
-| field |   |   | `offset` | `ttl`  | `feat` | `fee` | `amt` | `num_parts` |
+| field |   |   |          | `ttl`  | `feat` | `fee` | `amt` | `num_parts` |
 
 If the corresponding field for a bit is 1, the field is present and must be read accordingly.
 
