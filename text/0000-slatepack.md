@@ -338,11 +338,21 @@ As a consequence, a `SlatePack` address must be revealed by the party producing 
 
 ## Tari
 
-Tari handles this general problem by...
+Tari uses the [Tari DHT Network](https://www.tari.com/lessons/02_how_tari_works.html) to support asynchronous mimblewimble transactions. This approach is comprehensive and comprises of the entire peer to peer messaging network, including both nodes and wallets. This is distinct from Slatepack which is strictly an approach to transaction building between wallet software, not general protocol messaging.
+
+Similar to Slatepack, Tari users derive a public key from their master seed (which is represented to users as emojis instead of bech32) and is used to look up peers in peer databases (as opposed to directly routing to a traditional Tor hidden service as in Slatepack). By default Tari, like Slatepack, uses Tor for communication.
+
+While Slatepack and Tari both have addresses that decode to public keys used to find and communicate with counterparty wallets via Tor, they both handle the Tor failure case differently. Tari seems to rely on its custom DHT network to gracefully handle this at the cost of the complexity of a custom DHT layer. Slatepack falls back to an unopinionated, encrypted ascii armor string for the user to transport "outside of the Grin network" to complete the transaction.
+
+The advantage for Slatepack is significantly reduced complexity by using Tor directly with an unopinionated fallback mode. The disadvantage for Slatepack is that transactions don't "magically" just work if Tor communication is failing- they still require some effort from the user to transport the ascii armor themselves.
+
+_Note that these details were taken from early documentation and not code- transactions in Tari may behave differently in practice._
 
 ## Beam
 
-Beam handles this problem by...
+Beam uses the [SBBS](https://github.com/BeamMW/beam/wiki/Secure-bulletin-board-system-(SBBS) gossip protocol to support asynchronous mimblewimble transactions. SBBS adds a nontrivial amount of complexity and attack surface to the core Beam software. In exchange, Beam receives a somewhat user-friendly mechanism for users to build transactions asynchronously. The asynchronous fallback method for Slatepack transactions is a simple ascii armor string that does not contain an opinion about a particular protocol with which to exchange the data.
+
+The advantage with the Slatepack method is that much less code is required to support these transactions which can improve the overall stability and security of the codebase running the Grin network. The disadvantage of this for Slatepack is that asynchronous transactions don't "magically" work- they still need to be between users via an outside channel (instant message, text box, email etc). Slatepack makes the tradeoff of slightly more work for the end user in exchange for a simpler and potentially more secure network for Grin.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
@@ -396,3 +406,7 @@ https://github.com/mimblewimble/grin-rfcs/pull/50
 https://gitweb.torproject.org/torspec.git/tree/rend-spec-v3.txt
 
 https://signal.org/docs/specifications/xeddsa/
+
+https://www.tari.com/lessons/02_how_tari_works.html
+
+https://github.com/BeamMW/beam/wiki/Secure-bulletin-board-system-(SBBS)
