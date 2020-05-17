@@ -66,6 +66,7 @@ A `SlatePack Address` is a bech32 encoded ed25519 public key and when shared wit
 grin-wallet already handles ed25519 keys for the v3 onion addresses in Tor transactions. These keys can be extended to be a general `SlatePack Address` to allow a universal key format for both transport and encryption that is error-checked, QR friendly and easily human identifiable.
 
   - Existing ed25519 public keys from the wallet are bech32 encoded with `slatepack` as the `human-readable part` to build a `SlatePack Address`
+    - `floopack` is the HRP for a floonet `SlatePack Address`
 
   - A `SlatePack Address` can be decoded to its ed25519 public key which can then be mapped to an x25519 public key to be used for encryption
 
