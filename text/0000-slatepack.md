@@ -309,6 +309,16 @@ As a consequence, a `SlatePack` address must be revealed by the party producing 
 
 3. (Fallback) If the synchronous transaction fails, a `SlatePack Message` string is output for manual asynchronous transport by the user
 
+### With Three or More Parties
+
+Some possible future Slatepack transactions may require more than two parties to successfully build. These cases should not require any breaking changes to the core Slatepack standard workflow.
+
+The exact flow order (round-robin etc) will be defined by the accompanying RFCs that define the possible future multiple party slates themselves. In some cases, new slate versions may require (non-breaking) updates to this RFC. From there, the same standard Slatepack standard workflow of attempting to exchange the data via Tor first with an ascii armor fallback is still valid.
+
+For example, a future Slatepack version might add or extend a field to include an array containing a `SlatePack Address` for each party in the order desired to finish building the transaction. The wallet of each subsequent party will attempt to establish a connection with the next via Tor. In the event of a Tor failure it would be the responsibility of the most recent party to manually transport it to the next.
+
+In cases with many parties, the fallback method of the Slatepack standard could quickly become cumbersome if, for example, every third participant fails to achieve a Tor connection.
+
 ## Implementation Timeline
 
 1. Initial SlatePack implementation introduced with the _July 2020 hard fork_
@@ -377,7 +387,7 @@ The advantage with the Slatepack method is that much less code is required to su
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-- Extended to support future modes (payment channel, payjoin etc)
+- Extended to support future modes (payment channel, payjoin, multiple counterparties etc)
 
 - An entirely different standard could be adopted in the future if non-interactive transactions become the default, eliminating the need for SlatePack
   - It might be possible for a new standard to remain compatible with existing `SlatePack Addresses` to allow a more generic `Grin Address`
