@@ -69,7 +69,7 @@ grin-wallet already handles ed25519 keys for the v3 onion addresses in Tor trans
 
   - A `SlatePack Address` can be decoded to its ed25519 public key which can then be mapped to an x25519 public key to be used for encryption
 
-Wallets should support the ability for a user to both use a static, reusable `SlatePack Address` or to generate a unique `SlatePack Address` for each transaction if they wish. By default wallets should generate a new `SlatePack Address` for the sender address for each transaction.
+ _By default all wallets should generate a new `SlatePack Address` for each transaction for improved user privacy and security._ Wallets can optionally support the ability for a static, reusable receiving `SlatePack Address` with a warning about the privacy risks of reusing these addresses.
 
 ed25519 keys are bech32 encoded as `SlatePack Addresses` rather than x25519 keys because the mapping from ed25519 to x25519 is more straight forward (x25519 public keys do not carry a `v` coordinate so they can map to two possible ed25519 public keys- this is solvable but using the ed25519 as the first order key avoids a potentially complex solution).
 
@@ -361,6 +361,8 @@ Beam handles this problem by...
 
 - Should we still use double-sha256 in `SimpleBase58Check` or take the opportunity to use a BCH or CRC code which may be more appropriate for error detection on slatepack messages?
   - Is additional engineering desired here if there will always be further validation of the slate payload before a spend can occur?
+
+- If addresses are not reused by default and since wallets need to be able to conduct multiple transactions in parallel, they need the ability to listen on all "active" addresses at the same time
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
