@@ -1,4 +1,4 @@
-- Title: SlatePack
+- Title: Slatepack
 - Authors: [joltz](mailto:joltz@protonmail.com)
 - Start date: May 07 2020
 - RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
@@ -8,124 +8,124 @@
 # Summary
 [summary]: #summary
 
-SlatePack is a universal transaction standard for Grin. It is designed to provide a single coherent transaction building framework to improve both the user and developer experiences in the Grin ecosystem. All wallets and services are expected to fully support the SlatePack standard by the last scheduled hard fork in January 2021 to remain compatible.
+Slatepack is a universal transaction standard for Grin. It is designed to provide a single coherent transaction building framework to improve both the user and developer experiences in the Grin ecosystem. All wallets and services are expected to fully support the Slatepack standard by the last scheduled hard fork in January 2021 to remain compatible.
 
-This document specifies the required components of the SlatePack standard and introduces them in the context of existing methods for transaction building in Grin. It assumes that SlatePack is the default supported transaction standard for Grin and is intended to operate under all conditions and edge cases. SlatePack is intended to be compatible with the objects and serialization methods defined in the [Slate V4/Compact Slates](https://github.com/mimblewimble/grin-rfcs/pull/49) RFC. This RFC is meant to replace the [Slate Serialization](https://github.com/mimblewimble/grin-rfcs/pull/48), [Armored Slates](https://github.com/mimblewimble/grin-rfcs/pull/53) and [Encrypted Slates](https://github.com/mimblewimble/grin-rfcs/pull/50) RFCs.
+This document specifies the required components of the Slatepack standard and introduces them in the context of existing methods for transaction building in Grin. It assumes that Slatepack is the default supported transaction standard for Grin and is intended to operate under all conditions and edge cases. Slatepack is intended to be compatible with the objects and serialization methods defined in the [Slate V4/Compact Slates](https://github.com/mimblewimble/grin-rfcs/pull/49) RFC. This RFC is meant to replace the [Slate Serialization](https://github.com/mimblewimble/grin-rfcs/pull/48), [Armored Slates](https://github.com/mimblewimble/grin-rfcs/pull/53) and [Encrypted Slates](https://github.com/mimblewimble/grin-rfcs/pull/50) RFCs.
 
 # Motivation
 [motivation]: #motivation
 
 Without a comprehensive transaction building flow, users and services are left to make their own complicated decisions about firewalls, file handling and compatibility, risking their security, privacy and sanity.
 
-The objective of this RFC is to converge on a simple, universal, adoptable, secure and privacy preserving workflow standard for Grin transactions: SlatePack.
+The objective of this RFC is to converge on a simple, universal, adoptable, secure and privacy preserving workflow standard for Grin transactions: Slatepack.
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-SlatePack changes the existing transaction building process in Grin in a few ways:
+Slatepack changes the existing transaction building process in Grin in a few ways:
 
-1. _Users, developers and services are no longer required to choose between many possible transaction methods to use and support: SlatePack is a universal Grin transaction standard_
-  - The transport method decision now occurs automatically for the user by following the SlatePack standard
+1. _Users, developers and services are no longer required to choose between many possible transaction methods to use and support: Slatepack is a universal Grin transaction standard_
+  - The transport method decision now occurs automatically for the user by following the Slatepack standard
   - There is only one synchronous method and one asynchronous method supported by default to keep things simple for developers and support workers
 
-2. _Tor is the only synchronous transaction transport method that is currently supported in the SlatePack standard_
-  - This happens "under the hood" by the wallet and the user only has to keep track of a `SlatePack Address` for their counterparty
-  - If Tor is not successful, the transaction process automatically falls back to using an encrypted copy and pastable `SlatePack Message` string to complete the transaction asynchronously
+2. _Tor is the only synchronous transaction transport method that is currently supported in the Slatepack standard_
+  - This happens "under the hood" by the wallet and the user only has to keep track of a `SlatepackAddress` for their counterparty
+  - If Tor is not successful, the transaction process automatically falls back to using an encrypted copy and pastable `SlatepackMessage` string to complete the transaction asynchronously
 
-3. _The asynchronous method by default is now a copy and pastable `SlatePack Message` string instead of a file_
-  - `SlatePack Message` is an ascii-armor string that supports encryption of its payload with a `SlatePack Address`
-    - An encrypted `SlatePack Message` is not meaningfully larger than a plain text `SlatePack Message` with regard to transportability as proposed here
+3. _The asynchronous method by default is now a copy and pastable `SlatepackMessage` string instead of a file_
+  - `SlatepackMessage` is an ascii-armor string that supports encryption of its payload with a `SlatepackAddress`
+    - An encrypted `SlatepackMessage` is not meaningfully larger than a plain text `SlatepackMessage` with regard to transportability as proposed here
 
-4. _The difference between synchronous and asynchronous transaction methods is abstracted away from the end user with the SlatePack standard_
-  - `grin-wallet send -d SlatePackAddress 1.337` will first try to send the Grin synchronously via Tor to the `SlatePack Address`
-  - If that fails it will fall back to outputting an armored encrypted `SlatePack Message` string for manual copy and paste transport
-  - Example `SlatePack Address`: `slatepack1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
+4. _The difference between synchronous and asynchronous transaction methods is abstracted away from the end user with the Slatepack standard_
+  - `grin-wallet send -d SlatepackAddress 1.337` will first try to send the Grin synchronously via Tor to the `SlatepackAddress`
+  - If that fails it will fall back to outputting an armored encrypted `SlatepackMessage` string for manual copy and paste transport
+  - Example `SlatepackAddress`: `slatepack1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
 
-5. _Asynchronous transactions are now encrypted by default by knowing the `SlatePack Address` of your counterparty(s)_
-  - If a counterparty is unwilling or unable to provide a `SlatePack Address`, a plain text `SlatePack Message` can still be exchanged
+5. _Asynchronous transactions are now encrypted by default by knowing the `SlatepackAddress` of your counterparty(s)_
+  - If a counterparty is unwilling or unable to provide a `SlatepackAddress`, a plain text `SlatepackMessage` can still be exchanged
 
-6. _Sending a mobile Grin transaction should be as easy as scanning a simple QR encoded from a bech32 `SlatePack Address`_
-  - Or as easy as pasting the `SlatePack Address` of your counterparty into your wallet for any other device
-  - Or if Tor is not accessible, or the receiving party is not online, as easy as copying and pasting a couple of `SlatePack Message` strings with a counterparty in an alternative communication channel (email, forum, social media, instant messenger, generic web text box, carrier pigeon etc.)
+6. _Sending a mobile Grin transaction should be as easy as scanning a simple QR encoded from a bech32 `SlatepackAddress`_
+  - Or as easy as pasting the `SlatepackAddress` of your counterparty into your wallet for any other device
+  - Or if Tor is not accessible, or the receiving party is not online, as easy as copying and pasting a couple of `SlatepackMessage` strings with a counterparty in an alternative communication channel (email, forum, social media, instant messenger, generic web text box, carrier pigeon etc.)
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
-The SlatePack standard defines the three primary components: `SlatePack Address`, `SlatePack Message` and `SlatePack Workflow`.
+The Slatepack standard defines the three primary components: `SlatepackAddress`, `SlatepackMessage` and `SlatepackWorkflow`.
 
-The `SlatePack Address` is a shareable bech32 encoded ed25519 public key that can be used both to _route synchronous transactions_ and to _encrypt asynchronous transactions_.
+The `SlatepackAddress` is a shareable bech32 encoded ed25519 public key that can be used both to _route synchronous transactions_ and to _encrypt asynchronous transactions_.
 
-The `SlatePack Message` is an easily copy and pastable ascii-armor string that contains an encrypted slate payload by default and is used in asynchronous transactions.
+The `SlatepackMessage` is an easily copy and pastable ascii-armor string that contains an encrypted slate payload by default and is used in asynchronous transactions.
 
-The `SlatePack Workflow` specifies how both of these components interact in a universally adoptable transaction standard for Grin.
+The `SlatepackWorkflow` specifies how both of these components interact in a universally adoptable transaction standard for Grin.
 
-## `SlatePack Address`
+## `SlatepackAddress`
 
-A `SlatePack Address` is a bech32 encoded ed25519 public key and when shared with other parties is used to represent the ability to receive Grin transactions.
+A `SlatepackAddress` is a bech32 encoded ed25519 public key and when shared with other parties is used to represent the ability to receive Grin transactions.
 
-grin-wallet already handles ed25519 keys for the v3 onion addresses in Tor transactions. These keys can be extended to be a general `SlatePack Address` to allow a universal key format for both transport and encryption that is error-checked, QR friendly and easily human identifiable.
+grin-wallet already handles ed25519 keys for the v3 onion addresses in Tor transactions. These keys can be extended to be a general `SlatepackAddress` to allow a universal key format for both transport and encryption that is error-checked, QR friendly and easily human identifiable.
 
-  - Existing ed25519 public keys from the wallet are bech32 encoded with `slatepack` as the `human-readable part` to build a `SlatePack Address`
-    - `floopack` is the HRP for a floonet `SlatePack Address`
+  - Existing ed25519 public keys from the wallet are bech32 encoded with `slatepack` as the `human-readable part` to build a `SlatepackAddress`
+    - `floopack` is the HRP for a floonet `SlatepackAddress`
 
-  - A `SlatePack Address` can be decoded to its ed25519 public key which can then be mapped to an x25519 public key to be used for encryption
+  - A `SlatepackAddress` can be decoded to its ed25519 public key which can then be mapped to an x25519 public key to be used for encryption
 
- _By default all wallets should generate a new `SlatePack Address` for each transaction for improved user privacy and security._ Wallets can optionally support the ability for a static, reusable receiving `SlatePack Address` with a warning about the privacy risks of reusing these addresses.
+_By default all wallets should generate a new `SlatepackAddress` for each transaction for improved user privacy and security._ Wallets can optionally support the ability for a static, reusable receiving `SlatepackAddress` with a warning about the privacy risks of reusing these addresses.
 
-ed25519 keys are bech32 encoded as `SlatePack Addresses` rather than x25519 keys because the mapping from ed25519 to x25519 is more straight forward (x25519 public keys do not carry a `v` coordinate so they can map to two possible ed25519 public keys- this is solvable but using the ed25519 as the first order key avoids a potentially complex solution).
+ed25519 keys are bech32 encoded as `SlatepackAddresses` rather than x25519 keys because the mapping from ed25519 to x25519 is more straight forward (x25519 public keys do not carry a `v` coordinate so they can map to two possible ed25519 public keys- this is solvable but using the ed25519 as the first order key avoids a potentially complex solution).
 
 #### Key Generation
 
-_The derivation strategy for ed25519 keys used for a `SlatePack Address` in the context of grin-wallet remains open_
+_The derivation strategy for ed25519 keys used for a `SlatepackAddress` in the context of grin-wallet remains open_
 
-#### Example `SlatePack Address`
+#### Example `SlatepackAddress`
 
 ```
 slatepack1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x
 ```
 
-## `SlatePack Message`
+## `SlatepackMessage`
 
-A `SlatePackMessage` requires multiple layers of data and encoding.
+A `SlatepackMessage` requires multiple layers of data and encoding.
 
 ### Serialization
 
-Grin slates are serialized as first order JSON objects. Binary serialization is done on those JSON objects. Before SlatePack, users could use both binary and JSON serialization for asynchronous transactions.
+Grin slates are serialized as first order JSON objects. Binary serialization is done on those JSON objects. Before Slatepack, users could use both binary and JSON serialization for asynchronous transactions.
 
-With the SlatePack standard, all asynchronous transactions serialize the slate JSON objects as binary. JSON serialization for synchronous transactions (Tor) is still used as before. The SlatePack standard serialization choices are only relevant for asynchronous transaction methods.
+With the Slatepack standard, all asynchronous transactions serialize the slate JSON objects as binary. JSON serialization for synchronous transactions (Tor) is still used as before. The Slatepack standard serialization choices are only relevant for asynchronous transaction methods.
 
 The details for the binary serialization of the most recent slates at the time of this writing can be found in the [Slate V4 (Compact Slates)](https://github.com/mimblewimble/grin-rfcs/pull/49) RFC. Future variations in slate binary serialization should be referenced in an RFC and may require the update of this document.
 
 
 ### Metadata
 
-Metadata is included with SlatePack messages to indicate how to handle the encryption if any for the slata data in addition to tracking versions. It can be expanded in future versions with new fields that are safe to include in plain text. These fields are neither encrypted nor are they cryptographically authenticated by the sender. `mode` indicates which `Metadata` fields are expected to follow.
+Metadata is included with Slatepack messages to indicate how to handle the encryption if any for the slata data in addition to tracking versions. It can be expanded in future versions with new fields that are safe to include in plain text. These fields are neither encrypted nor are they cryptographically authenticated by the sender. `mode` indicates which `Metadata` fields are expected to follow.
 
 - `"slatepack": [Major, Minor]`
-  - Where `[Major, Minor]` are positive fixnum ints representing the SlatePack version used to build the `SlatePack Message`
+  - Where `[Major, Minor]` are positive fixnum ints representing the Slatepack version used to build the `SlatepackMessage`
 
 - `"mode": int`
-  - Where `int` is a positive fixnum int indicating the type of SlatePack message
+  - Where `int` is a positive fixnum int indicating the type of `SlatepackMessage`
   - 0 == plain text
   - 1 == encrypted
   - Extendable to future new modes
 
-- `"sender": SlatePackAddress`
-  - Where `SlatePackAddress` is a bech32 encoded ed25519 public key generated by the senders wallet
-  - For SlatePacks where the user does not wish to provide any `SlatePackAddress` a `0` value is used
-  - This value is used in the SlatePack workflow to attempt to complete the transaction via Tor and to otherwise encrypt a slate for asynchronous transport
+- `"sender": SlatepackAddress`
+  - Where `SlatepackAddress` is a bech32 encoded ed25519 public key generated by the senders wallet
+  - For Slatepacks where the user does not wish to provide any `SlatepackAddress` a `0` value is used
+  - This value is used in the Slatepack workflow to attempt to complete the transaction via Tor and to otherwise encrypt a slate for asynchronous transport
 
 ### Encryption
 
-SlatePack encryption adheres to the cryptography decisions made by [age](https://age-encryption.org). It supports a conversion from the ed25519 signing key type that grin-wallet already uses for Tor to a x25519 encryption key type that age uses for encryption. This allows us to avoid having to make new cryptography decisions to support encrypted slates with keys already used in grin-wallet.
+Slatepack encryption adheres to the cryptography decisions made by [age](https://age-encryption.org). It supports a conversion from the ed25519 signing key type that grin-wallet already uses for Tor to a x25519 encryption key type that age uses for encryption. This allows us to avoid having to make new cryptography decisions to support encrypted slates with keys already used in grin-wallet.
 
-While SlatePack follows age's cryptography decisions exactly, it diverges on _formatting_ choices made by age. This is done because SlatePack asynchronous transactions benefit from a compact format for transport in addition to allowing us to use the JSON building techniques already supported and expected by wallets.
+While Slatepack follows age's cryptography decisions exactly, it diverges on _formatting_ choices made by age. This is done because Slatepack asynchronous transactions benefit from a compact format for transport in addition to allowing us to use the JSON building techniques already supported and expected by wallets.
 
-It should also be noted that a `SlatePack Address` could be used to do generic age encryption by decoding the bech32 to the ed25519 public key and mapping that to its corresponding x25519 public key used in age. An `age Address` could also be used as a `SlatePack Address` with some extra effort: bech32 decode to the x25519 public key and then [follow Signal's lead](https://signal.org/docs/specifications/xeddsa/) to attempt to solve the problem of an x25519 key mapping to two ed25519 keys to give a single ed25519 public key to be used to build a `SlatePack Address` by bech32 encoding with `slatepack` as the HRP.
+It should also be noted that a `SlatepackAddress` could be used to do generic age encryption by decoding the bech32 to the ed25519 public key and mapping that to its corresponding x25519 public key used in age. An `age Address` could also be used as a `SlatepackAddress` with some extra effort: bech32 decode to the x25519 public key and then [follow Signal's lead](https://signal.org/docs/specifications/xeddsa/) to attempt to solve the problem of an x25519 key mapping to two ed25519 keys to give a single ed25519 public key to be used to build a `SlatepackAddress` by bech32 encoding with `slatepack` as the HRP.
 
 #### Header
 
-A `header` field is included in all encrypted `SlatePack Messages` and contains at minimum the necessary fields for the encrypted `payload` of a SlatePack: `recipients_list` and `mac`.
+A `header` field is included in all encrypted `SlatepackMessages` and contains at minimum the necessary fields for the encrypted `payload` of a Slatepack: `recipients_list` and `mac`.
 
 It is considered part of the `Encryption` layer rather than the `Metadata` layer to help provide a clear distinction of components required for cryptography and truly optional metadata components.
 
@@ -153,9 +153,9 @@ It is considered part of the `Encryption` layer rather than the `Metadata` layer
 
 #### Payload (age Enryption)
 
-A binary serialized slate is encrypted according to the age encryption specification. The steps taken here follow age as closely as possible to avoid losing any security properties. An fairly well-review [age library in rust](https://github.com/str4d/rage/tree/master/age) is available to use for implementation.
+A binary serialized slate is encrypted according to the age encryption specification. The steps taken here follow age as closely as possible to avoid losing any security properties. A fairly well-reviewed [age library in rust](https://github.com/str4d/rage/tree/master/age) is available to use for implementation.
 
-Any deviations in SlatePack encryption from the exact cryptography steps and decisions made in age are unintentional and should be corrected unless they are explicitly stated as a deviation from the cryptography decisions made by age.
+Any deviations in Slatepack encryption from the exact cryptography steps and decisions made in age are unintentional and should be corrected unless they are explicitly stated as a deviation from the cryptography decisions made by age.
 
 The expected deviations from the age specification are in the formatting and structure of the contents of the file output data (as opposed to the encryption technique itself or the actual binary encrypted payload).
 
@@ -168,7 +168,7 @@ The expected deviations from the age specification are in the formatting and str
 
 ### Armor
 
-The payload that will be armored is a binary serialized `SlatePack` JSON object. Armor is `Framing` wrapped around a `SimpleBase58Check` encoded `Payload`.
+The payload that will be armored is a binary serialized `Slatepack` JSON object. Armor is `Framing` wrapped around a `SimpleBase58Check` encoded `Payload`.
 
 #### Framing
 
@@ -203,7 +203,7 @@ Armor uses specific `Headers`, `Footers` and `Periods` as `Framing` to contain i
 
 #### `SimpleBase58Check` Encoding
 
-`SlatePack Message` armor payloads are encoded similar to legacy bitcoin addresses, with the primary differences being that the `SimpleBase58Check` used here does not include version bytes and includes the error checking code at the beginning of the payload instead of at the end.
+`SlatepackMessage` armor payloads are encoded similar to legacy bitcoin addresses, with the primary differences being that the `SimpleBase58Check` used here does not include version bytes and includes the error checking code at the beginning of the payload instead of at the end.
 
 1. `SHA256(SHA256(SLATEPACK_MESSAGE_BINARY))`
 
@@ -234,11 +234,11 @@ A more robust error correction option was not chosen here because the consequenc
 
 All chosen parameters except for `MAX_MESSAGES` should be changeable without breaking armored slates as whitespace and newlines are removed during decoding and in the case of message breaks, the error check code is over the entire slate payload. `MAX_MESSAGES` cannot exceed 9 because they would be rejected by clients as invalid since the regex will not match. Slates larger than this should use synchronous transport for a better user and developer experience.
 
-### Example SlatePack JSON Object
+### Example Slatepack JSON Object
 
 #### Plain Text
 
-In this plain text example, neither the sender nor the receiver wish to share a `SlatePack Address`
+In this plain text example, neither the sender nor the receiver wish to share a `SlatepackAddress`
 
 ```
 {
@@ -269,7 +269,7 @@ In this plain text example, neither the sender nor the receiver wish to share a 
 }
 ```
 
-### Example `SlatePack Message`
+### Example `SlatepackMessage`
 
 ```
 BEGINSLATEPACK. 4H1qx1wHe668tFW yC2gfL8PPd8kSgv
@@ -278,37 +278,37 @@ GWmtgsneoXf7N4D uVWuyZSamPhfF1u AHRaYWvhF7jQvKx
 wNJAc7qmVm9JVcm NJLEw4k5BU7jY6S eb. ENDSLATEPACK.
 ```
 
-## `SlatePack Workflow`
+## `SlatepackWorkflow`
 
-Adoption of the SlatePack standard allows for a unified workflow that can still function without knowledge of a `SlatePack Address` from a counterparty.
+Adoption of the Slatepack standard allows for a unified workflow that can still function without knowledge of a `SlatepackAddress` from a counterparty.
 
-### With a `SlatePack Address`
+### With a `SlatepackAddress`
 
 1. `grin-wallet send -d slatepack1bech32address 1.337`
 
 2. Sender wallet derives an onion v3 address from `slatepack1bech32address` and attempts to complete the transaction synchronously via Tor
 
-3. (Fallback) If the synchronous transaction fails, a `SlatePack Message` string is encrypted to the `SlatePack Address` and output for manual asynchronous transport by the user
+3. (Fallback) If the synchronous transaction fails, a `SlatepackMessage` string is encrypted to the `SlatepackAddress` and output for manual asynchronous transport by the user
 
-### Without a `SlatePack Address`
+### Without a `SlatepackAddress`
 
 1. `grin-wallet send 1.337`
 
-2. A `SlatePack Message` string is output for manual asynchronous transport by the user
+2. A `SlatepackMessage` string is output for manual asynchronous transport by the user
 
 ### With QR Codes
 
-A QR-based `SlatePack Workflow` will always begin with a standard QR size because they are encoded directly from a bech32 `SlatePack Address`.
+A QR-based `SlatepackWorkflow` will always begin with a standard QR size because they are encoded directly from a bech32 `SlatepackAddress`.
 
-This encoding simultaneously provides a derivable onion address to attempt a synchronous transaction (`bech32 -> ed25519 -> onionv3`) _and_ a derivable encryption key (`bech32 -> ed25519 -> x25519`) to return an encrypted SlatePack string to complete the transaction asynchronously as a fallback.
+This encoding simultaneously provides a derivable onion address to attempt a synchronous transaction (`bech32 -> ed25519 -> onionv3`) _and_ a derivable encryption key (`bech32 -> ed25519 -> x25519`) to return an encrypted Slatepack string to complete the transaction asynchronously as a fallback.
 
-As a consequence, a `SlatePack` address must be revealed by the party producing a QR code in the `SlatePack Workflow`.
+As a consequence, a `SlatepackAddress` must be revealed by the party producing a QR code in the `SlatepackWorkflow`.
 
-1. Receiver shares `SlatePack Address` via QR
+1. Receiver shares `SlatepackAddress` via QR
 
-2. Sender scans QR code and the transaction is completed synchronously via Tor by deriving the recipients onion v3 address from their `SlatePack Address`
+2. Sender scans QR code and the transaction is completed synchronously via Tor by deriving the recipients onion v3 address from their `SlatepackAddress`
 
-3. (Fallback) If the synchronous transaction fails, a `SlatePack Message` string is output for manual asynchronous transport by the user
+3. (Fallback) If the synchronous transaction fails, a `SlatepackMessage` string is output for manual asynchronous transport by the user
 
 ### With Three or More Parties
 
@@ -316,22 +316,22 @@ Some possible future Slatepack transactions may require more than two parties to
 
 The exact flow order (round-robin etc) will be defined by the accompanying RFCs that define the possible future multiple party slates themselves. In some cases, new slate versions may require (non-breaking) updates to this RFC. From there, the same standard Slatepack standard workflow of attempting to exchange the data via Tor first with an ascii armor fallback is still valid.
 
-For example, a future Slatepack version might add or extend a field to include an array containing a `SlatePack Address` for each party in the order desired to finish building the transaction. The wallet of each subsequent party will attempt to establish a connection with the next via Tor. In the event of a Tor failure it would be the responsibility of the most recent party to manually transport it to the next.
+For example, a future Slatepack version might add or extend a field to include an array containing a `SlatepackAddress` for each party in the order desired to finish building the transaction. The wallet of each subsequent party will attempt to establish a connection with the next via Tor. In the event of a Tor failure it would be the responsibility of the most recent party to manually transport it to the next.
 
 In cases with many parties, the fallback method of the Slatepack standard could quickly become cumbersome if, for example, every third participant fails to achieve a Tor connection.
 
 ## Implementation Timeline
 
-1. Initial SlatePack implementation introduced with the _July 2020 hard fork_
+1. Initial Slatepack implementation introduced with the _July 2020 hard fork_
   - May or may not support encryption by default yet
 
-2. The proposed SlatePack standard is fully implemented and adopted as a universal transaction standard in _last hard fork (Jan 2021)_
-  - SlatePack is the default transaction standard in all wallets and services
+2. The proposed Slatepack standard is fully implemented and adopted as a universal transaction standard in _last hard fork (Jan 2021)_
+  - Slatepack is the default transaction standard in all wallets and services
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-- This puts a lot of eggs in one basket (if SlatePack fails there will likely be confusion returning to old methods)
+- This puts a lot of eggs in one basket (if Slatepack fails there will likely be confusion returning to old methods)
 
 - This may be a bit rushed to have where we want it before HF schedule
 
@@ -371,9 +371,9 @@ The advantage with the Slatepack method is that much less code is required to su
 - How to handle key derivation harmoniously?
 
 - What are unmentioned security considerations for using the same base key to both map to an onion address and map to an encryption key used in transactions?
-  - Related, what are unmentioned security considerations to `SlatePack Address` reuse?
+  - Related, what are unmentioned security considerations to `SlatepackAddress` reuse?
 
-- What should the `human-readable part` of the bech32 encoded `SlatePack Address` be?
+- What should the `human-readable part` of the bech32 encoded `SlatepackAddress` be?
   - `slatepack1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
   - `grin1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
   - `spk1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
@@ -390,8 +390,8 @@ The advantage with the Slatepack method is that much less code is required to su
 
 - Extended to support future modes (payment channel, payjoin, multiple counterparties etc)
 
-- An entirely different standard could be adopted in the future if non-interactive transactions become the default, eliminating the need for SlatePack
-  - It might be possible for a new standard to remain compatible with existing `SlatePack Addresses` to allow a more generic `Grin Address`
+- An entirely different standard could be adopted in the future if non-interactive transactions become the default, eliminating the need for Slatepack
+  - It might be possible for a new standard to remain compatible with the existing `SlatepackAddress` to allow a more generic `GrinAddress`
 
 # References
 [references]: #references
