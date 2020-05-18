@@ -106,8 +106,9 @@ In version 4 of the Slate format, the initial Slate now looks like the following
 ```
 {
   "ver": "4:3",
-  "sta": "S1",
   "id": "mavTAjNm4NVztDwh4gdSrQ",
+  "sta": "S1",
+  "off": "0gKWSQAAAADTApZJAAAAANQClkkAAAAA1QKWSQAAAAA=",
   "amt": "1000000000",
   "fee": "8000000",
   "sigs": [
@@ -126,6 +127,7 @@ While a "return" slate might look something like the following:
   "ver": "4:3",
   "id": "7haE++9ZScKLOqM2jvRsjA==",
   "sta": "S2",
+  "off": "9fKWSQAAAADTApZJAAAAANQClkkAAAAA1QKWSQAAAAA=",
   "sigs": [
     {
       "xs": "Ai+QL7rLMl1GC6UmKoMyy9bzsSJPasLzLWzIzjFA1eMY",
@@ -311,7 +313,6 @@ depend on the value of 'feat'. Currently, the only supported kernel is HeightLoc
 #### Top-Level Slate Struct
 
 * The `version_info` struct is removed, and is replaced with `ver`, which has the format "[version]:[block header version]"
-* `id` becomes a short-form base-64 encoding of the UUID binary
 * `sta` is added, with possible values S1|S2|S3|I1|I2|I3|NA
 * `num_participants` is renamed to `num_parts`
 * `num_parts` may be omitted from the slate. If omitted its value is assumed to be 2.
@@ -487,7 +488,7 @@ value of the `feat` field. Currently only present if `feat` is 1.
 
 This RFC is envasaged as a necessary first step for all slate-exchange possibilities that would benefit from compactness, e.g:
 
-* [Slate Serialization](https://github.com/j01tz/grin-rfcs/blob/slate-serialization/text/0000-slate-serialization.md)
+* [Slatepack](https://github.com/j01tz/grin-rfcs/blob/slatepack/text/0000-slatepack.md)
 * QR Code encoding of slates
 * Armored slates
 
