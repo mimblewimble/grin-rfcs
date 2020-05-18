@@ -486,7 +486,7 @@ value of the `feat` field. Currently only present if `feat` is 1.
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-This RFC is envasaged as a necessary first step for all slate-exchange possibilities that would benefit from compactness, e.g:
+This RFC is envisaged as a necessary first step for all slate-exchange possibilities that would benefit from compactness, e.g:
 
 * [Slatepack](https://github.com/j01tz/grin-rfcs/blob/slatepack/text/0000-slatepack.md)
 * QR Code encoding of slates
