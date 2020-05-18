@@ -39,11 +39,11 @@ There is scope for interpretation as to what this actually means, but the follow
    * Fixed-term development or project-management contracts
    * Infrastructure and other incidental costs
    * Security audit costs
-   * Costs incurred for any legal matters that may arise for either the project or individual contributors 
-arising directly from their work in good faith on the Grin project
+   * Costs incurred for any legal matters that may arise for either the project or individual contributors arising directly from their work in good faith on the Grin project
 * Running budgets for Grin teams (with funds spent at their own discretion)
 * Technological research in areas that may be relevant to Grin in the future
 * Cryptographic research related to Grin or Mimblewimble in general
+* Fully open-sourced community-based projects that enhance the Grin ecosystem
 * Supporting non-profit, community-driven and inclusive promotional efforts for the Grin Project (e.g. Grincon) 
 * Charitable donations toward important causes relevant to the Grin or cryptocurrency communities as a whole
 
@@ -78,6 +78,7 @@ While everyone and anyone is encouraged to create a funding request, those makin
 * Have too many similar requests been funded recently?
 * How tangible is the value proposition to Grin?
 * How much risk is involved relative to the size of the ask and the potential return.
+* Does a prioritization call need to be made due to a limited balance in the General Fund?
 
 Everyone is welcome to weigh in on the merits of a funding request in the forum thread and during the public governance meeting where the funding request is finalized. The core team will strive to ensure there's a community consensus for each request, however the final decision rests with the core team. Other Grin teams who have been allocated budgets can spend funds at their own discretion, but are strongly encouraged to consider the guidelines in this RFC during their decision making process.
 
@@ -104,6 +105,6 @@ The core team is obliged to publish a detailed spending log of all transactions 
 
 ## Unresolved questions
 
-* This RFC is put together on the understanding that the fundamental question of  'who appoints the core team' is still outstanding. This point should be discussed separately and this RFC assumes there is an acceptable answer in place.
+* This RFC is put together on the understanding that the fundamental question of 'who appoints the core team' is still outstanding. This point should be discussed separately and this RFC assumes there is an acceptable answer in place.
 
 # Future possibilities
