@@ -347,6 +347,8 @@ In cases with many parties, the fallback method of the Slatepack standard could 
 # Prior art
 [prior-art]: #prior-art
 
+Note that while previous asynchronous mimblewimble transaction solutions require a relatively short TTL for a counterparty to successfully connect to their respective network before transactions fail (currently 72 hours for Tari DHT Network, 24 hours for Beam SBBS), Grin Slatepack transactions can remain valid indefinitely without spamming the network when using the ascii armor fallback.
+
 ## Tari
 
 Tari uses the [Tari DHT Network](https://www.tari.com/lessons/02_how_tari_works.html) to support asynchronous mimblewimble transactions. This approach is comprehensive and comprises of the entire peer to peer messaging network, including both nodes and wallets. This is distinct from Slatepack which is strictly an approach to transaction building between wallet software, not general protocol messaging.
