@@ -18,6 +18,8 @@ Grin supports a limited implementation of "relative timelocks" with "No Recent D
 Relative timelocks are a prerequisite for robust payment channels. NRD kernels can be used to implement a _revocable_ channel close mechanism.
 A mandatory revocation period can be introduced through a relative timelock between two transactions. Any attempt to close an old invalid channel state can be safely revoked during the revocation period.
 
+Recently, Ruben Somsen announced a design for [Succinct Atomic Swaps (SAS)][10] reducing the number of on-chain transactions required to implement the swap. This design uses a combination of relative locks and [adaptor signatures][11]. SAS would appear to be compatible with Grin/MW but with some caveats, namely the need for an additional transaction kernel as the NRD lock and the adaptor signature cannot co-exist on the same kernel. This is discussed in [Unresolved questions](#unresolved-questions) below.
+
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
@@ -310,12 +312,12 @@ The idea of using Merkle proofs to verify inclusion of a historical referenced k
 
 Bitcoin allows transaction inputs to be "encumbered" with a relative locktime based on the sequence number field. This restricts an input from spending the associated output until a certain number of blocks have passed. BIP112 describes the CHECKSEQUENCEVERIFY opcode in Bitcoin and BIP68 describes the underlying consensus changes around the sequence number field.
 
-* https://en.bitcoin.it/wiki/Timelock#CheckSequenceVerify
-* https://en.bitcoin.it/wiki/CheckSequenceVerify
-* https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki
-* https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki
+* [Timelock#CheckSequenceVerify (bitcoin wiki)][6]
+* [CheckSequenceVerify (bitcoin wiki)][7]
+* [Bitcoin BIP-0068][8]
+* [Bitcoin BIP-0112][9]
 
-Note that relative locks in Bitcoin are based on transaction _inputs_ and _outputs_, with inputs only able to spend outputs after they are confirmed beneath a certain number of blocks. We cannot do this in Grin due to the pruning of old data. Spent outputs will eventually be removed and cannot be relied upon as part of the validation process. Bitcoin encumbers individual outputs whereas in Grin we encumber transactions via the constituent transaction kernels.
+Note that relative locks in Bitcoin are based on transaction _inputs_ and _outputs_, with inputs only able to spend outputs once confirmed beneath a certain number of blocks. We cannot do this in Grin due to the pruning of old data. Spent outputs will eventually be removed and cannot be relied upon as part of the validation process. Bitcoin encumbers individual outputs whereas in Grin we encumber transactions via the constituent transaction kernels.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
@@ -324,15 +326,31 @@ Some investigation is still needed around the conditions necessary to allow a ke
 
 One outstanding question is what use cases are not covered by NRD kernels. We believe them to be sufficient for the revocable payment channel close mechanism. But they may not be sufficient for all use cases.
 
+[Succinct Atomic Swaps (SAS)][10] describes the use of both relative locks and [adaptor signatures][11] to implement atomic swaps with only two on-chain transactions. The secret associated with the adaptor signature is swapped to allow funds to be claimed while the relative lock locks funds prior to a refund being claimed. We note that NRD kernels and adaptor signatures are not diectly compatible as a prior instance of an NRD kernel would have revealed the secret associated with the adaptor signature. That said we can produce transactions with multiple kernels and we can use this to isolate the adaptor signature on a separate kernel alongside an NRD kernel. It is an unresolved question if there is a way to modify the SAS protocol and avoid the need for these additional kernels in Grin/MW.  
+
 # References
 [references]: #references
 
-* https://lists.launchpad.net/mimblewimble/msg00025.html ("triggers" post by Ruben Somsen)
-* https://lists.launchpad.net/mimblewimble/msg00635.html ("No Such Kernel Recently" post by John Tromp)
-* https://lists.launchpad.net/mimblewimble/msg00635.html ("Duplicate Kernels" post by Antioch)
-* https://lists.launchpad.net/mimblewimble/msg00636.html ("NRD based payment channel" post by John Tromp)
-* https://gist.github.com/antiochp/78fe813b6c2c0612593f8747390a8aae (earlier NSKR based payment channel design)
-* https://en.bitcoin.it/wiki/Timelock#CheckSequenceVerify
-* https://en.bitcoin.it/wiki/CheckSequenceVerify
-* https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki
-* https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki
+* [Original "triggers" mailing list post by Ruben Somsen][1]
+* ["No Such Kernel Recently" post by John Tromp][2]
+* ["Duplicate Kernels" post by Antioch][3]
+* ["NRD based payment channel" post by John Tromp][4]
+* [Earlier NSKR based payment channel design)][5]
+* [Timelock#CheckSequenceVerify (bitcoin wiki)][6]
+* [CheckSequenceVerify (bitcoin wiki)][7]
+* [Bitcoin BIP-0068][8]
+* [Bitcoin BIP-0112][9]
+* [Succinct Atomic Swaps by Ruben Somsen][10]
+* [Scriptless Scripts][11]
+
+[1]: https://lists.launchpad.net/mimblewimble/msg00025.html 
+[2]: https://lists.launchpad.net/mimblewimble/msg00635.html 
+[3]: https://lists.launchpad.net/mimblewimble/msg00635.html 
+[4]: https://lists.launchpad.net/mimblewimble/msg00636.html 
+[5]: https://gist.github.com/antiochp/78fe813b6c2c0612593f8747390a8aae
+[6]: https://en.bitcoin.it/wiki/Timelock#CheckSequenceVerify
+[7]: https://en.bitcoin.it/wiki/CheckSequenceVerify
+[8]: https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki
+[9]: https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki
+[10]: https://www.reddit.com/r/Bitcoin/comments/gi6ciw/sas_succinct_atomic_swaps_half_the_number_of/
+[11]: http://diyhpl.us/wiki/transcripts/layer2-summit/2018/scriptless-scripts/ 
