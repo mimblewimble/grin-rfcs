@@ -3,7 +3,7 @@
 - Authors: [Michael Cordner](mailto:yeastplume@protonmail.com)
 - Start date: April 3, 2020 
 - RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
-- Tracking issue: [mimblewimble/grin-wallet#366](https://github.com/mimblewimble/grin-wallet/pull/366)
+- Tracking issue: [mimblewimble/grin-wallet#317](https://github.com/mimblewimble/grin-wallet/pull/317)
 
 ---
 
@@ -22,7 +22,7 @@ This RFC aims to define the contents of a streamlined "compact" slate by:
 * Removing all redundant or unnecessary Slate fields
 * Shortening the names of many Slate fields
 * Reducing the size of the Slate to be as minimal as possible at all phases of a transaction
-* Defining an optional highly-minimized binary format for Slate otuput
+* Defining an optional highly-minimized binary format for Slate output
 
 Although this RFC doesn't address any particular transaction exchange methods that might be facilitated by this streamlining, one could envisage possibilities such as:
 
@@ -267,16 +267,16 @@ The `proof` struct is an optional payment proof request that must be filled out 
 
 #### Transaction Object Fields
 
-The V4 Version of the Slate defines its own representation of Grin's internal Tranasction object, which defines its own serialization at [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871). Internally, the wallet will transform its VersionedSlate into the format expected by the Grin node, allowing the wallet to specify its own Transaction format.
+The V4 Version of the Slate contains its own separate representation of Grin's internal Transaction object. (Grin's internal transaction struct definition can be found here: [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871)). Internally, the wallet will transform its representation into the format expected by the node while posting the transaction.
 
 The `tx` struct in a V4 Slate is removed, and is replaced instead by the following Top-Level fields. Wallets recreate the transaction object as expected by the Grin node from these fields before posting.
 
-* `coms` is an array containing the outputs and inputs that have been added to the slate. These will appear duing the I1 or S2 phases of a transction. Each entry includes:
+* `coms` is an array containing the outputs and inputs that have been added to the slate. These will appear during the I1 or S2 phases of a transaction. Each entry includes:
    * `f`: The output features, assumed to be 'Plain' if omitted. 0 denotes Plain, 1 denotes Coinbase
    * `c`: The output/input commitment, Base64 Encoded
    * `p`: The output's range proof, Base64 Encoded. If this is included, the entry is assumed to be an output. If not, it is an input.
 
-When rebuilding the transaction kernel for the Node (done during the S3 or I3 phases,) the kernel is assumed to be 'Plain' unless the top-level `feat` field is non-zero. In this case, the kernel features are filled accorginly with any needed values from the `feat_args` struct.
+When rebuilding the transaction kernel for the Node (done during the S3 or I3 phases,) the kernel is assumed to be 'Plain' unless the top-level `feat` field is non-zero. In this case, the kernel features are filled accordingly with any needed values from the `feat_args` struct.
 
 In a typical S3 phase, these fields may look something like:
 
@@ -299,7 +299,7 @@ In a typical S3 phase, these fields may look something like:
 
 Depending on the chosen Kernel Feature set, `feat_args` may be populated with
 arguments specific to the kernel. The exact arguments that will be present here
-depend on the value of 'feat'. Currently, the only supported kernel is HeightLocked
+depend on the value of `feat`. Currently, the only supported kernel is HeightLocked
 (value 1) which has the arguments:
 
 ```
@@ -318,7 +318,7 @@ depend on the value of 'feat'. Currently, the only supported kernel is HeightLoc
 * `num_parts` may be omitted from the slate. If omitted its value is assumed to be 2.
 * `amount` is renamed to `amt`
 * `amt` may be removed from the slate on the S2 phase of a transaction.
-* `fee` may be removed from the slate on the S2 phase of a transaction. It may also be ommited when intiating an I1 transaction, and added during the I2 phase.
+* `fee` may be removed from the slate on the S2 phase of a transaction. It may also be omitted when initiating an I1 transaction, and added during the I2 phase.
 * `lock_height` is removed
 * `feat` is added to the slate denoting the Kernel feature set. May be omitted from the slate if kernel is plain
 * `ttl_cutoff_height` is renamed to `ttl`
@@ -476,7 +476,7 @@ value of the `feat` field. Currently only present if `feat` is 1.
 |       Field | type  | len | notes                                |
 | ----------: | ----- | --  | ------------------------------------ |
 | `lock_hgt`  | u64   | 4   | Lock height, present if `feat` is 1  |
-|
+
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
