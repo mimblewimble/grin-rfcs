@@ -24,7 +24,7 @@ To begin writing your own RFC or to find out more about the process and the gene
 | [0009-enable-faster-sync](text/0009-enable-faster-sync.md) | Enable faster txhashset sync by changing output MMR commitment
 | [0010-online-transacting-via-tor](text/0010-online-transacting-via-tor.md) | Define standard for transacting via TOR
 | [0011-security-team](text/0011-security-team.md) | Establish Grin Security team
-
+| [0012-compact-slates](text/0012-compact-slates.md) | Introduce new compact slate format (Slate V4)
 
 ## License
 
