@@ -3,7 +3,7 @@
 - Authors: [Michael Cordner](mailto:yeastplume@protonmail.com)
 - Start date: April 3, 2020 
 - RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
-- Tracking issue: [mimblewimble/grin-wallet#317](https://github.com/mimblewimble/grin-wallet/pull/317)
+- Tracking issue: [mimblewimble/grin-wallet#317](https://github.com/mimblewimble/grin-wallet/pull/3)
 
 ---
 
@@ -106,7 +106,7 @@ In version 4 of the Slate format, the initial Slate now looks like the following
 ```
 {
   "ver": "4:3",
-  "id": "mavTAjNm4NVztDwh4gdSrQ",
+  "id": "0436430c-2b02-624c-2032-570501212b00",
   "sta": "S1",
   "off": "0gKWSQAAAADTApZJAAAAANQClkkAAAAA1QKWSQAAAAA=",
   "amt": "1000000000",
@@ -125,7 +125,7 @@ While a "return" slate might look something like the following:
 ```
 {
   "ver": "4:3",
-  "id": "7haE++9ZScKLOqM2jvRsjA==",
+  "id": "0436430c-2b02-624c-2032-570501212b00",
   "sta": "S2",
   "off": "9fKWSQAAAADTApZJAAAAANQClkkAAAAA1QKWSQAAAAA=",
   "sigs": [
@@ -161,7 +161,7 @@ Field ordering is canonical.
 {
 # These fields are always present
   "ver": "4:3",
-  "id": "mavTAjNm4NVztDwh4gdSrQ",
+  "id": "0436430c-2b02-624c-2032-570501212b00",
   "sta": "S1",
   "off": "0gKWSQAAAADTApZJAAAAANQClkkAAAAA1QKWSQAAAAA=",
 
@@ -196,7 +196,7 @@ A description of all fields and their meanings is as follows:
 ##### Fields - Always present
 * `ver` - The slate version and supported block header version, separated by a `:`
 * `id` - The slate's UUID, standard hex-string encoding for UUIDs
-* `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status_codes)
+* `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status-codes)
 * `off` - The running transaction offset total, base-64 encoded. All parties select a random offset at the beginning of the transaction and subtract their offset from the excess value of their outputs.
 They then subtract the value of the inputs from the offset when committing to inputs, updating the total offset before sending to the next stage.
 
@@ -210,10 +210,10 @@ particular kernel feature set will be found in the `feat_args` struct.
 from the slate. To be used when delayed transaction posting is desired.
 
 ##### Structs - Always present
-* `sigs` - An array of signature data containing the signature information of the last participant. See [Signature Data](#signature_data)
+* `sigs` - An array of signature data containing the signature information of the last participant. See [Signature Data](#signature-data)
 
 ##### Structs - Optional, depending on state of transaction
-* `proof` - An optional payment proof request. See [Payment Proof Data](#payment_proof_data)
+* `proof` - An optional payment proof request. See [Payment Proof Data](#payment-proof-data)
 * `coms` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); is removed from the slate in favour of including this top-level Slate field that can be used to reconstruction the transaction object as expected by the Grin node. See [Transaction Object Fields](#transaction-object-fields)
 * `feat_args` - Optional arguments for Kernel features.
 
@@ -360,7 +360,7 @@ The examples above are pretty-printed for reference, but all Slates should remov
 
 ### Slate Definition - Binary
 
-while the JSON slate remains the first-order slate definition, and should be accepted by all wallets and APIs, wallets should also be have the ability to transform slates between the JSON format and a reduced binary format suitable for armoring or direct transfer. The definition of the V4 binary slate format follows.
+While the JSON slate remains the first-order slate definition, and should be accepted by all wallets and APIs, wallets should also have the ability to transform slates between the JSON format and a reduced binary format suitable for armoring or direct transfer. The definition of the V4 binary slate format follows.
 
 All integer values are Big-Endian.
 
@@ -491,10 +491,3 @@ This RFC is envisaged as a necessary first step for all slate-exchange possibili
 * [Slatepack](https://github.com/j01tz/grin-rfcs/blob/slatepack/text/0000-slatepack.md)
 * QR Code encoding of slates
 * Armored slates
-
-# References
-[references]: #references
-
-* [Shorter UUIDs](https://github.com/seigert/shorter-uuid-rs)
-
-Include any references such as links to other documents or reference implementations.
