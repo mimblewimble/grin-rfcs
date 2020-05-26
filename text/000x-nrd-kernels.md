@@ -111,53 +111,38 @@ Nodes on the Grin network currently support two serialization versions for trans
 
 __V1 "fixed size kernels"__
 
-In V1 all kernels are serialized to the same "fixed" number of bytes.
-Every kernel includes 8 bytes for the fee with a 0 fee if not applicable.
-Every kernel also includes 8 bytes of feature specific data. This is used for the lock height and unused for all other kernel variants.
+In V1 all kernels are serialized to the same "fixed" number of bytes:
 
-* kernel features
-	* feature byte: 1 byte
-	* fee: 8 bytes
-	* feature specific data: 8 bytes
-* excess commitment: 33 bytes
-* signature: 64 bytes
+	feature (1 byte) | fee (8 bytes) | additional_data (8 bytes) | excess commitment (33 bytes) | signature (64 bytes)
 
-V1 is supported for backward compatibility with older nodes and will be used as necessary, based on version negotiation during the peer connection setup process.
+	03 | 00 00 00 00 01 f7 8a 40 | 00 00 00 00 00 00 05 A0 | 08 b1 ... 22 d8 | 33 11 ... b9 69
 
-```
-feature (1 byte) | fee (8 bytes) | additional_data (8 bytes) | excess commitment (33 bytes) | signature (64 bytes)
+NRD kernels use the last 2 bytes of feature specific data for the relative lock height as big-endian u16. 
+The first 6 bytes of feature specific data must be all zero:
 
-03 | 00 00 00 00 01 f7 8a 40 | 00 00 00 00 00 00 05 A0 | 08 b1 ... 22 d8 | 33 11 ... b9 69
-```
+	00 00 00 00 00 00 05 A0
+
+Note: absolute lock height (u64) and relative lock height (u16) have identical serialization in practice. 
+
+V1 is supported for backward compatibility with nodes that do not support V2 "variable size kernels".
 
 __V2 "variable size kernels"__
 
-V2 kernels have been supported since Grin `v2.1.0` and V2 supports the notion of "variable size" kernels.
+V2 kernels have been supported since Grin `v2.1.0` and V2 supports the notion of "variable size" kernels. See [RFC-0005 "Varible Size Kernels"][12] for details of this.
 
-In V2 we only serialize the data relevant for each kernel feature variant. All kernels require a single byte to define the feature variant, 33 bytes for the excess commitment and 64 bytes for the associated signature. Each kernel variant also includes data specific to the variant. Not all kernel variants will include a fee, for example.
+NRD kernels include 8 bytes for the fee as big-endian u64 and 2 bytes for the relative lock height:
 
-* Plain kernel:
-	* fee: 8 bytes
-* Coinbase kernel:
-	* no additional data
-* Height locked kernel:
-	* fee: 8 bytes
-	* lock height: 8 bytes
-* NRD kernel:
-	* fee: 8 bytes
-	* relative lock height: 2 bytes
+	feature (1 byte) | fee (8 bytes) | relative_height (2 bytes) | excess commitment (33 bytes) | signature (64 bytes)
 
-When taking advantage of variable size kernels, NRD kernels are 2 bytes larger than plain kernels to account for the additional relative lock height information.
+	03 | 00 00 00 00 00 6a cf c0 | 05 A0 | 09 4d ... bb 9a | 09 c7 ... bd 54
 
-Note that the serialization strategy is used for both network "on the wire" serialization of both transactions and full blocks, and local storage, both the database for full blocks and the kernel MMR backend files.
+In V2 relative lock height is 2 bytes as big-endian u16:
+
+	05 A0
+
+Note: the serialization strategy is used for both network "on the wire" serialization of both transactions and full blocks, and local storage, both the database for full blocks and the kernel MMR backend files.
 Version negotiation occurs during the initial peer connection setup process and determines which version is used for p2p message serialization.
-Note that if a node uses V2 serialization for the kernel MMR backend file then it will provide a V2 txhashset based on these underlying files.
-
-```
-feature (1 byte) | fee (8 bytes) | relative_height (2 bytes) | excess commitment (33 bytes) | signature (64 bytes)
-
-03 | 00 00 00 00 00 6a cf c0 | 05 A0 | 09 4d ... bb 9a | 09 c7 ... bd 54
-```
+If a node uses V2 serialization for the kernel MMR backend file then it will provide a V2 txhashset based on these underlying files.
 
 __Kernel Signature Message__
 
@@ -342,6 +327,7 @@ One outstanding question is what use cases are not covered by NRD kernels. We be
 * [Bitcoin BIP-0112][9]
 * [Succinct Atomic Swaps by Ruben Somsen][10]
 * [Scriptless Scripts][11]
+* [RFC-0005 "Varible Size Kernels"][12]
 
 [1]: https://lists.launchpad.net/mimblewimble/msg00025.html 
 [2]: https://lists.launchpad.net/mimblewimble/msg00635.html 
@@ -354,3 +340,4 @@ One outstanding question is what use cases are not covered by NRD kernels. We be
 [9]: https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki
 [10]: https://www.reddit.com/r/Bitcoin/comments/gi6ciw/sas_succinct_atomic_swaps_half_the_number_of/
 [11]: http://diyhpl.us/wiki/transcripts/layer2-summit/2018/scriptless-scripts/ 
+[12]: https://github.com/mimblewimble/grin-rfcs/blob/master/text/0005-variable-size-kernels.md
