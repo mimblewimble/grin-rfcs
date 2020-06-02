@@ -18,13 +18,14 @@ To begin writing your own RFC or to find out more about the process and the gene
 | [0003-security-process](text/0003-security-process.md) | Define community standards for ethical disclosure behaviour |
 | [0004-full-wallet-lifecycle](text/0004-full-wallet-lifecycle.md) | Define API standard for sensitive wallet operations |
 | [0005-variable-size-kernels](text/0005-variable-size-kernels.md) | Introduce kernel variants that can be of different sizes |
-| [0006-payment-proofs](text/0006-payment-proofs.md) | Support generating and validating payment proofs for sender-initiated (i.e. non-invoice) transactions.
-| [0007-node-api-v2](text/0007-node-api-v2.md) | Create a v2 JSON-RPC API for the Node API.
-| [0008-wallet-state-management](text/0008-wallet-state-management.md) | Improve wallet state management.
-| [0009-enable-faster-sync](text/0009-enable-faster-sync.md) | Enable faster txhashset sync by changing output MMR commitment
-| [0010-online-transacting-via-tor](text/0010-online-transacting-via-tor.md) | Define standard for transacting via TOR
-| [0011-security-team](text/0011-security-team.md) | Establish Grin Security team
-| [0012-compact-slates](text/0012-compact-slates.md) | Introduce new compact slate format (Slate V4)
+| [0006-payment-proofs](text/0006-payment-proofs.md) | Support generating and validating payment proofs for sender-initiated (i.e. non-invoice) transactions |
+| [0007-node-api-v2](text/0007-node-api-v2.md) | Create a v2 JSON-RPC API for the Node API |
+| [0008-wallet-state-management](text/0008-wallet-state-management.md) | Improve wallet state management |
+| [0009-enable-faster-sync](text/0009-enable-faster-sync.md) | Enable faster txhashset sync by changing output MMR commitment |
+| [0010-online-transacting-via-tor](text/0010-online-transacting-via-tor.md) | Define standard for transacting via Tor |
+| [0011-security-team](text/0011-security-team.md) | Establish Grin Security team |
+| [0012-compact-slates](text/0012-compact-slates.md) | Introduce new compact slate format (Slate V4) |
+| [0013-nrd-kernels](text/0013-nrd-kernels.md) | Introduce relative timelocks through "No Recent Duplicate" transaction kernels |
 
 ## License
 
