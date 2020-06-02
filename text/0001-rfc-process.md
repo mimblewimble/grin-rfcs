@@ -35,7 +35,7 @@ Some changes do not require an RFC:
 
 If you submit a pull request to implement a new feature without going through the RFC process, it may be closed with a polite request to submit an RFC first.
 
-### Sub-team specific guidelines
+### Team specific guidelines
 
 _To be added here once available._
 
@@ -47,10 +47,9 @@ A hastily-proposed RFC can hurt its chances of acceptance. Low quality proposals
 Although there is no single way to prepare for submitting an RFC, it is generally a good idea to pursue feedback from other project contributors
 beforehand, to ascertain that the RFC may be desirable; having a consistent impact on the project requires concerted effort toward consensus-building.
 
-Ways to prepare and pave the way for writing and submitting an RFC include discussing the topic or posting "pre-RFCs" to our [forum](https://grin-forum.org) for feedback.
+Ways to prepare and pave the way for writing and submitting an RFC include discussing the topic or posting "pre-RFCs" to our [forum](https://forum.grin.mw) for feedback.
 
-As a rule of thumb, receiving encouraging feedback from long-standing project
-contributors, and particularly members of the relevant sub-team (if applicable) is a good indication that the RFC is worth pursuing.
+As a rule of thumb, receiving encouraging feedback from long-standing project contributors, and particularly members of the relevant team (if applicable) is a good indication that the RFC is worth pursuing.
 
 ## Process description
 [process-description]: #process-description
@@ -71,15 +70,15 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 
 #### Draft
 
-* Each pull request will be labeled with the most relevant sub-team, which will lead to it being triaged by that team and is assigned a shepherd from this team. The shepherd ensures the RFC progresses through the process and that a decision is reached, but they themselves do not make this decision.
+* Each pull request will be labeled with the most relevant team, which will lead to it being triaged by that team and is assigned a shepherd from this team. The shepherd ensures the RFC progresses through the process and that a decision is reached, but they themselves do not make this decision.
 * As the author, you build consensus and integrate feedback. RFCs that have broad support are much more likely to make progress than those that don't receive any comments. They are encouraged to reach out to the RFC shepherd in particular to get help identifying stakeholders and obstacles.
-* The relevant sub-team discuss the RFC pull request, as much as possible in the comment thread of the pull request itself. Offline discussion will be summarized on the pull request comment thread.
+* The relevant team discuss the RFC pull request, as much as possible in the comment thread of the pull request itself. Offline discussion will be summarized on the pull request comment thread.
 * RFCs rarely go through this process unchanged, especially as alternatives and drawbacks are shown. As an author you can make edits, big and small, to the RFC to clarify or change the design,but make changes as new commits to the pull request, and leave a comment on the pull request explaining your changes. Specifically, do not squash or rebase commits after they are visible on the pull request.
 
 #### Final Comment Period (FCP)
 
-* At some point, a member of the sub-team will propose a "motion for final comment period" (FCP), along with a *disposition* for the RFC (merge, close, or postpone).
-* This step is taken when enough of the tradeoffs have been discussed that the sub-team is in a position to make a decision. That does not require consensus amongst all participants in the RFC thread (which is usually impossible). However, the argument supporting the disposition on the RFC needs to have already been clearly articulated, and there should not be a strong consensus *against* that position outside of the sub-team. Sub-team members use their best judgment in taking this step, and the FCP itself ensures there is ample time and notification for stakeholders to push back if it is made prematurely.
+* At some point, a member of the assigned team will propose a "motion for final comment period" (FCP), along with a *disposition* for the RFC (merge, close, or postpone).
+* This step is taken when enough of the tradeoffs have been discussed that the team is in a position to make a decision. That does not require consensus amongst all participants in the RFC thread (which is usually impossible). However, the argument supporting the disposition on the RFC needs to have already been clearly articulated, and there should not be a strong consensus *against* that position outside of the team. Team members use their best judgment in taking this step, and the FCP itself ensures there is ample time and notification for stakeholders to push back if it is made prematurely.
 * For RFCs with lengthy discussion, the motion to FCP is usually preceded by a *summary comment* trying to lay out the current state of the discussion and major tradeoffs/points of disagreement.
 * The FCP lasts ten calendar days, so that it is open for at least 5 business days. It is also advertised widely (i.e. in [Grin News](https://grinnews.substack.com)). This way all stakeholders have a chance to lodge any final objections before a decision is reached.
 * In most cases, the FCP period is quiet, and the RFC is either merged or closed. However, sometimes substantial new arguments or ideas are raised, the FCP is canceled, and the RFC goes back into draft mode.
@@ -96,13 +95,13 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 * Furthermore, the fact that a given RFC has been accepted and is "active" implies nothing about what priority is assigned to its implementation, nor does it imply anything about whether a developer has been assigned the task of implementing the feature.
 * While it is not necessary that the author of the RFC also write the implementation, it is by far the most effective way to see an RFC through to completion: authors should not expect that other project contributors will take on responsibility for implementing their accepted feature.
 * Modifications to "active" RFCs can be done in follow-up pull requests. We strive to write each RFC in a manner that it will reflect the final design of the feature; but the nature of software development means that we cannot expect every merged RFC to actually reflect what the end result will be at the time of implementation.
-* In general, once accepted, RFCs should not be substantially changed. Only very minor changes should be submitted as amendments. More substantial changes should be new RFCs, with a note added to the original RFC. Exactly what counts as a "very minor change" is up to the sub-team to decide; check sub-team specific guidelines for more details.
+* In general, once accepted, RFCs should not be substantially changed. Only very minor changes should be submitted as amendments. More substantial changes should be new RFCs, with a note added to the original RFC. Exactly what counts as a "very minor change" is up to the team to decide; check team specific guidelines for more details.
 
 #### Postponed
 
 * Some RFC pull requests are tagged with the "postponed" label when they are closed (as part of the rejection process).
 * An RFC closed with "postponed" is marked as such because we want neither to think about evaluating the proposal nor about implementing the described feature until some time in the future, and we believe that we can afford to wait until then to do so.
-* Postponed pull requests may be re-opened when the time is right. We don't have any formal process for that, you should ask members of the relevant sub-team.
+* Postponed pull requests may be re-opened when the time is right. We don't have any formal process for that, you should ask members of the relevant team.
 * Usually an RFC pull request marked as "postponed" has already passed an informal first round of evaluation, namely the round of "do we think we would ever possibly consider making this change, as outlined in the RFC pull request, or some semi-obvious variation of it." (When the answer to the latter question is "no", then the appropriate response is to close the RFC, not postpone it.)
 
 #### Closed
@@ -113,7 +112,7 @@ In order to make a "substantial" change to Grin, one must first get an RFC merge
 
 In the spirit of the proposed process itself, a future "substantial" overhaul to the RFC process should be opened as a new RFC rather than making edits to this RFC. Minor changes can be made by opening pull requests against this document.
 
-As the RFC process is something that should be consistent across all sub-teams and the project as a whole, changes to the process fall under Core's remit. As they evaluate proposals to modify the process, they are expected to consult with sub-teams, and other stakeholders using or being affected by the process.
+As the RFC process is something that should be consistent across all teams and the project as a whole, changes to the process fall under Core's remit. As they evaluate proposals to modify the process, they are expected to consult with teams, and other stakeholders using or being affected by the process.
 
 ## Drawbacks
 [drawbacks]: #drawbacks
