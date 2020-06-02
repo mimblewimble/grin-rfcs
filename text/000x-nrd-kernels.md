@@ -311,7 +311,7 @@ Some investigation is still needed around the conditions necessary to allow a ke
 
 One outstanding question is what use cases are not covered by NRD kernels. We believe them to be sufficient for the revocable payment channel close mechanism. But they may not be sufficient for all use cases.
 
-[Succinct Atomic Swaps (SAS)][10] describes the use of both relative locks and [adaptor signatures][11] to implement atomic swaps with only two on-chain transactions. The secret associated with the adaptor signature is swapped to allow funds to be claimed while the relative lock locks funds prior to a refund being claimed. We note that NRD kernels and adaptor signatures are not diectly compatible as a prior instance of an NRD kernel would have revealed the secret associated with the adaptor signature. That said we can produce transactions with multiple kernels and we can use this to isolate the adaptor signature on a separate kernel alongside an NRD kernel. It is an unresolved question if there is a way to modify the SAS protocol and avoid the need for these additional kernels in Grin/MW.  
+[Succinct Atomic Swaps (SAS)][10] describes the use of both relative locks and [adaptor signatures][11] to implement atomic swaps with only two on-chain transactions. The secret associated with the adaptor signature is swapped to allow funds to be claimed while the relative lock locks funds prior to a refund being claimed. We note that NRD kernels and adaptor signatures are not directly compatible as a prior instance of an NRD kernel would have revealed the secret associated with the adaptor signature. That said we can produce transactions with multiple kernels and we can use this to isolate the adaptor signature on a separate kernel alongside an NRD kernel. It is an unresolved question if there is a way to modify the SAS protocol and avoid the need for these additional kernels in Grin/MW.  
 
 # References
 [references]: #references
@@ -327,7 +327,7 @@ One outstanding question is what use cases are not covered by NRD kernels. We be
 * [Bitcoin BIP-0112][9]
 * [Succinct Atomic Swaps by Ruben Somsen][10]
 * [Scriptless Scripts][11]
-* [RFC-0005 "Varible Size Kernels"][12]
+* [RFC-0005 "Variable Size Kernels"][12]
 
 [1]: https://lists.launchpad.net/mimblewimble/msg00025.html 
 [2]: https://lists.launchpad.net/mimblewimble/msg00635.html 
