@@ -1,9 +1,9 @@
 
-- Title: nrd-kernels
+- Title: `nrd-kernels`
 - Authors: [Antioch Peverell](mailto:apeverell@protonmail.com)
 - Start date: Mar 24, 2020
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
-- Tracking issue: [Edit if merged with link to tracking github issue]
+- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#47](https://github.com/mimblewimble/grin-rfcs/pull/47)
+- Tracking issue: [mimblewimble/grin#3288](https://github.com/mimblewimble/grin/issues/3288)
 
 ---
 
