@@ -64,9 +64,9 @@ There is no set template for what the contents of the funding request should inc
     * The expected deliverable, if applicable (for a research project, for instance)
 * Background information on the person making the request
 
-Amounts should be stated using fiat currency equivalents with the exact Cryptocurrency amount determined by the rate at the time of transfer. To assist others with conceptualizing the amounts, fiat currencies used should be reasonably global, e.g. USD, EUR, RMB, GBP.
+Amounts should be stated using fiat currency equivalents with the exact Cryptocurrency amount determined by the rate at the time of transfer. To assist others with conceptualizing the amounts, fiat currencies used should be reasonably global, e.g. USD, EUR, CNY, GBP.
 
-All community discussion on the funding request should be made within the forum thread itself, and the final decision on the request will be made by members of the core team at a public governance meeting, to take place at least one week after the request is made. The community is encouraged to display their support (or lack thereof) of a funding request at these Governance meetings, however the decision rests with the core team.
+All community discussion on the funding request should be made within the forum thread itself, and the final decision on the request will be made by members of the core team at a [public governance meeting](https://github.com/mimblewimble/grin-pm/issues?q=is%3Aissue+label%3Agovernance+label%3Ameetings+), to take place at least one week after the request is made. The community is encouraged to display their support (or lack thereof) of a funding request at these Governance meetings, however the decision rests with the core team.
 
 It should also be noted that decisions should never be considered final. Those making funding requests are encouraged to revise or refine proposals based on whatever feedback is given during the request process and submit them for consideration again.
 
@@ -89,22 +89,28 @@ Everyone is welcome to weigh in on the merits of a funding request in the forum 
 * Be specific, professional and thorough with your proposal.
 * Be respectful and professional in your response to any feedback and criticism on the proposal thread 
 
-# Payout Process
+## Payout Process
 
-* At the time of payout, an amount of Bitcoin equivalent to the funding amount is paid out to an address provided by the funding requestor only.
+* At the time of payout, the approved funding amount is converted to the equivalent in cryptocurrency and paid out to an address provided by the funding requestor only.
 * The payout address should be provided to the core team by the requestor via a secure, verifiable channel (with cryptographic proof of identity if deemed necessary).
-* The exchange rate between BTC and the target currency is determined by the exchange rate at the time of the funding transaction, without exception.
+* Any conversion rate between the currency of the funding request and the currency that is paid out from the general fund is determined by the prevailing exchange rate at the time of the funding transaction, without exception.
 * To minimize the effects of currency fluctuations on accounting transparency, all payments should be performed at pre-arranged "signing parties" in which mu-sig holders sample the current exchange rate. The transaction should be created, signed and broadcast as quickly as possible, with the transaction and rate reported back to the core team for tracking.
 * Mu-sig holders will verify the address provided by the funding requestor several times during transaction creation and broadcasting. However, the core team is not responsible for errors or incorrect addresses provided by the requestor.
 
-## Transparency and processes
+## Reporting
 
 The result of all funding decisions will be published in the meeting notes found in the [Grin Project Management](https://github.com/mimblewimble/grin-pm) repository.
 
-The core team is obliged to publish a detailed spending log of all transactions made in and out of the fund, as well as quarterly spending reports summarizing all income and spending. These reports will also be made available in the Grin PM Repository.
+The core team is obliged to publish a detailed spending log of all transactions made in and out of the fund, as well as quarterly transparency reports summarizing all income and spending. This and other financial reporting can be found in the [/grin-pm](https://github.com/mimblewimble/grin-pm) repository.
 
-## Unresolved questions
+# Unresolved questions
 
 * This RFC is put together on the understanding that the fundamental question of 'who appoints the core team' is still outstanding. This point should be discussed separately and this RFC assumes there is an acceptable answer in place.
 
 # Future possibilities
+
+Ideas to further improve the funding process include creating a community funding website, where proposals can be made and vetted by the community, and support for particular ideas can be shown. Contributions towards funding could be made by community individuals and be matched with contributions from the general fund.
+
+# References
+* https://grin.mw/fund
+* https://github.com/mimblewimble/grin-pm/ 
