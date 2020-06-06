@@ -26,6 +26,7 @@ To begin writing your own RFC or to find out more about the process and the gene
 | [0011-security-team](text/0011-security-team.md) | Establish Grin Security team |
 | [0012-compact-slates](text/0012-compact-slates.md) | Introduce new compact slate format (Slate V4) |
 | [0013-nrd-kernels](text/0013-nrd-kernels.md) | Introduce relative timelocks through "No Recent Duplicate" transaction kernels |
+| [0014-general-fund-guidelines](text/0014-general-fund-guidelines.md) | Define general fund spending guidelines |
 
 ## License
 
