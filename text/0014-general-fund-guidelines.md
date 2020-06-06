@@ -1,9 +1,9 @@
 
-- Title: general-fund-spending-guidelines
+- Title: `general-fund-guidelines`
 - Authors: [Yeastplume](mailto:yeastplume@protonmail.org)
-- Start date: [Feb 07, 2020]
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)·
-- Tracking issue: [Edit if merged with link to tracking github issue]
+- Start date: Feb 07, 2020
+- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#41](https://github.com/mimblewimble/grin-rfcs/pull/41)
+- Tracking issue: `N/A`
 
 ---
 
