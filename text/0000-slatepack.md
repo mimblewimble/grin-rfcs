@@ -72,11 +72,17 @@ grin-wallet already handles ed25519 keys for the v3 onion addresses in Tor trans
 
 _By default, all wallets should generate a new `SlatepackAddress` for each transaction for improved user privacy and security._ Wallets can optionally support the ability for a static, reusable receiving `SlatepackAddress` with a warning about the privacy risks of reusing these addresses.
 
+The exact proposal for the implementation of simulatenous active `SlatepackAddresses` to enforce address uniqueness by default according to this standard is left as an implementation detail to wallets to ensure that wallets can _interactively_ receive Grin across many `SlatepackAddresses` simulataneously and efficiently.
+
 ed25519 keys are bech32 encoded as `SlatepackAddresses` rather than x25519 keys because the mapping from ed25519 to x25519 is more straightforward (x25519 public keys do not carry a `v` coordinate so they can map to two possible ed25519 public keys- this is solvable but using the ed25519 as the first order key avoids a potentially complex solution).
 
 #### Key Generation
 
-_The derivation strategy for ed25519 keys used for a `SlatepackAddress` in the context of grin-wallet remains open_
+Keys used in `SlatepackAddresses` are derived from a path from the master seed in a given wallet account. Currently the wallet uses separate derivation paths: one for the private bytes used for the blinding factor keys and one for the private bytes used to derive the ed25519 keys used to derive Tor onion addresses. ed25519 keys used for a `SlatepackAddress` are derived from this second derivation path of the master seed. 
+
+SlatepackAddress` keys may be derived in parallel to the blinding factor derivation path such that a unique `SlatepackAddress` is derived each time a new blinding factor is derived for a transaction to satisfy the requirement for a unique `SlatepackAddress` to be used for each transaction by default. 
+
+In a future update it may be desirable to encode the derivation path for the `SlatepackAddress` for a given encrypted `SlatepackMessage` somewhere so that the x25519 decryption keys can be derived without grinding down the path to find the right key to use.
 
 #### Example `SlatepackAddress`
 
