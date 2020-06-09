@@ -150,9 +150,7 @@ Any deviations in Slatepack encryption from the exact cryptography steps and dec
 
 An encrypted Slatepack payload is built with the same steps as an encrypted age payload, where the X25519 keys are derived from a participants `SlatepackAddress`.
 
-E.g. `age_encrypt(sender + slate_binary)` where `mode == 1`, `slatepack > [0, 1]` and `sender` is a valid `SlatepackAddress`
-
-Note that for version 0.1 the `sender` is still included in the standard plain text metadata regardless of the mode. Later versions should move the `sender` field to be encrypted with the binary slate payload as well as any other metadata fields where privacy may be desirable.
+E.g. `age_encrypt(sender + slate_binary)` where `mode == 1` and `sender` is a valid `SlatepackAddress`
 
 ### Armor
 
@@ -233,22 +231,11 @@ In this plain text example, neither the sender nor the receiver wish to share a 
 }
 ```
 
-#### Mode 1 (v0.1): Encrypted
+#### Mode 1: Encrypted
 
 ```
 {
   "slatepack": [0, 1],
-  "mode": 1,
-  "sender": "slatepack1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x",
-  "payload": <age encrypted binary: binary serialized slate>,
-}
-```
-
-#### Mode 1 (v0.2): Encrypted
-
-```
-{
-  "slatepack": [0, 2],
   "mode": 1,
   "payload": <age encrypted binary: sender slatepack address + binary serialized slate>,
 }
