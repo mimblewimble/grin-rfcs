@@ -160,7 +160,7 @@ E.g. `age_encrypt(sender + slate_binary)` where `mode == 1` and `sender` is a va
 
 ### Armor
 
-The payload that will be armored is a binary serialized `Slatepack` JSON object. Armor is `Framing` wrapped around a `SimpleBase58Check` encoded `Payload`.
+The payload that will be armored is an optionally encrypted, binary serialized `Slatepack` JSON object and any associated encrypted metadata. Armor is `Framing` wrapped around a `SimpleBase58Check` encoded `Payload`.
 
 #### Framing
 
@@ -230,7 +230,7 @@ In this plain text example, neither the sender nor the receiver wish to share a 
 
 ```
 {
-  "slatepack": [0, 1],
+  "slatepack": [1, 0],
   "mode": 0,
   "sender": "0",
   "payload": <binary serialized slate>
@@ -241,7 +241,7 @@ In this plain text example, neither the sender nor the receiver wish to share a 
 
 ```
 {
-  "slatepack": [0, 1],
+  "slatepack": [1, 0],
   "mode": 1,
   "payload": <age encrypted binary: sender slatepack address + binary serialized slate>,
 }
@@ -341,7 +341,7 @@ _Note that these details were taken from early documentation and not code- trans
 
 ## Beam
 
-Beam uses the [SBBS](https://github.com/BeamMW/beam/wiki/Secure-bulletin-board-system-(SBBS) gossip protocol to support asynchronous mimblewimble transactions. SBBS adds a nontrivial amount of complexity and attack surface to the core Beam software. In exchange, Beam receives a somewhat user-friendly mechanism for users to build transactions asynchronously. The asynchronous fallback method for Slatepack transactions is a simple ascii armor string that does not contain an opinion about a particular protocol with which to exchange the data.
+Beam uses the [SBBS](https://github.com/BeamMW/beam/wiki/Secure-bulletin-board-system-(SBBS)) gossip protocol to support asynchronous mimblewimble transactions. SBBS adds a nontrivial amount of complexity and attack surface to the core Beam software. In exchange, Beam receives a somewhat user-friendly mechanism for users to build transactions asynchronously. The asynchronous fallback method for Slatepack transactions is a simple ascii armor string that does not contain an opinion about a particular protocol with which to exchange the data.
 
 The advantage with the Slatepack method is that much less code is required to support these transactions which can improve the overall stability and security of the codebase running the Grin network. The disadvantage of this for Slatepack is that asynchronous transactions don't "magically" work- they still need to be between users via an outside channel (instant message, text box, email etc). Slatepack makes the tradeoff of slightly more work for the end user in exchange for a simpler and potentially more secure network for Grin.
 
