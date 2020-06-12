@@ -39,7 +39,7 @@ Slatepack changes the existing transaction building process in Grin in a few way
 4. _The difference between synchronous and asynchronous transaction methods is abstracted away from the end user with the Slatepack standard_
   - `grin-wallet send -d SlatepackAddress 1.337` will first try to send the Grin synchronously via Tor to the `SlatepackAddress`
   - If that fails it will fall back to outputting an armored encrypted `SlatepackMessage` string for manual copy and paste transport
-  - Example `SlatepackAddress`: `slatepack1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
+  - Example `SlatepackAddress`: `grin1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
 
 5. _Asynchronous transactions are now encrypted by default by knowing the `SlatepackAddress` of your counterparty(s)_
   - If a counterparty is unwilling or unable to provide a `SlatepackAddress`, a plain text `SlatepackMessage` can still be exchanged
@@ -65,8 +65,8 @@ A `SlatepackAddress` is a bech32 encoded ed25519 public key and when shared with
 
 grin-wallet already handles ed25519 keys for the v3 onion addresses in Tor transactions. These keys can be extended to be a general `SlatepackAddress` to allow a universal key format for both transport and encryption that is error-checked, QR friendly and easily human identifiable.
 
-  - Existing ed25519 public keys from the wallet are bech32 encoded with `slatepack` as the `human-readable part` to build a `SlatepackAddress`
-    - `floopack` is the HRP for a floonet `SlatepackAddress`
+  - Existing ed25519 public keys from the wallet are bech32 encoded with `grin` as the `human-readable part` to build a `SlatepackAddress`
+    - `tgrin` is the HRP for a floonet `SlatepackAddress`
 
   - A `SlatepackAddress` can be decoded to its ed25519 public key which can then be mapped to an x25519 public key to be used for encryption
 
@@ -87,7 +87,7 @@ In a future update it may be desirable to encode the derivation path for the `Sl
 #### Example `SlatepackAddress`
 
 ```
-slatepack1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x
+grin1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x
 ```
 
 ## `SlatepackMessage`
@@ -136,9 +136,9 @@ Note that `recipients_list` does not gain the same privacy advantages of the `se
 - `"recipients_list": vec<SlatepackAddress>`
   - Only included in multiparty encrypted mode for use in future versions
   - Array of recipients such that each recipients `SlatepackAddress` in `recipients_list` matches their associated `epk` and `emk` by index in the age encryption header of the encrypted payload
-  - E.g. `"recipients_list": [slatepack1a, slatepack1b]`, `"age_header_recipients": [(X25519, EPKa, EMKa), (X25519, EPKb, EMKb)]`
-	- `slatepack1a` and `(X25519, EPKa, EMKa)` both belong to the same party as they are both at index 0
-	- `slatepack1b` and `(X25519, EPKb, EMKb)` both belong to the same party as they are both at index 1
+  - E.g. `"recipients_list": [grin1a, grin1b]`, `"age_header_recipients": [(X25519, EPKa, EMKa), (X25519, EPKb, EMKb)]`
+	- `grin1a` and `(X25519, EPKa, EMKa)` both belong to the same party as they are both at index 0
+	- `grin1b` and `(X25519, EPKb, EMKb)` both belong to the same party as they are both at index 1
 
 ### Encryption
 
@@ -262,9 +262,9 @@ Adoption of the Slatepack standard allows for a unified workflow that can still 
 
 ### With a `SlatepackAddress`
 
-1. `grin-wallet send -d slatepack1bech32address 1.337`
+1. `grin-wallet send -d grin1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x 1.337`
 
-2. Sender wallet derives an onion v3 address from `slatepack1bech32address` and attempts to complete the transaction synchronously via Tor
+2. Sender wallet derives an onion v3 address from `grin1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x` and attempts to complete the transaction synchronously via Tor
 
 3. (Fallback) If the synchronous transaction fails, a `SlatepackMessage` string is encrypted to the `SlatepackAddress` and output for manual asynchronous transport by the user
 
@@ -352,13 +352,6 @@ The advantage with the Slatepack method is that much less code is required to su
 
 - What are unmentioned security considerations for using the same base key to both map to an onion address and map to an encryption key used in transactions?
   - Related, what are unmentioned security considerations to `SlatepackAddress` reuse?
-
-- What should the `human-readable part` of the bech32 encoded `SlatepackAddress` be?
-  - `slatepack1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
-  - `grin1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
-  - `spk1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
-  - `sp1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
-  - `g1p4fuklglxqsgg602hu4c4jl4aunu5tynyf4lkg96ezh3jefzpy6swshp5x`
 
 - Should we still use double-sha256 in `SimpleBase58Check` or take the opportunity to use a BCH or CRC code which may be more appropriate for error detection on slatepack messages?
   - Is additional engineering desired here if there will always be further validation of the slate payload before a spend can occur?
