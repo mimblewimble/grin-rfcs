@@ -1,6 +1,6 @@
 # Grin RFCs
 
-This repository contains all [Grin Project](https://grin-tech.org) RFCs that have been proposed and accepted by the Grin community for further consideration.
+This repository contains all [Grin Project](https://grin.mw) RFCs that have been proposed and accepted by the Grin community for further consideration.
 
 Grin RFCs may cover (but are not limited to) technical enhancements, changes to the governance structure or changes to project processes.
 
