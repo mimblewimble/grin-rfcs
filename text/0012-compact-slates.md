@@ -21,7 +21,7 @@ This RFC aims to define the contents of a streamlined "compact" slate by:
 
 * Removing all redundant or unnecessary Slate fields
 * Shortening the names of many Slate fields
-* Reducing the size of the Slate to be as minimal as possible at all phases of a transaction
+* Reducing the size of the Slate to at all phases of a transaction
 * Defining an optional highly-minimized binary format for Slate output
 
 Although this RFC doesn't address any particular transaction exchange methods that might be facilitated by this streamlining, one could envisage possibilities such as:
@@ -105,18 +105,18 @@ In version 4 of the Slate format, the initial Slate now looks like the following
 
 ```
 {
-  "ver": "4:3",
+  "ver": "4:2"
   "id": "0436430c-2b02-624c-2032-570501212b00",
   "sta": "S1",
-  "off": "0gKWSQAAAADTApZJAAAAANQClkkAAAAA1QKWSQAAAAA=",
-  "amt": "1000000000",
+  "off": "d202964900000000d302964900000000d402964900000000d502964900000000",
+  "amt": "6000000000",
   "fee": "8000000",
   "sigs": [
     {
-      "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
-      "nonce": "A1MbUjB5g4fjZ3fTYATVBA8TADHGG77D8gHpzbQTl/IE"
+      "xs": "023878ce845727f3a4ec76ca3f3db4b38a2d05d636b8c3632108b857fed63c96de"
+      "nonce": "031b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
     }
-  ]
+  ],
 }
 ```
 
@@ -127,18 +127,18 @@ While a "return" slate might look something like the following:
   "ver": "4:3",
   "id": "0436430c-2b02-624c-2032-570501212b00",
   "sta": "S2",
-  "off": "9fKWSQAAAADTApZJAAAAANQClkkAAAAA1QKWSQAAAAA=",
+  "off": "a4052c9200000001a6052c9200000002ed564fab50b75fc5ea32ce052fc9bebf",
   "sigs": [
     {
-      "xs": "Ai+QL7rLMl1GC6UmKoMyy9bzsSJPasLzLWzIzjFA1eMY",
-      "nonce": "AzXE1/dlRaI66gEiTGrQF4h3v4zORFG7Hi5r7/xb0p1k",
-      "part": "ZJ3SW/zvay4eu1FEzoy/d4gX0GpMIgHqOqJFZffXxDXD7Bt8tc8dVq/p9n0Wei38mVtKTuMaSMNXBSo49TQ06A=="
+      "xs": "03b0d73a044f1f9ae06cf96ef91593f121864b66bf7f7e7ac481b0ce61e39847fe",
+      "nonce": "031b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
+      "part": "8f07ddd5e9f5179cff19486034181ed76505baaad53e5d994064127b56c5841b54735cb9ed2f59fb457144f7b1c8226d08b54cbdd0eb7e6492950751b0bb54f9"
     }
   ],
   "coms": [
     {
-      "c": "CfdTW8wOTGEsSs76A90BTpRzo9gixyfx+jJrhvIt//ua",
-      "p": "geV4V00oPT+QSZBppHhVTqm0EhHTApAUBG+CZIsPdQ1Qj4gzGlPs6KbgVrqssYpcDzLCjDchIHZSd9WLX0QPJwXh2Tt7yA+kep7vkAMgsjjtjkYpDMk+twTztQkNyTPoaFmMbBf2WTxkuT2ohFZqcNS9mnEkW5gwuC/WEDilO9AD+d7lqbApZV0nbkp1zquE6oL9+017gyliTKl4LhYzM8zaRCacaTFjLaWhJAEvR5c0RH37qiLEu1NsVqN3Ik0FXbVqHPoqB5EduDYeB375MKTAdyr+n0XCpj5oKKq+9qXRd3ftbOeB8m+H3IiGX0UTDDU7ackUYF++1J2d+FzswxxGine/eMyizkq6yqq/hkwqp2Lht+N0zgogY6aA67x+w9C03f+ZMxfvSatxBwf392AcLZ2liM/Px45CbeIyoUpotoI+AbN6Rfvip5zIbZBAy0R4+KBxXVeGjrw1hdcvpdH2AROItob2rc7pU3eHZaQj/dcfv2CAkNP7bF3cKuQe55gBCuhFKsneD8xayoX9MwtNcvWgQVrm9hw+1K7OsHrYMJ9fe59JpPC74s0vaE0zSDWpDkh3sf8ru6ADR8CsRoBo2YPVZrCX39sPtMqd7SFS66s/tO8Jn9rDqljDmvdjtRiD28UZitwAZEKxXCU5PztkcKC5FWQdIcVviNdVo5nCYI+GXaMhQDhuTqo5pftGlwjeB1aIDX3K3rxdB8wHuvtQefBTuzKGxW0iumYF2/Uy7oHOwVBCEI+BzJHLmqttYy0gDIgrNZoxTVTl8U8vugVOsk6+MYDvC9LRFQZ7hgheRiCnE1wVka7BCKYsk30h26RwV6LKWLkM0n6HBVX9gIKtNvnyWaC1C7o2KnsTNxo+G3K44LYhc2+hAG3vOaFGP14a"
+      "c": "091582c92b99943b57955e52b5ccf1223780c2a2e55995c00c86fca2bcb46b6b9f",
+      "p": "49972a8d5b7c088e7813c3988ebe0982f8f0b12b849b1788df7da07b549408b0d6c99f80c0e2335370c104225ef5d282d79966e9044c959bedc3be03af6246fa07fc13eb3c60c90213c9f3a7a5ecf9a34c8fbaddc1a72e49e12dba9495e5aaa53bb6ac6ed63d8774707c57ab604d6bdc46de18da57a731fe336c3ccef92b4dae967417ffdae2c7d75864d46d30e287dd9cc15882e15f296b9bab0040e4432f4024be33924f112dd26c90cc800ac09a327b0ac3a661f63da9945fb1bcc82a7777d61d97cbe657675e22d035d2cf9ea03a89cfa410960ebc18a0a18b1909f4c5bef20b0fd13ffcf5a818ad8768d354b1c0f2e9b16dd7a9cf0641546f57d1945a98b8684d067dd085b90b40457e4c14665fb1b94feecf30a90f508ded16ba1bba8080a6866dffd0b1f01738fff8c62ce5e38e677835752a1b4072124dd9ff14ba8ff92126baebbb5f6e14fbb052f5d5b09aec11bfd880d7d4640a295aa83f184034d26f00cbdbabf9b89fddd7a7c9cc8c5d4b53fc39971e4495a8d984ac9607be89780fde528ee3f2d6b912908b4caf04f5c93f64431517af6b32d0b9c18255959f6903c6696ec71f615a0c877630a2d871f3f8a107fc80f306a94b6ad5790070f7d2535163bad7feae9263a9d3558ea1acecc4e61ff4e05b0162f6aba1a3b299ff1c3bb85e4109e550ad870c328bedc45fed8b504f679bc3c1a25b2b65ede44602f21fac123ba7c5f132e7c786bf9420a27bae4d2559cf7779e77f96b747b6d3ad5c13b5e8c9b49a7083001b2f98bcf242d4644537bb5a3b5b41764812a93395b7ab372c18be575e02c3763b4170234e5fddeb43420aadb71cb80f75cc681c1e7ffee3e6a8868c6076fd1da539ab9a12fef1c8cbe271b6de60100c9f82d826dc97b47b57ee9804e60112f556c1dce4f12ecc91ef34d69090b8c9d2ae9cbae38994a955cb"
     }
   ]
 }
@@ -163,7 +163,7 @@ Field ordering is canonical.
   "ver": "4:3",
   "id": "0436430c-2b02-624c-2032-570501212b00",
   "sta": "S1",
-  "off": "0gKWSQAAAADTApZJAAAAANQClkkAAAAA1QKWSQAAAAA=",
+  "off": "d202964900000000d302964900000000d402964900000000d502964900000000",
 
 # These fields may or may not be present
 //"num_parts: 2,
@@ -175,9 +175,9 @@ Field ordering is canonical.
 # Sigs is always present with at least one entry
   "sigs": [
     {
-      "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
+      "xs": "03b0d73a044f1f9ae06cf96ef91593f121864b66bf7f7e7ac481b0ce61e39847fe",
 //    "part": null,
-      "nonce": "A1MbUjB5g4fjZ3fTYATVBA8TADHGG77D8gHpzbQTl/IE"
+      "nonce": "031b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
     }
   ]
 
@@ -197,7 +197,7 @@ A description of all fields and their meanings is as follows:
 * `ver` - The slate version and supported block header version, separated by a `:`
 * `id` - The slate's UUID, standard hex-string encoding for UUIDs
 * `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status-codes)
-* `off` - The running transaction offset total, base-64 encoded. All parties select a random offset at the beginning of the transaction and subtract their offset from the excess value of their outputs.
+* `off` - The running transaction offset total, hex-string encoded. All parties select a random offset at the beginning of the transaction and subtract their offset from the excess value of their outputs.
 They then subtract the value of the inputs from the offset when committing to inputs, updating the total offset before sending to the next stage.
 
 ##### Fields - Optional, depending on State and transaction options
@@ -234,16 +234,16 @@ An entry in the `sigs` array is as follows:
 
 ```
 {
-   "xs": "A5sKZUTyGG1FogzBtH8ZvGaVVOFFxusytVLN0rdpX2DE",
+   "xs": "03b0d73a044f1f9ae06cf96ef91593f121864b66bf7f7e7ac481b0ce61e39847fe",
    "part": null,
-   "nonce": "A1MbUjB5g4fjZ3fTYATVBA8TADHGG77D8gHpzbQTl/IE"
+   "nonce": "031b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
 }
 ```
 
 The `sigs` struct contains is comprised of an array of participant signature data, with each entry comprising:
-   * `xs` - Base64 encoded short form public key on the secp256k1 curve representing the public blind excess for the participants outputs subtracted from each party's part of the offset.
-   * `part` - Base64 encoded Aggregated (Schnorr) secp2561k signature represeting the participant's partial sig. May be omitted if the participant does not yet have enough data to create it
-   * `nonce` - Base64 encoded The public key of the nonce chosen by the participant for their partial signature
+   * `xs` - Hex string encoded short form public key on the secp256k1 curve representing the public blind excess for the participants outputs subtracted from each party's part of the offset.
+   * `part` - Hex string encoded Aggregated (Schnorr) secp2561k signature represeting the participant's partial sig. May be omitted if the participant does not yet have enough data to create it
+   * `nonce` - Hex string encoded The public key of the nonce chosen by the participant for their partial signature
 
 The other party's `sig` entry is removed from the slate before sending it back to the transaction initiator during the S2 and I2 phases.
 
@@ -261,9 +261,9 @@ If included, the proof structure is:
 
 The `proof` struct is an optional payment proof request that must be filled out by the recipient if requested (only valid for basic transaction flow). Its fields are as follows:
 
-   * `saddr` - Base64 encoded short-form public key on the ed25519 curve, representing the sender's wallet address (see the [payment proofs rfc](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0006-payment-proofs.md) for details.
-   * `raddr` - Base64 encoded short-form public key on the ed25519 curve represnting the recipient's wallet address
-   * `rsig` - Base64 encoded EdDSA ed25519 signature representing the recipient's payment-proof signature. Can be omitted if this has not yet been filled out
+   * `saddr` - Hex string encoded short-form public key on the ed25519 curve, representing the sender's wallet address (see the [payment proofs rfc](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0006-payment-proofs.md) for details.
+   * `raddr` - Hex string encoded short-form public key on the ed25519 curve represnting the recipient's wallet address
+   * `rsig` - Hex string encoded EdDSA ed25519 signature representing the recipient's payment-proof signature. Can be omitted if this has not yet been filled out
 
 #### Transaction Object Fields
 
@@ -273,8 +273,8 @@ The `tx` struct in a V4 Slate is removed, and is replaced instead by the followi
 
 * `coms` is an array containing the outputs and inputs that have been added to the slate. These will appear during the I1 or S2 phases of a transaction. Each entry includes:
    * `f`: The output features, assumed to be 'Plain' if omitted. 0 denotes Plain, 1 denotes Coinbase
-   * `c`: The output/input commitment, Base64 Encoded
-   * `p`: The output's range proof, Base64 Encoded. If this is included, the entry is assumed to be an output. If not, it is an input.
+   * `c`: The output/input commitment, hex string Encoded
+   * `p`: The output's range proof, hex string Encoded. If this is included, the entry is assumed to be an output. If not, it is an input.
 
 When rebuilding the transaction kernel for the Node (done during the S3 or I3 phases,) the kernel is assumed to be 'Plain' unless the top-level `feat` field is non-zero. In this case, the kernel features are filled accordingly with any needed values from the `feat_args` struct.
 
@@ -283,14 +283,14 @@ In a typical S3 phase, these fields may look something like:
 ```
   "coms": [
     {
-      "c": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt",
-      "p": "J+/eWsEWsOljOS5norAUhV9Ygzub4Vf6dxLl71w06sA5c0QHllDeFv0n9UbCPuIL2CoBtLAfgKHAjPV7OjQ5lwSZcK+lfBD3kziiY1iUdjH6ZctAE9D/DdNfQ7a4RdurQDdKbGtihnnnOkHbllutCyV1TDLyvvqyExuwQrK2QkJulhfArQVcBE2txtbWSDjfAAtxraU7UpCMg0MoGRP4v6bm/50hntwTHc9zHegcDblADpMhTNMGh1jlRaCP00n8/Lj520YvZNd0dedynD5U97cfXFTP5C2fjVwwZKCnMZqN90CDAxNuCTA5fFaGTOv2MHMvZrqoVFriuaa+jbjpeU9ifGOWAI5B3HXMeMiSUL0a8c451ohT7zcENCr8jTW+uwA2ejcidMZsL19EaDZX9w0cirdKW5mRI/YPRuw6zBkg8SmXvSLArW0vz94pERcaE0uK9pK/qlgvplmC3/Rv92A9AkyQVeWBieyCoFaxoDL5hGMQaLLc6G3slgCzBUZHX1idNwLhfWAb5mHF97GmqcJf/joEVKuhPpK/mAICLWDUzYQS9gH4GJDlgAz1Bv5KdHY9jo/kB6IDvtxOKnTkl+vK2eK3L178vp02lufgv29fblxSFN9Kw2ujh1j8eCh8RC3RDyAI8qVbHiRDN2N4ANk0fIlc6Gq37D/VChxlTCzd+MmiBJRpqDvYFnz0r2kjuic/xATPQ+G5QoyI30ftXWgLzhGqgZ7S33rywiAP1EsgsoRwUojYvx0skfuasZd+F/Dj2o4RzX32JDcROAh6S49mcr+VumVbPx5tEcZwsQNb6d2yrzCQ6j3x5skaydyaMxhdsMtzb7BOWGWl1GrZ8AALr96R2bdP2vL4mxLtym2qZ/Hh2P5MrnivthS8C+x57TFa"
+      "c": "091582c92b99943b57955e52b5ccf1223780c2a2e55995c00c86fca2bcb46b6b9f",
+      "p": "49972a8d5b7c088e7813c3988ebe0982f8f0b12b849b1788df7da07b549408b0d6c99f80c0e2335370c104225ef5d282d79966e9044c959bedc3be03af6246fa07fc13eb3c60c90213c9f3a7a5ecf9a34c8fbaddc1a72e49e12dba9495e5aaa53bb6ac6ed63d8774707c57ab604d6bdc46de18da57a731fe336c3ccef92b4dae967417ffdae2c7d75864d46d30e287dd9cc15882e15f296b9bab0040e4432f4024be33924f112dd26c90cc800ac09a327b0ac3a661f63da9945fb1bcc82a7777d61d97cbe657675e22d035d2cf9ea03a89cfa410960ebc18a0a18b1909f4c5bef20b0fd13ffcf5a818ad8768d354b1c0f2e9b16dd7a9cf0641546f57d1945a98b8684d067dd085b90b40457e4c14665fb1b94feecf30a90f508ded16ba1bba8080a6866dffd0b1f01738fff8c62ce5e38e677835752a1b4072124dd9ff14ba8ff92126baebbb5f6e14fbb052f5d5b09aec11bfd880d7d4640a295aa83f184034d26f00cbdbabf9b89fddd7a7c9cc8c5d4b53fc39971e4495a8d984ac9607be89780fde528ee3f2d6b912908b4caf04f5c93f64431517af6b32d0b9c18255959f6903c6696ec71f615a0c877630a2d871f3f8a107fc80f306a94b6ad5790070f7d2535163bad7feae9263a9d3558ea1acecc4e61ff4e05b0162f6aba1a3b299ff1c3bb85e4109e550ad870c328bedc45fed8b504f679bc3c1a25b2b65ede44602f21fac123ba7c5f132e7c786bf9420a27bae4d2559cf7779e77f96b747b6d3ad5c13b5e8c9b49a7083001b2f98bcf242d4644537bb5a3b5b41764812a93395b7ab372c18be575e02c3763b4170234e5fddeb43420aadb71cb80f75cc681c1e7ffee3e6a8868c6076fd1da539ab9a12fef1c8cbe271b6de60100c9f82d826dc97b47b57ee9804e60112f556c1dce4f12ecc91ef34d69090b8c9d2ae9cbae38994a955cb"
     },
     {
-      "c": "CA8KJv0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrSd2yt"
+      "c": "087df32304c5d4ae8b2af0bc31e700019d722910ef87dd4eec3197b80b207e3045"
     },
     {
-      "c": "A43jdi0/AmWQRgvKpTBIwxaE+OTn/TnxaADSkhrxer3f"
+      "c": "08e1da9e6dc4d6e808a718b2f110a991dd775d65ce5ae408a4e1f002a4961aa9e7"
     }
   ],
 ```
@@ -337,9 +337,6 @@ depend on the value of `feat`. Currently, the only supported kernel is HeightLoc
 * `public_nonce` is renamed to `nonce`
 * `part_sig` is renamed to `part`
 * `part` may be omitted if it has not yet been filled out
-* `xs` becomes Base64 encoded instead of a hex string
-* `nonce` becomes Base64 encoded instead of a hex string
-* `part` becomes Base64 encoded instead of a hex string
 * `message` is removed
 * `message_sig` is removed
 * `id` is removed. Parties can identify themselves via the keys stored in their transaction context
@@ -349,9 +346,6 @@ depend on the value of `feat`. Currently, the only supported kernel is HeightLoc
 *  The `sender_address` field is renamed to `saddr`
 *  The `receiver_address` field is renamed to `raddr`
 *  The `receiver_signature` field is renamed to `rsig`
-* `saddr` is Base64 encoded instead of a hex string
-* `raddr` is Base64 encoded instead of a hex string
-* `rsig` is Base64 encoded instead of a hex string
 * `rsig` may be omitted if it has not yet been filled out
 
 ### Pretty-Printing
@@ -370,7 +364,7 @@ All integer values are Big-Endian.
 | `ver.block_header_version` | u16            | 2        |                                                       |
 | `id`                       | Uuid           | 16       | binary Uuid representation                            |
 | `sta`                      | u8             | 1        | See [Status Byte](#status-byte)                       |
-| `offset`                   | BlindingFactor | 33       |
+| `offset`                   | BlindingFactor | 33       |                                                       |
 | Optional field status      | u8             | 1        | See [Optional Field Status](#optional-field-status)   |
 | `num_parts`                | u8             | (1)      | If present                                            |
 | `amt`                      | u64            | (4)      | If present                                            |
