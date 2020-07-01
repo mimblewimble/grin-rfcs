@@ -8,7 +8,6 @@ Grin RFCs may cover (but are not limited to) technical enhancements, changes to 
 
 To begin writing your own RFC or to find out more about the process and the general RFC guidelines, refer to [the RFC that established this  process](text/0001-rfc-process.md).
 
-
 ## List of accepted RFCs
 
 |Title|Tl;dr|
@@ -27,6 +26,7 @@ To begin writing your own RFC or to find out more about the process and the gene
 | [0012-compact-slates](text/0012-compact-slates.md) | Introduce new compact slate format (Slate V4) |
 | [0013-nrd-kernels](text/0013-nrd-kernels.md) | Introduce relative timelocks through "No Recent Duplicate" transaction kernels |
 | [0014-general-fund-guidelines](text/0014-general-fund-guidelines.md) | Define general fund spending guidelines |
+| [0015-slatepack](text/0015-slatepack.md) | Universal transaction standard for Grin |
 
 ## License
 
