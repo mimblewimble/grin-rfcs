@@ -1,8 +1,8 @@
 - Title: Slatepack
 - Authors: [joltz](mailto:joltz@protonmail.com)
 - Start date: May 07 2020
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
-- Tracking issue: [Edit if merged with link to tracking github issue]
+- RFC PR: [mimblewimble/grin-rfcs#55](https://github.com/mimblewimble/grin-rfcs/pull/55)
+- Tracking issue: [mimblewimble/grin-wallet#406](https://github.com/mimblewimble/grin-wallet/issues/406)
 ---
 
 # Summary
