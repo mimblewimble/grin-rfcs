@@ -367,10 +367,10 @@ All integer values are Big-Endian.
 | `offset`                   | BlindingFactor | 33       |                                                       |
 | Optional field status      | u8             | 1        | See [Optional Field Status](#optional-field-status)   |
 | `num_parts`                | u8             | (1)      | If present                                            |
-| `amt`                      | u64            | (4)      | If present                                            |
-| `fee`                      | u64            | (4)      | If present                                            |
+| `amt`                      | u64            | (8)      | If present                                            |
+| `fee`                      | u64            | (8)      | If present                                            |
 | `feat`                     | u8             | (1)      | If present                                            |
-| `ttl`                      | u64            | (4)      | If present                                            |
+| `ttl`                      | u64            | (8)      | If present                                            |
 | `sigs` length              | u8             | 1        | Number of entries in the `sigs` struct                |
 | `sigs` entries             | struct         | varies   | See [Sigs Entries](#sigs-entries)                     |
 | Optional struct status     | u8             | 1        | See [Optional Struct Status](#optional-struct-status) |
@@ -469,7 +469,7 @@ value of the `feat` field. Currently only present if `feat` is 1.
 
 |       Field | type  | len | notes                                |
 | ----------: | ----- | --  | ------------------------------------ |
-| `lock_hgt`  | u64   | 4   | Lock height, present if `feat` is 1  |
+| `lock_hgt`  | u64   | 8   | Lock height, present if `feat` is 1  |
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
