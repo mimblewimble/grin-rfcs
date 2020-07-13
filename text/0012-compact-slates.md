@@ -364,7 +364,7 @@ All integer values are Big-Endian.
 | `ver.block_header_version` | u16            | 2        |                                                       |
 | `id`                       | Uuid           | 16       | binary Uuid representation                            |
 | `sta`                      | u8             | 1        | See [Status Byte](#status-byte)                       |
-| `offset`                   | BlindingFactor | 33       |                                                       |
+| `offset`                   | BlindingFactor | 32       |                                                       |
 | Optional field status      | u8             | 1        | See [Optional Field Status](#optional-field-status)   |
 | `num_parts`                | u8             | (1)      | If present                                            |
 | `amt`                      | u64            | (8)      | If present                                            |
