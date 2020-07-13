@@ -371,10 +371,8 @@ All integer values are Big-Endian.
 | `fee`                      | u64            | (8)      | If present                                            |
 | `feat`                     | u8             | (1)      | If present                                            |
 | `ttl`                      | u64            | (8)      | If present                                            |
-| `sigs` length              | u8             | 1        | Number of entries in the `sigs` struct                |
 | `sigs` entries             | struct         | varies   | See [Sigs Entries](#sigs-entries)                     |
 | Optional struct status     | u8             | 1        | See [Optional Struct Status](#optional-struct-status) |
-| `coms` length              | u8             | (1)      | If present                                            |
 | `coms` entries             | struct         | (varies) | If present. See [Coms Entries](#coms-entries)         |
 | `proof`                    | struct         | (64)     | If present. See [Proof](#proof)                       |
 | `feat_args` entries        | struct         | (varies) | If present. See [Feature Args](#feature-args)         |
