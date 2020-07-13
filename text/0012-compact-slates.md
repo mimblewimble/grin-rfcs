@@ -416,8 +416,8 @@ Each Sigs Entry is structured as follows:
 | Field         | type                 | len  | notes                              |
 | ------------: | -------------------- | ---- | ---------------------------------- |
 | complete flag | u8                   | 1    | If non-zero, entry contains `part` |
-| `xs`          | secp256k1 Public Key | 32   |                                    |
-| `nonce`       | secp256k1 Public Key | 32   |                                    |
+| `xs`          | secp256k1 Public Key | 33   |                                    |
+| `nonce`       | secp256k1 Public Key | 33   |                                    |
 | `part`        | secp256k1 AggSig     | (64) | If present                         |
 
 #### Optional Struct Status
