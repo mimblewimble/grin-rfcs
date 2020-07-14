@@ -463,11 +463,11 @@ Optional Payment proof, with fields as follows
 #### Feature Args
 
 Optional feature args, presence or absence of which should be determined by the
-value of the `feat` field. Currently only present if `feat` is 1.
+value of the `feat` field. Currently only present if `feat` is 2.
 
 |       Field | type  | len | notes                                |
 | ----------: | ----- | --  | ------------------------------------ |
-| `lock_hgt`  | u64   | 8   | Lock height, present if `feat` is 1  |
+| `lock_hgt`  | u64   | 8   | Lock height, present if `feat` is 2  |
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
