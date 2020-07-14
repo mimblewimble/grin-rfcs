@@ -364,19 +364,17 @@ All integer values are Big-Endian.
 | `ver.block_header_version` | u16            | 2        |                                                       |
 | `id`                       | Uuid           | 16       | binary Uuid representation                            |
 | `sta`                      | u8             | 1        | See [Status Byte](#status-byte)                       |
-| `offset`                   | BlindingFactor | 33       |                                                       |
+| `offset`                   | BlindingFactor | 32       |                                                       |
 | Optional field status      | u8             | 1        | See [Optional Field Status](#optional-field-status)   |
 | `num_parts`                | u8             | (1)      | If present                                            |
-| `amt`                      | u64            | (4)      | If present                                            |
-| `fee`                      | u64            | (4)      | If present                                            |
+| `amt`                      | u64            | (8)      | If present                                            |
+| `fee`                      | u64            | (8)      | If present                                            |
 | `feat`                     | u8             | (1)      | If present                                            |
-| `ttl`                      | u64            | (4)      | If present                                            |
-| `sigs` length              | u8             | 1        | Number of entries in the `sigs` struct                |
+| `ttl`                      | u64            | (8)      | If present                                            |
 | `sigs` entries             | struct         | varies   | See [Sigs Entries](#sigs-entries)                     |
 | Optional struct status     | u8             | 1        | See [Optional Struct Status](#optional-struct-status) |
-| `coms` length              | u8             | (1)      | If present                                            |
 | `coms` entries             | struct         | (varies) | If present. See [Coms Entries](#coms-entries)         |
-| `proof`                    | struct         | (64)     | If present. See [Proof](#proof)                       |
+| `proof`                    | struct         | (varies) | If present. See [Proof](#proof)                       |
 | `feat_args` entries        | struct         | (varies) | If present. See [Feature Args](#feature-args)         |
 
 #### Status Byte
@@ -418,8 +416,8 @@ Each Sigs Entry is structured as follows:
 | Field         | type                 | len  | notes                              |
 | ------------: | -------------------- | ---- | ---------------------------------- |
 | complete flag | u8                   | 1    | If non-zero, entry contains `part` |
-| `xs`          | secp256k1 Public Key | 32   |                                    |
-| `nonce`       | secp256k1 Public Key | 32   |                                    |
+| `xs`          | secp256k1 Public Key | 33   |                                    |
+| `nonce`       | secp256k1 Public Key | 33   |                                    |
 | `part`        | secp256k1 AggSig     | (64) | If present                         |
 
 #### Optional Struct Status
@@ -465,11 +463,11 @@ Optional Payment proof, with fields as follows
 #### Feature Args
 
 Optional feature args, presence or absence of which should be determined by the
-value of the `feat` field. Currently only present if `feat` is 1.
+value of the `feat` field. Currently only present if `feat` is 2.
 
 |       Field | type  | len | notes                                |
 | ----------: | ----- | --  | ------------------------------------ |
-| `lock_hgt`  | u64   | 4   | Lock height, present if `feat` is 1  |
+| `lock_hgt`  | u64   | 8   | Lock height, present if `feat` is 2  |
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
