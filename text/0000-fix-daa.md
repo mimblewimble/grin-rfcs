@@ -69,11 +69,16 @@ and responsiveness. They may also achieve greater overall simplicity, both conec
 [prior-art]: #prior-art
 
 The current DAA in Bitcoin Cash suffers from the same oscillatory behaviour that Grin's DAA does.
-Which is what led various BCH developers to do extensive research on possible alternatives [1].
+Which is what led various BCH developers to do extensive research on possible alternatives [1] [2].
 They identified two DAAs as being superior to others. These two, wtema, and asert, also happen to behave nearly identically.
 While wtema is simpler in that it doesn't need exponentiation, it would need special safeguards to robustly deal with
 the possibility of very negative solvetimes. Since Grin requires strictly increasing timestamps, it doesn't need any such
 safeguards, making wtema the preferred choice for Grin.
+
+Before adding a dependence on number of parent uncles, Ethereud uses a DAA that can be seen as a close approximation of wtema:
+After every block, increase network difficulty by a factor of 1 - (t/T - 1) / M.
+Comparing with wtema above, we see that instead of dividing by (1+x), they multiply by (1-x).
+Even though Ethereum, like Grin, enforces positive solvetimes, they still need to guard against division by 0 in this form.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
@@ -83,7 +88,7 @@ While this RFC argues for adopting wtema as a new DAA, it doesn't want to argue 
 In Grin tradition, an integral number of hours is preferable, to limit
 arbitrariness. Either 2 hours, 3 hours, or 4 hours, all offer a resonable
 balance of responsiveness and stability.
-These 3 choices as well as Grin's current DAA with various damping factor choices are implemented at [2],
+These 3 choices as well as Grin's current DAA with various damping factor choices are implemented at [3],
 which allows for easy comparison across many scenarios.
 At the same time, we need to decide if reducing the maximum allowed clock drift (FTL parameter) from 12 minutes
 down to 1 makes sense, as this will reduce one form of timestamp manipulation.
@@ -101,5 +106,8 @@ Having such a well vetted DAA will be a reassurance for years to come.
 # References
 [references]: #references
 
-[1] https://read.cash/@jtoomim/bch-upgrade-proposal-use-asert-as-the-new-daa-1d875696
-[2] https://github.com/tromp/difficulty
+[1] https://www.yours.org/content/the-wtema-difficulty-adjustment-algorithm-855a3405606a
+
+[2] https://read.cash/@jtoomim/bch-upgrade-proposal-use-asert-as-the-new-daa-1d875696
+
+[3] https://github.com/tromp/difficulty
