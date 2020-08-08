@@ -9,7 +9,7 @@
 # Summary
 [summary]: #summary
 
-Change Grin's DAA (Difficulty Adjustment Algorithm) from the current damped simple moving average (dsma) to a weighted-target exponential moving average (wtema). Optionally further restrict the faster-than-light window to 1 minute.
+Change Grin's DAA (Difficulty Adjustment Algorithm) from the current damped simple moving average (dsma) to a weighted-target exponential moving average (wtema). Optionally further restrict the future-time-limit window to 1 minute.
 
 # Motivation
 [motivation]: #motivation
