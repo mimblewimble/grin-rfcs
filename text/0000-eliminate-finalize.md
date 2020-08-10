@@ -20,7 +20,31 @@ To simplify transaction building.
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-This feels like unnecessary red tape. See summary.
+## Prior to this RFC
+
+### Sender initiated (regular workflow)
+1. Receiver shares a `grin1` slatepack address with sender.
+2. Sender creates and sends partial slate to receiver's slatepack address.
+3. Receiver produces a response and returns to sender.
+4. Sender finalizes and broadcasts to the network.
+
+### Receiver initiated (invoice workflow)
+1. Sender shares a `grin1` slatepack address with sender.
+2. Receiver creates a payment request and partial slate and sends to sender.
+3. Sender approves the request, produces a response and returns to receiver.
+4. Receiver finalizes and broadcasts to the network.
+
+## Flow as per this RFC
+
+### Sender initiated (regular workflow)
+1. Receiver shares a one-time address with sender.
+2. Sender creates a partial slate and shares with receiver.
+3. Receiver finalizes and broadcasts transaction to the network.
+
+### Receiver initiated (invoice workflow)
+1. Receiver shares a one-time address, amount, and optional memo, expiration, etc.
+2. Sender approves the request, creates a partial slate and shares with receiver.
+3. Receiver finalizes and broadcasts to the network.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -43,10 +67,7 @@ bech32 address: grin1qx87jxj3htwwhj5k6hy0xhd0fszpntznz26clfjfdsmpggy437gt5qmrjkf
 
 ### Building the proof
 
-Define `diffie_secret` as the Diffie-Hellman secret, which can be computed by only the sender and the receiver:
-`diffie_secret` = `Hash(sender.nonce * receiver.public_nonce)` = `Hash(sender.public_nonce * receiver.nonce)`
-
-Calculate `proof_nonce` = `Hash(diffie_secret | receiver.public_excess | tx.amount)`.
+Calculate `proof_nonce` = `Hash(sender.nonce | receiver.address | tx.amount)`, where `receiver.address` is the decoded one-time address (`version | ed25519_key | public_excess | public_nonce`)
 
 The `total_nonce` for the transaction will then be `sender.nonce + receiver.nonce + proof_nonce`.
 
@@ -63,7 +84,7 @@ The following 4 steps are necessary for the sender to prove payment to the recei
 1. Provide the kernel and show that it was confirmed on-chain.
 2. Prove knowledge of `sender.nonce`
 3. Show that `sender.public_nonce + receiver.public_nonce + (proof_nonce * G)` = `total_nonce * G` (ie. the `k*G` in the kernel signature)
-4. Provide the preimage to `proof_nonce` (`diffie_secret | receiver.public_excess | tx.amount`)
+4. Provide the preimage to `proof_nonce` (`sender.address | receiver.address | tx.amount`)
 
 ## Slate Format
 
@@ -102,9 +123,9 @@ Upon receipt of a partial transaction (slate), the receiver should obtain a lock
 
 TODO: Describe play attacks, and finish this section.
 
-Any inputs sent from a wallet to a one-time address should be considered as sent. They should not be cancelable, however, the sender should have the option to add additional inputs and/or increase the fee (equivalent of bitcoin's RBF).
+Any inputs sent from a wallet to a one-time address should be considered as sent. The sender should have the option to add additional inputs and/or increase the fee (equivalent of bitcoin's RBF).
 
-Receiver should be unable to claim a problem with the transaction. If they do, it's trivial to show them the slate that was sent, and prove that it's a valid partial transaction containing everything necessary for the receiver to finalize.
+Receiver should be unable to claim a problem with the transaction. If they do, it's trivial to show them the slate that was sent, and prove that it's a valid partial transaction containing everything necessary for the receiver to finalize. If they still wish to cancel, the sender must spend those inputs back to themselves.
 
 # Drawbacks
 [drawbacks]: #drawbacks
