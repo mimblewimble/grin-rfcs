@@ -67,22 +67,20 @@ Let's say that we want to be able to do both `Regular` and `PayJoin` transaction
 
 ### Separation of replay protected outputs
 
-Let's define a clear separation of outputs that are protected from those that are not. We define two special key derivation paths:
-
-1. An anchor derivation path `A`
-2. A protected output derivation path `P` - used for creating an output that we label as `Protected`
-
-We label outputs from any other (including the current) key derivation path as `Unprotected`.
+Let's define a clear separation of outputs that are protected from those that are not. We define a protected output generator `GenP` that allows us to either `create` a protected output or `check` whether an output is `Protected`.
 
 An output is labeled as `Protected` *only if* it was created in a transaction where we contributed an input that was labeled as `Protected`. An exception to the rule are outputs that are created as a part of the _Bootstrap_ transaction discussed in the next section.
 
-_Note: If it's not too costly, path `P` might even be derived from `A` so that we know which anchor protects which outputs. This would solve the case of a wrong labeling when one of the anchors was accidentally spent (in case we allow multiple)._
+#### Possible protected output generators implementations
 
-Some other options for consistent cross device output labeling would be:
-1. choose specific `r` values for `Protected` outputs
-2. use the 20 bytes that are available in the Bulletproofs to convey the idea whether the output is protected
+As we mentioned above, `GenP` for `Protected` outputs would need to have `create` and `check` functions defined.
 
-In both cases, the output label should only be visible to the owner of the output. It seems necessary to have labeling information about the UTXO on the UTXO itself if we want it to be consistent with different wallet reusing the same seed. If the information is held only on the wallet side, then we hit much bigger issues because there comes a need for either a manual intervention and labeling or a robust solution for synchronization between wallets - which does not appear simple to build.
+There are a few choices how to label outputs as `Protected` while still being able to identify them across difference devices:
+1. Call to `create` uses a new derivation path `P` that is used only for creating `Protected` outputs. Similarly `check` uses the same `P` to check whether an output is protected.
+2. Call to `create` creates a specific `r` value for `Protected` outputs e.g. they should start with `N` zeros or be divisible by some number `M`
+3. Call to `create` uses additional output information in the ~30 bytes that are available in the Bulletproofs to convey the idea whether the output is protected. Perhaps we could define a specific structure for these bytes e.g. `<scheme_version:1 byte><meta_data:4 bytes><data:25 bytes>` where `metadata` would also tell whether the `data` that follows is encrypted or not. The data could be encrypted using the `seed` key and could thus hold information on output labels which would only be available to the owner of the output. We could even include the starting bytes of the anchor that protects it if we wanted to. If we went such path, we would need to think of the possible drawbacks.
+
+In all cases, the output label should only be visible to the owner of the output. It seems necessary to have labeling information about the UTXO on the UTXO itself if we want it to be consistent with different wallet reusing the same seed. If the information is held only on the wallet side, then we hit much bigger issues because there comes a need for either a manual intervention and labeling or a robust solution for synchronization between wallets - which does not appear simple to build.
 
 ### Simple bootstrapping of protected outputs
 
