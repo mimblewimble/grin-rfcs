@@ -15,7 +15,20 @@ Use one-time addresses which include a pre-generated public excess and public no
 # Motivation
 [motivation]: #motivation
 
-To simplify transaction building.
+This change simplifies transaction building by effectively reducing the number of steps required to build a transaction. This is seen most clearly in the case of mobile-to-mobile transacting. Before, the sender would have to scan a QR code from the receiver, then the receiver would scan a QR code from the sender, and then the sender would once again scan a QR code from the receiver. That's 3 QR scans total, and an awkward and confusing process overall. After this change, the final QR is no longer required. It just requires 2 scans: sender <- receiver, receiver <- sender.
+
+By reducing the number of steps required, we're also reducing the number of states a transaction can be in. This simplifies transaction management logic, decreases the complexity of debugging, and makes for a more shallow learning curve for Grin users.
+
+Before, a transaction could be:
+* Sent, not received
+* Received, not finalized
+* Finalized, not confirmed
+
+After, a transaction can be:
+* Sent, not received
+* Received, not confirmed
+
+Lastly, there have been a number of cases where users have tried to receive funds, but after receiving the slate and returning it to the sender, something goes wrong when finalizing or broadcasting. The receiver gets no indication that a problem occurred other than the transaction never showing up on the blockchain. Sometimes, there's an issue with the slate and the sender is unable to finalize, while other times the transaction just never made it to a block and needs rebroadcast. This change provides the receiver with a greater ability to diagnose and resolve these problems on her own, which pushes the burden to the party who is most motivated to resolve the issue.
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
@@ -51,23 +64,27 @@ To simplify transaction building.
 
 ## Address Generation
 
-As of the introduction of slatepacks, we already have a standardized system for generating addresses [4]. To support eliminating the finalize step, we must extend these addresses to include a public excess and a public nonce. The new addresses are for one-time use only.
+As of the introduction of slatepacks, we already have a standardized system for generating addresses [4]. To support eliminating the finalize step, we must extend these addresses to include a public excess and a public nonce, and a signature using the `ed25519_key` committing to ownership of the excess and nonce. The new addresses are for one-time use only.
 
-The address format will be `version | ed25519_key | public_excess | public_nonce` bech32 encoded using `grin` as the HRC and `1` as the version. They are easily distinguishable from the existing slatepack addresses due to their additional length (1 additional byte for version, 33 additional bytes for `public_excess` and 33 additional bytes for `public_nonce`).
+The address format will be `version | ed25519_key | public_excess | public_nonce | signature` bech32 encoded using `grin` as the HRC and `1` as the version. They are easily distinguishable from the existing slatepack addresses due to their additional length (1 additional byte for version, 33 additional bytes for `public_excess`, 33 additional bytes for `public_nonce`, and 64 additional bytes for `signature`).
 
-Example: 
+### Example
 
-version: 1
-ed25519 pubkey: 0x8fe91a51badcebca96d5c8f35daf4c0419ac5312b58fa6496c361420958f90ba
-public excess: 0x03639592cc3d406a1773ead98b59aa0c54c10e6412edfcdf78c45faf6c810d90d4
-public nonce: 0x0332e9abd666ab919b22613e7f6332f449c9adb46b323b0d069953faabf15cfd45
-bech32 address: grin1qx87jxj3htwwhj5k6hy0xhd0fszpntznz26clfjfdsmpggy437gt5qmrjkfvc02qdgth86ke3dv65rz5cy8xgyhdln0h33zl4akgzrvs6spn96dt6en2hyvmyfsnulmrxt6ynjddk34nywcdq6v4874t79w063gugaa22
+#### Data to encode
+* version: 1
+* ed25519 pubkey: 0xb52f5366eab0f5d95d0472a2fb4b2741a4bcfaafd3d563747bc93796577861a6
+* public excess: 0x02ef03d2f597453151ea7a87aa32493bbd347fa26128007038db69c48ef0687acb
+* public nonce: 0x028fc8de02ae4a3e2c1d82e6c007b7a970012a9b49498688451eca170d3af50b6f
+* signature: 0xf6ff51be2540a5d3000027dc29073c04f4fcf57c39c5519534e8cb9d1b5718691069e36a28dab2d3b1b86b9ebbc963f8da1a2c28f495c87a7bbb0ee19b48520e
+
+#### Bech32-encoded address
+grin1qx6j75mxa2c0tk2aq3e2976tyaq6f0864lfa2cm500yn09jh0ps6vqh0q0f0t969x9g757584geyjwaax3l6ycfgqpcr3kmfcj80q6r6evpgljx7q2hy503vrkpwdsq8k75hqqf2ndy5np5gg50v59cd8t6skmlklagmuf2q5hfsqqp8ms5sw0qy7n702lpec4ge2d8geww3k4ccdygxncm29rdt95a3hp4eaw7fv0ud5x3v9r6ftjr60wasacvmfpfquglvavs
 
 ## Payment Proofs
 
 ### Building the proof
 
-Calculate `proof_nonce` = `Hash(sender.nonce | receiver.address | tx.amount)`, where `receiver.address` is the decoded one-time address (`version | ed25519_key | public_excess | public_nonce`)
+Calculate `proof_nonce` = `Hash(sender.public_nonce | receiver.address | tx.amount)`, where `receiver.address` is the decoded one-time address (`version | ed25519_key | public_excess | public_nonce | signature`)
 
 The `total_nonce` for the transaction will then be `sender.nonce + receiver.nonce + proof_nonce`.
 
@@ -84,7 +101,7 @@ The following 4 steps are necessary for the sender to prove payment to the recei
 1. Provide the kernel and show that it was confirmed on-chain.
 2. Prove knowledge of `sender.nonce`
 3. Show that `sender.public_nonce + receiver.public_nonce + (proof_nonce * G)` = `total_nonce * G` (ie. the `k*G` in the kernel signature)
-4. Provide the preimage to `proof_nonce` (`sender.address | receiver.address | tx.amount`)
+4. Provide the preimage to `proof_nonce` (`sender.public_nonce | receiver.address | tx.amount`)
 
 ## Slate Format
 
@@ -101,11 +118,12 @@ A slate is now only needed for passing information from the sender to receiver. 
 * `time_to_live` (optional)
 
 TODO: Define JSON & binary formats
-TODO: Mention QR codes
 
 ## Backward Compatibility
 
-TODO: Decide how to handle versioning. In theory, this should be simple. If given an old slatepack address, use the old slate format. If given a new, one-time address, then the new slate format is supported.
+Deciding whether to use the traditional method of sending or the new approach using one-time addresses should be straightforward for wallet developers. If provided a one-time address, use the new method. Otherwise, use v4 slates and follow the existing process.
+
+TODO: Do we want to phase out traditional 4-step transaction building?
 
 ## Invoices
 
@@ -130,7 +148,7 @@ Receiver should be unable to claim a problem with the transaction. If they do, i
 # Drawbacks
 [drawbacks]: #drawbacks
 
-Addresses are significantly longer (170 characters).
+Addresses are significantly longer (272 characters).
 
 Using one-time addresses increases the risk of "Play" attacks [2]. Recommendations for dealing with these have been discussed in the above "Play attacks" section.
 
@@ -151,7 +169,7 @@ Eliminating finalize brings us one step closer to supporting receive-only wallet
 
 # Credits
 
-Thanks to Kurt Coolman for coming up with the general design for payment proofs [5].
+Thanks to Kurt Coolman for coming up with an earlier iteration of the payment proofs design [5].
 
 # References
 [references]: #references
