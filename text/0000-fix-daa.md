@@ -40,7 +40,7 @@ In M blocks, the difficulty can thus be increased by at most (1-1/M)^-M ~ e.
 [drawbacks]: #drawbacks
 
 The one drawback I can think of is that using the difference of consecutive
-timestamps makes the DAA more susceptible to timestamp manipulation. To quanify
+timestamps makes the DAA more susceptible to timestamp manipulation. To quantify
 the effect of this, let's say that miners maximally misrepresent m typical
 consecutive block times as one m-minute block + m-1 instant blocks. Instead of
 keeping network difficulty constant, this would divide it by (1+(m-1)/M) * (1-1/M)^m.
@@ -63,7 +63,7 @@ The simplest fix to the current DAA to reduce the problem of oscillations is to 
 The reason Grin went with a small damping factor was to make the DAA very responsive to changes in graphrate.
 This responsiveness will suffer from increasing the damping factor. It makes sense to consider changing not just
 a parameter in the current DAA, but the DAA altogether, as alternatives may offer better trade-offs between stability
-and responsiveness. They may also achieve greater overall simplicity, both conecptually and in implementation.
+and responsiveness. They may also achieve greater overall simplicity, both conceptually and in implementation.
 
 # Prior art
 [prior-art]: #prior-art
@@ -75,7 +75,7 @@ While wtema is simpler in that it doesn't need exponentiation, it would need spe
 the possibility of very negative solvetimes. Since Grin requires strictly increasing timestamps, it doesn't need any such
 safeguards, making wtema the preferred choice for Grin.
 
-Before adding a dependence on number of parent uncles, Ethereud uses a DAA that can be seen as a close approximation of wtema:
+Before adding a dependence on number of parent uncles, Ethereum uses a DAA that can be seen as a close approximation of wtema:
 After every block, increase network difficulty by a factor of 1 - (t/T - 1) / M.
 Comparing with wtema above, we see that instead of dividing by (1+x), they multiply by (1-x).
 Even though Ethereum, like Grin, enforces positive solvetimes, they still need to guard against division by 0 in this form.
@@ -100,7 +100,9 @@ Although Grin graphrate has been relatively stable throughout its short history,
 In a future where Grin mining is dominated by Cuckatoo32 ASICs and where Grin is the C32 coin with the largest daily issuance, 
 the graphrate should be naturally stable, with the need for responsiveness lessened.
 We should however account for the possibility of other coins adopting Cuckatoo32 as well.
-If, like most coins, they opt for a finite supply, then in initial years they may well have a daily issuance exceeding that of Grin. That would put us in a situation similar to Bitcoin Cash competing with Bitcoin for ASIC hashrate.
+If, like most coins, they opt for a finite supply, then in initial years they
+may well have a daily issuance exceeding that of Grin. That would put us in the
+same situation as Bitcoin Cash competing with Bitcoin for ASIC hashrate.
 Having such a well vetted DAA will be a reassurance for years to come.
 
 # References
