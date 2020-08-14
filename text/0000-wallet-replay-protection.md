@@ -92,9 +92,9 @@ An output is labeled as `Protected` if it was created in a transaction where we 
 As we mentioned above, `GenP` for `Protected` outputs would need to have `create` and `check` functions defined.
 
 There are a few choices how to label outputs as `Protected` while still being able to identify them across difference devices:
-1. Call to `create` uses a new derivation path `P` that is used only for creating `Protected` outputs. Similarly `check` uses the same `P` to check whether an output is protected.
+1. Call to `create` uses a new derivation path `P` that is used only for creating `Protected` outputs. Similarly `check` uses the same `P` to check whether an output is protected. Perhaps we could have `N` labels possible which would be labeled by the `r % N` result
 2. Call to `create` creates a specific `r` value for `Protected` outputs e.g. they should start with `N` zeros or be divisible by some number `M`
-3. Call to `create` uses additional output information in the ~30 bytes that are available in the Bulletproofs to convey the idea whether the output is protected. Perhaps we could define a specific structure for these bytes e.g. `<scheme_version:1 byte><meta_data:4 bytes><data:25 bytes>` where `metadata` would also tell whether the `data` that follows is encrypted or not. The data could be encrypted using the `seed` key and could thus hold information on output labels which would only be available to the owner of the output. We could even include the starting bytes of the anchor that protects it if we wanted to. If we went such path, we would need to think of the possible drawbacks.
+3. Call to `create` uses additional output information in the bytes that are available in the Bulletproofs to convey the idea whether the output is protected. To make sure the label would be seen only to the we could represent a `Protected` output as `10` in binary and then save a xor `bits = label ^ r`. This way, nobody would know which label the output has except for the owner of the utxo because they know the r value. The owner could xor again to get the label `label = bits ^ r`. A possible issue here is that old outputs also have some bits set. To tackle this, we could spend all the outputs to gain protected ones. Another possible option could be checking at which block our `anchor` output was created and locally labeling all the outputs that were created before the anchor output. If we went such path, we would need to think of the possible drawbacks.
 
 In all cases, the output label should only be visible to the owner of the output. It seems necessary to have labeling information about the UTXO on the UTXO itself if we want it to be consistent with different wallet reusing the same seed. If the information is held only on the wallet side, then we hit much bigger issues because there comes a need for either a manual intervention and labeling or a robust solution for synchronization between wallets - which does not appear simple to build.
 
@@ -102,7 +102,7 @@ In all cases, the output label should only be visible to the owner of the output
 
 We start off with all of our outputs marked as `Unprotected`. To create a `Protected` output out of nothing we create the following outputs:
 1. an `anchor` output that has a form `0*H + r*G` - generated from key derivation path `A`
-2. a set of protected outputs `PS` that hold our coins - generated from key derivation path `P`
+2. a set of protected outputs `PS` that hold our coins - generated from `GenP`
 
 We make a bootstrap transaction with `anchor` and `PS` outputs. The outputs in `PS` are exceptionally labeled as `Protected` because they are joined in the same transaction output set as our anchor output. This transactions cannot be replayed because the anchor output will never be spent which means that `PS` outputs are safe from being recreated.
 
@@ -227,8 +227,8 @@ TRANSACTION_BUILDING_CONFIGURATIONS:
     // they don't generate new outputs.
     // If PayJoin transactions are not wanted due to privacy concerns, you can set this value to 0.0 in which case
     // receive transactions will never contribute an input.
-    // Default: RECEIVE_PROTECTED_PROB = 0.5
-    RECEIVE_PROTECTED_PROB: 0.5
+    // Default: RECEIVE_PROTECTED_PROB = 0.9
+    RECEIVE_PROTECTED_PROB: 0.9
 
     // The number of protected outputs we want to have available at any time. This is to be able to have concurrent
     // transactions that are safe from replay attacks. If we had only 1 protected output and wanted to make two
