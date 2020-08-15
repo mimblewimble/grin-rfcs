@@ -283,6 +283,8 @@ The difference between a Play and Replay attacks are that in a Play attack, the 
 
 To protect against this, a user should have an option to cancel a transaction which would immediately create a self-spend transaction with the same inputs that the canceled transaction used and broadcast it to the network. The reason why the sender would want to reuse the inputs is to make the previous transaction invalid. So now, only 1 of the two transactions that have been signed can make it to the chain. As already mentioned, the cancel would not be confirmed until the self-spend transaction has been confirmed on the chain.
 
+_Note: If we make another transaction to the same user, we should either wait enough confirmations or use the new self-spend outputs that were created and confirmed on the chain as inputs for this new transaction. This is to avoid a possible short reorg attack which could remove the self-spend transaction and publish both transaction which would result in a double-spend._
+
 # Drawbacks
 [drawbacks]: #drawbacks
 
