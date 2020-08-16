@@ -96,7 +96,7 @@ down to 1 makes sense, as this will reduce one form of timestamp manipulation.
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-Although Grin graphrate has been relatively stable throughout its short history, as a GPU mineable coin availble at nicehash, it's always at risk of sudden temporary surges in graphrate, to which it should be able to respond quickly. The current DAA does that, but at a cost (of oscillatory behaviour).
+Although Grin graphrate has been relatively stable throughout its short history, as a GPU mineable coin available at nicehash, it's always at risk of sudden temporary surges in graphrate, to which it should be able to respond quickly. The current DAA does that, but at a cost (of oscillatory behaviour).
 In a future where Grin mining is dominated by Cuckatoo32 ASICs and where Grin is the C32 coin with the largest daily issuance, 
 the graphrate should be naturally stable, with the need for responsiveness lessened.
 We should however account for the possibility of other coins adopting Cuckatoo32 as well.
