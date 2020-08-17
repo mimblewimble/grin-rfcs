@@ -207,7 +207,7 @@ They then subtract the value of the inputs from the offset when committing to in
 * `feat` - Kernel Features ID. If omitted, kernel is assumed to be Plain (0). If set to 1 or otherwise, any arguments required for a
 particular kernel feature set will be found in the `feat_args` struct.
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction. Assumed 0 (no ttl) if omitted
-from the slate. To be used when delayed transaction posting is desired.
+from the slate.
 
 ##### Structs - Always present
 * `sigs` - An array of signature data containing the signature information of the last participant. See [Signature Data](#signature-data)
