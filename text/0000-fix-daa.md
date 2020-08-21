@@ -90,8 +90,9 @@ arbitrariness. Either 2 hours, 3 hours, or 4 hours, all offer a resonable
 balance of responsiveness and stability.
 These 3 choices as well as Grin's current DAA with various damping factor choices are implemented at [3],
 which allows for easy comparison across many scenarios.
-At the same time, we need to decide if reducing the maximum allowed clock drift (FTL parameter) from 12 minutes
+At the same time, reducing the maximum allowed clock drift (FTL parameter) from 12 minutes
 down to 1 makes sense, as this will reduce one form of timestamp manipulation.
+Preferably, this is not hardcoded but specified as a parameter in grin-server.toml
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
