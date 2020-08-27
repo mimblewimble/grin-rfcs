@@ -94,7 +94,7 @@ As we mentioned above, `GenP` for `Protected` outputs would need to have `create
 There are a few choices how to label outputs as `Protected` while still being able to identify them across difference devices:
 1. Call to `create` uses a new derivation path `P` that is used only for creating `Protected` outputs. Similarly `check` uses the same `P` to check whether an output is protected. Perhaps we could have `N` labels possible which would be labeled by the `r % N` result
 2. Call to `create` creates a specific `r` value for `Protected` outputs e.g. they should start with `N` zeros or be divisible by some number `M`
-3. Call to `create` uses additional output information in the bytes that are available in the Bulletproofs to convey the idea whether the output is protected. To make sure the label would be seen only to the we could represent a `Protected` output as `10` in binary and then save a xor `bits = label ^ r`. This way, nobody would know which label the output has except for the owner of the utxo because they know the r value. The owner could xor again to get the label `label = bits ^ r`. A possible issue here is that old outputs also have some bits set. To tackle this, we could spend all the outputs to gain protected ones. Another possible option could be checking at which block our `anchor` output was created and locally labeling all the outputs that were created before the anchor output. If we went such path, we would need to think of the possible drawbacks.
+3. Call to `create` uses additional output information in the bytes that are available in the Bulletproofs to convey the idea whether the output is protected. These bytes are right now 'zero' bytes meaning their binary representation is all zeros. We label an output as `Protected` by setting the `label` bit that is unused now to `1`. `Unprotected` outputs will have the label bit set to `0` which includes all the old outputs as well. To make sure the output label would be seen only to the owner we save a xor `bit = label ^ r`. This way, nobody would know which label the output has except for the owner of the utxo because they know the `r` value. The owner could xor again to get the label `label = bit ^ r`. If we went such path, we would need to think of the possible drawbacks.
 
 In all cases, the output label should only be visible to the owner of the output. It seems necessary to have labeling information about the UTXO on the UTXO itself if we want it to be consistent with different wallet reusing the same seed. If the information is held only on the wallet side, then we hit much bigger issues because there comes a need for either a manual intervention and labeling or a robust solution for synchronization between wallets - which does not appear simple to build.
 
@@ -146,8 +146,9 @@ fn bootstrap_outputs() -> []Output {
 fn receive_protected() -> ([]Output, []Output) {
   // if we have no anchor, contribute anchor + PS outputs for replay protection
   // TODO: this might be too obvious from the chain analysis perspective
-  if anchor_not_exists:
+  if anchor_not_exists {
     return [], bootstrap_outputs()
+  }
   // PayJoin - protect the transaction with a protect output as an input
   return [random_protected_output()], []
 }
@@ -158,7 +159,7 @@ fn receive(value: int64) -> ([]Output, []Output) {
   receiver_inputs = []
   receiver_outputs = []
   // receive-only wallets could have receive_protected_prob=0.0 to always have 1-2 receive transactions
-  is_protected = random() <= config.RECEIVE_PROTECTED_PROB
+  is_protected = random() <= config.receive_protected_prob
   if is_protected {
     receiver_inputs, receiver_outputs = receive_protected()
     receiver_outputs += [generate_protected_output(value)]
@@ -194,8 +195,12 @@ fn send(value: int64) -> ([]Output, []Output) {
   return inputs, outputs
 }
 
-// TODO: needs handling of running out of protected outputs and keeping a minimal of `N`
-// protected outputs as defined in the configuration file
+// NOTE: There are many possible strategies that can keep the number of protected outputs
+// higher than the specified n_protected_outputs configuration. These can be created by:
+// 1. doing self-spend 1-2 transactions (needs to pay fee)
+// 2. adding new outputs to existing transactions
+// 3. attaching outputs to transactions that pass by and have overpaid the fees
+// The handling of these is left to the wallet implementation.
 ```
 
 TODO: Check this is safe.
@@ -208,7 +213,7 @@ The downside of this approach is that a replay attacks are still possible in whi
 
 ### Receive-only wallets
  
-Any kind of automated receiving should default to 1-2 transactions and thus creating _unprotected_ outputs to avoid utxo spoofing attack which would reveal our inputs. Always performing 1-2 receive transactions can be achieved by setting the configuration `RECEIVE_PROTECTED_PROB = 0.0` which is explained in the next section.
+Any kind of automated receiving should default to 1-2 transactions and thus creating _unprotected_ outputs to avoid utxo spoofing attack which would reveal our inputs. Always performing 1-2 receive transactions can be achieved by setting the configuration `receive_protected_prob = 0.0` which is explained in the next section.
 
 ### Transaction building configuration
 
@@ -217,53 +222,55 @@ Any kind of automated receiving should default to 1-2 transactions and thus crea
 // transactions. All wallet configurations inherit the values from the 'default' option that can be
 // overriden. A wallet should allow the user to generate a one-time SlatepackAddress based on a chosen
 // configuration. 
-TRANSACTION_BUILDING_CONFIGURATIONS:
-  default:
-    // Probability that we will protect a 'receive' transaction from replay attacks. If an anchor does not
-    // exist, the transaction will be protected by generating an anchor and an initial set of protected outputs.
-    // If such an anchor already exists, we contribute a protected output as an input which makes it a PayJoin
-    // transaction. By default, half of the receive transaction will be PayJoin transactions. This is to help mask
-    // the sender inputs. Additionally, PayJoin transactions are cheaper and more healthy for the network because
-    // they don't generate new outputs.
-    // If PayJoin transactions are not wanted due to privacy concerns, you can set this value to 0.0 in which case
-    // receive transactions will never contribute an input.
-    // Default: RECEIVE_PROTECTED_PROB = 0.9
-    RECEIVE_PROTECTED_PROB: 0.9
+transaction_building:
+  configs:
+    - name: default
+      // Probability that we will protect a 'receive' transaction from replay attacks. If an anchor does not
+      // exist, the transaction will be protected by generating an anchor and an initial set of protected outputs.
+      // If such an anchor already exists, we contribute a protected output as an input which makes it a PayJoin
+      // transaction. By default, half of the receive transaction will be PayJoin transactions. This is to help mask
+      // the sender inputs. Additionally, PayJoin transactions are cheaper and more healthy for the network because
+      // they don't generate new outputs.
+      // If PayJoin transactions are not wanted due to privacy concerns, you can set this value to 0.0 in which case
+      // receive transactions will never contribute an input.
+      // Default: receive_protected_prob: 0.9
+      receive_protected_prob: 0.9
 
-    // The number of protected outputs we want to have available at any time. This is to be able to have concurrent
-    // transactions that are safe from replay attacks. If we had only 1 protected output and wanted to make two
-    // 'send' transactions, we would need to do them sequentially because we could only protect a single
-    // transaction at once. This defines the minimal set size of protected outputs. Exchanges would want to set
-    // this to higher values to avoid blocking transactions.
-    N_PROTECTED_OUTPUTS: 5
+      // The number of protected outputs we want to have available at any time. This is to be able to have concurrent
+      // transactions that are safe from replay attacks. If we had only 1 protected output and wanted to make two
+      // 'send' transactions, we would need to do them sequentially because we could only protect a single
+      // transaction at once. This defines the minimal set size of protected outputs. Exchanges would want to set
+      // this to higher values to avoid blocking transactions.
+      // Default: n_protected_outputs: 5
+      n_protected_outputs: 5
 
-  // PayJoins configuration
-  all_payjoins:
-    RECEIVE_PROTECTED_PROB: 1.0
+    // PayJoins configuration
+    - name: all_payjoins
+      receive_protected_prob: 1.0
 
-  // No PayJoins configuration - e.g. could be used for withdrawals from exchanges
-  no_payjoins:
-    RECEIVE_PROTECTED_PROB: 0.0
+    // No PayJoins configuration - e.g. could be used for withdrawals from exchanges or other untrusted parties
+    - name: no_payjoins
+      receive_protected_prob: 0.0
     
-// We can predefine some fixed transaction building configurations for specific addresses, but we should note
-// that this comes at a privacy risk due to the SlatepackAddress reuse.
-ADDRESS_TRANSACTION_CONFIGURATIONS:
-  grin1dhvv9mvarqrqwerfderuxp3qgl6qpphvc9p4u24asdfec0mvvg6342q4w6: default
-  grin1hhb34mfsrqwlfderuxpfdql6qpphvc9p4u24fd47ec0mvvg6342q1asdxc: all_payjoins
-  grin1fsdf9fd83e3fjvcxruxp3qgl6qpphvc9p4u24347ec0mvvg6342fdoiosl: no_payjoins
+  // We can predefine some fixed transaction building configurations for specific addresses, but we should note
+  // that this comes at a privacy risk due to the SlatepackAddress reuse.
+  address_configurations:
+    grin1dhvv9mvarqrqwerfderuxp3qgl6qpphvc9p4u24asdfec0mvvg6342q4w6: default
+    grin1hhb34mfsrqwlfderuxpfdql6qpphvc9p4u24fd47ec0mvvg6342q1asdxc: all_payjoins
+    grin1fsdf9fd83e3fjvcxruxp3qgl6qpphvc9p4u24347ec0mvvg6342fdoiosl: no_payjoins
 ```
 
-TODO: Automated wallet `receive` actions open up the receiver to dusting attacks if an address can be reused. Should we clearly separate automated `receive` wallets from others? At the very least, `receive` PayJoin transactions should be confirmed manually otherwise the utxos are vulnerable to UTXO spoofing attack. Perhaps we should have `RECEIVE_PROTECTED_PROB: 0.0` by default to avoid leaking inputs? should all transactions by default be inherently interactive and thus requiring a manual step from the receiver?
+TODO: Automated wallet `receive` actions open up the receiver to dusting attacks if an address can be reused. Should we clearly separate automated `receive` wallets from others? At the very least, `receive` PayJoin transactions should be confirmed manually otherwise the utxos are vulnerable to UTXO spoofing attack. Perhaps we should have `receive_protected_prob: 0.0` by default to avoid leaking inputs? should all transactions by default be inherently interactive and thus requiring a manual step from the receiver?
 
-### Child wallets
+### Wallet accounts
 
-TODO
+Each wallet account should have its own `anchor` output protecting it.
 
 ### Exchanges scenarios
 
 #### Exchange configuration
 
-As mentioned in the configuration section, exchanges would likely need a bit bigger set of protected outputs so they would need to adjust the `N_PROTECTED_OUTPUTS` configuration. It would be encouraged that exchanges have `RECEIVE_PROTECTED_PROB` set to `1.0` to help mask the user input.
+As mentioned in the configuration section, exchanges would likely need a bigger set of protected outputs so they would need to adjust the `n_protected_outputs` configuration. It would be encouraged that exchanges have `receive_protected_prob` set to `1.0` to help mask the user input.
 
 #### User withdrawing from an exchange configuration
 
@@ -299,9 +306,8 @@ Seems to be able to protect against all replay attacks if we follow a simple rul
 [unresolved-questions]: #unresolved-questions
 
 - What should the transaction building configuration look like?
-- Should we label `Protected` outputs by making them have a separate derivation path?
-- Is it worth implementing other solutions as well (e.g. out
-- put history + sweeping) which seem to have more problems and introduce complexity to wallet handling?
+- Should we use two bits for labeling the outputs to clearly distinguish the old outputs that did not use the labeling scheme? This could come in handy to immediately spend an output that is received with the old scheme as it could be susceptible to a replay attack so it should be immediately spent.
+- Is it worth implementing other solutions as well (e.g. output history + sweeping) which seem to have more problems and introduce complexity to wallet handling?
 - Should the default probability for a PayJoin on a 'receive' transaction be 0.0 to avoid leaking outputs?
 - Should certain transaction options allow having a user-level interactive transaction which means that the user must manually confirm the transaction building process? Perhaps have this as an additional transaction building configuration which would also allow selecting specific outputs to be used in a transaction?
 
