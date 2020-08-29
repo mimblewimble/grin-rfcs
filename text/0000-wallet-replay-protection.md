@@ -59,7 +59,7 @@ O2  -> O3 (change output)
     -> Bob_output
 ```
 
-The key idea here is to observe that `T2` can't be replayed by anyone else. Only we can create the input needed for the transaction to be replayed `O2`. The attacker could attempt to replay the previous transaction `T` to create the  `O2` input, but `T` can't be replayed because it has an `anchor` output that has not been spent and hence can't be valid. This means that our transaction `T2` is protected against other parties replaying it. 
+The key idea here is to observe that `T2` can't be replayed by anyone else. Only we can create the input `O2` needed for the transaction to be replayed. The attacker could attempt to replay the previous transaction `T` to create the  `O2` input, but `T` can't be replayed because it has an `anchor` output that has not been spent and hence can't be valid. This means that our transaction `T2` is protected against other parties replaying it. 
 
 If we again used `O3` as an input in a new transaction `T3` to send money to Charlie, the same protection would be put in place. The attacker would need to replay `T2` to recreate `O3` input, but we have already shown that `T2` can't be replayed.
 
