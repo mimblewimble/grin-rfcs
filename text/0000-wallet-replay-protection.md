@@ -305,11 +305,9 @@ Seems to be able to protect against all replay attacks if we follow a simple rul
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-- What should the transaction building configuration look like?
 - Should we use two bits for labeling the outputs to clearly distinguish the old outputs that did not use the labeling scheme? This could come in handy to immediately spend an output that is received with the old scheme as it could be susceptible to a replay attack so it should be immediately spent.
 - Is it worth implementing other solutions as well (e.g. output history + sweeping) which seem to have more problems and introduce complexity to wallet handling?
-- Should the default probability for a PayJoin on a 'receive' transaction be 0.0 to avoid leaking outputs?
-- Should certain transaction options allow having a user-level interactive transaction which means that the user must manually confirm the transaction building process? Perhaps have this as an additional transaction building configuration which would also allow selecting specific outputs to be used in a transaction?
+- Should the user have a transaction configuration option that, when enabled, would require a manual confirmation of the receiving transactions? The user manually confirming the outputs they would receive prevents dusting attacks (regardless of the cost) and severely limits any other utxo spoofing methods. It also allows the user to have full control over what outputs they will have in their wallet.
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
