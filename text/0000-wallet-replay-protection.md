@@ -36,7 +36,7 @@ Unsafe receives are allowed, but safe receives (that are generally payjoins) are
 
 A safe cancel requires an immediate self-spend of an input of the tx to be canceled.
 
-The wallet rules for spending safely would happen behind the scenes, so the end user would not be aware of any changes. Canceling a transaction would be a difference experience than it is now, but it is required to change it to prevent the play attacks from occuring. A possible cancel flow would be to make the cancellation a longer event which is not finished until the self-spend transaction has been confirmed on the chain.  
+The wallet rules for spending safely would happen behind the scenes, so the end user would not be aware of any changes. Canceling a transaction would be a different experience than it is now, but it is required to change it to prevent the play attacks from occuring. A possible cancel flow would be to make the cancellation a longer event which is not finished until the self-spend transaction has been confirmed on the chain.  
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
