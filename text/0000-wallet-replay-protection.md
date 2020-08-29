@@ -32,7 +32,7 @@ We propose that wallets follow the following 2 rules to fully protect users from
 
 An `anchor` is a 0-valued output (created by this wallet) that is never spent.
 A safe (from this wallet's viewpoint) transaction is a transaction that either creates an anchor, or that spends an output from an earlier safe transaction.
-Unsafe receives are allowed, but safe receives (that are necessarily payjoins) are preferred as long as the receiver gets to finalize, which minimizes the risk of utxo spoofing. Sends should always be a safe transaction and thus _require_ spending an output from an earlier safe transaction.
+Unsafe receives are allowed, but safe receives (that are generally payjoins) are preferred as long as the receiver gets to finalize, which minimizes the risk of utxo spoofing. Sends should always be a safe transaction.
 
 A safe cancel requires an immediate self-spend of an input of the tx to be canceled.
 
