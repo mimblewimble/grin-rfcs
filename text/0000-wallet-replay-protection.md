@@ -93,8 +93,7 @@ As we mentioned above, `GenP` for `Protected` outputs would need to have `create
 
 There are a few choices how to label outputs as `Protected` while still being able to identify them across difference devices:
 1. Call to `create` uses a new derivation path `P` that is used only for creating `Protected` outputs. Similarly `check` uses the same `P` to check whether an output is protected. Perhaps we could have `N` labels possible which would be labeled by the `r % N` result
-2. Call to `create` creates a specific `r` value for `Protected` outputs e.g. they should start with `N` zeros or be divisible by some number `M`
-3. Call to `create` uses additional output information in the bytes that are available in the Bulletproofs to convey the idea whether the output is protected. These bytes are right now 'zero' bytes meaning their binary representation is all zeros. We label an output as `Protected` by setting the `label` bit that is unused now to `1`. `Unprotected` outputs will have the label bit set to `0` which includes all the old outputs as well. To make sure the output label would be seen only to the owner we save a xor `bit = label ^ r`. This way, nobody would know which label the output has except for the owner of the utxo because they know the `r` value. The owner could xor again to get the label `label = bit ^ r`. If we went such path, we would need to think of the possible drawbacks.
+2. Call to `create` uses additional output information in the bytes that are available in the Bulletproofs to convey the idea whether the output is protected. These bytes are right now 'zero' bytes meaning their binary representation is all zeros. We label an output as `Protected` by setting the `label` bit that is unused now to `1`. `Unprotected` outputs will have the label bit set to `0` which includes all the old outputs as well. The label bit can be read only by the owner of the output because the message that is encoded in the Bulletproof is already private. If we went such path, we would need to think of the possible drawbacks.
 
 In all cases, the output label should only be visible to the owner of the output. It seems necessary to have labeling information about the UTXO on the UTXO itself if we want it to be consistent with different wallet reusing the same seed. If the information is held only on the wallet side, then we hit much bigger issues because there comes a need for either a manual intervention and labeling or a robust solution for synchronization between wallets - which does not appear simple to build.
 
@@ -300,7 +299,7 @@ It requires an `anchor` input that is never spent which increases the chain 700 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-Seems to be able to protect against all replay attacks if we follow a simple rule which means it doesn't require any consensus changes. There are also some other ideas on how to tackle this problem that solve the problem at the consensus level. Each implementation has its own set of tradeoffs. The main benefit of non-consensus solutions is that they can be replaced later with any alternative, including a consensus solution.
+There are also other ideas on how to protect against replay attacks that solve the problem at the consensus level. Both wallet and consensus level solutions have their own tradeoffs. The main benefit of solutions at the wallet level is that they can't introduce a consensus failure and because they are only a change in the wallet behaviour, they can later be replaced by a consensus level solution if needed.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
