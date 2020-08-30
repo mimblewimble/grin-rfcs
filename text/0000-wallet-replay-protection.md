@@ -77,23 +77,21 @@ Most common transaction types are:
 1. A `Regular` tx which has inputs from a single party - the sender
 2. A `PayJoin` tx which has inputs from both parties - both sender and receiver contribute at least one input each
 
-Let's call outputs that hang from a chain that leads to your anchor a `Protected` output. A transaction is protected from replays if a party contributes a Protected output as an input in the transaction. It's not enough that some other party contributes such an input. We are only really protected from replay attacks if we contribute the `Protected` output. Otherwise, our security depends on the honesty and following of the wallet rules of other participants which should not be relied on.
+Let's call an output `Protected` if it is a part of the graph that leads back to an anchor output. A transaction is protected from replays if a party contributes a Protected output as an input or creates an anchor output. It's not enough that some other party does this. We are only really protected from replay attacks if we make the transaction safe from replays ourselves. This way, our safety does not depend on the honesty and following of the wallet rules of other participants.
 
-Let's say that we want to be able to do both `Regular` and `PayJoin` transactions. We do both of these so we have some protected outputs and some that are not protected. The first problem we have is that after a wallet restore, we can't really tell whether an output is protected through a PayJoins+Anchor or not. It would be nice if we could label our outputs as either `Protected` or `Unprotected` after a wallet restore.
+If we will be doing both `Regular` and `PayJoin` transactions, then only some of our outputs will be protected. The first problem we have is that after a wallet restore, we can't tell whether an output is protected or not. It would be nice if we could label our outputs as either `Protected` or `Unprotected` after a wallet restore.
 
 ### Separation of replay protected outputs
 
-Let's define a clear separation of outputs that are protected from those that are not. We define a protected output generator `GenP` that allows us to either `create` a protected output or `check` whether an output is `Protected`.
-
-An output is labeled as `Protected` if it was created in a transaction where we either contributed a protected input, or contributed an anchor output.
+We need a clear separation of outputs that are protected from those that are not. Let's define a protected output generator `GenP` that allows us to either `create` a protected output or `check` whether an output is `Protected`.
 
 #### Possible protected output generators implementations
 
-As we mentioned above, `GenP` for `Protected` outputs would need to have `create` and `check` functions defined.
+As we mentioned above, generator of `Protected` outputs would need to have `create` and `check` functions defined.
 
-There are a few choices how to label outputs as `Protected` while still being able to identify them across difference devices:
+There are a few options how to label outputs as `Protected` while still being able to identify them across difference devices:
 1. Call to `create` uses a new derivation path `P` that is used only for creating `Protected` outputs. Similarly `check` uses the same `P` to check whether an output is protected. Perhaps we could have `N` labels possible which would be labeled by the `r % N` result
-2. Call to `create` uses additional output information in the bytes that are available in the Bulletproofs to convey the idea whether the output is protected. These bytes are right now 'zero' bytes meaning their binary representation is all zeros. We label an output as `Protected` by setting the `label` bit that is unused now to `1`. `Unprotected` outputs will have the label bit set to `0` which includes all the old outputs as well. The label bit can be read only by the owner of the output because the message that is encoded in the Bulletproof is already private. If we went such path, we would need to think of the possible drawbacks.
+2. Call to `create` uses additional output information in the bytes that are available in the Bulletproofs to tell whether the output is protected. These bytes are right now 'zero' bytes meaning their binary representation is all zeros. We label an output as `Protected` by setting the `label` bit that is unused now to `1`. `Unprotected` outputs will have the label bit set to `0` which includes all the old outputs as well. The label bit can be read only by the owner of the output because the message that is encoded in the Bulletproof is already private. If we went such path, we would need to think of the possible drawbacks.
 
 In all cases, the output label should only be visible to the owner of the output. It seems necessary to have labeling information about the UTXO on the UTXO itself if we want it to be consistent with different wallet reusing the same seed. If the information is held only on the wallet side, then we hit much bigger issues because there comes a need for either a manual intervention and labeling or a robust solution for synchronization between wallets - which does not appear simple to build.
 
@@ -114,13 +112,13 @@ There are two known ways to protect against replay attacks using wallet rules. O
 #### Replay protection with utilization of Protected outputs
 
 In order to protect ourselves from replay attacks, we need to follow a simple rule:
-**When we are sending money to someone , we _MUST_ always include a `Protected` input as a part of the transaction.** This is to prevent someone doing a replay of the transaction which would move money from our outputs. Exception to this rule are self-spends that use inputs from an unsafe receive transaction.
+**When we are sending money to someone, we need to either include a `Protected` input or create an anchor output as a part of the transaction.** This is to prevent someone doing a replay of the transaction which would move the coins away from us. Self-spends are an exception and can be left unprotected because we don't really mind them being replayed since the transaction doesn't give coins to anyone else.
 
 This means that:
-1. We can make regular 1-2 transaction if our input is labeled as `Protected`
-2. We can receive money through a 1-2 transaction
+1. We can send money through a regular 1-2 transaction if our input is labeled as `Protected`
+2. We can receive money through a regular 1-2 transaction
 
-The only thing we need to be aware is that our output that is created in a 1-2 receive transaction will be labeled as unprotected and will hence need to be spent in a transaction that will include one of our `Protected` outputs as an input. A more general rule is that outputs created in a transaction to which we did not contribute a `Protected` input are unprotected and need to be spent along side some of our `Protected` inputs. In theory, it should be impossible to replay a transaction that followed this rule.
+The only thing we need to be aware is that our output that is created in a 1-2 receive transaction will be labeled as unprotected and will hence need to be spent in a safe transaction. A more general rule is that unprotected outputs need to be spent in a safe transaction - in most cases this means along side some of our `Protected` inputs. In theory, it should be impossible to replay a transaction that followed this rule.
 
 _Note: If we are the sender in a 1-2 transaction where we use a `Protected` output as an input, we create a change output which is also a `Protected` output. Since we spent 1 protected input and created another one, it means that the sender can chain such 1-2 transactions safely._
 
