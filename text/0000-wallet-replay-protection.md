@@ -101,9 +101,9 @@ We start off with all of our outputs marked as `Unprotected`. To create a `Prote
 1. an `anchor` output that has a form `0*H + r*G` - generated from key derivation path `A`
 2. a set of protected outputs `PS` that hold our coins - generated from `GenP`
 
-We make a bootstrap transaction with `anchor` and `PS` outputs. The outputs in `PS` are exceptionally labeled as `Protected` because they are joined in the same transaction output set as our anchor output. This transactions cannot be replayed because the anchor output will never be spent which means that `PS` outputs are safe from being recreated.
+We make a bootstrap transaction with `anchor` and `PS` outputs. The outputs in `PS` are labeled as `Protected` because they are joined in the same transaction output set as our anchor output. This transaction cannot be replayed because the anchor output will never be spent which means that `PS` outputs are safe from being recreated.
 
-_Note: Grin has a rule that an output that already exists in the UTXO set cannot be created which makes the transaction invalid._
+_Note: Grin has a rule that an output that already exists in the UTXO set cannot be created - a transaction that would attempt to do that is invalid. This is why transactions that contain an anchor output can't be replayed._
 
 ### Wallet transaction rules
 
