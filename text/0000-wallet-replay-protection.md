@@ -32,7 +32,7 @@ We propose that wallets follow the following 2 rules to fully protect users from
 
 An `anchor` is a 0-valued output (created by this wallet) that is never spent.
 A safe (from this wallet's viewpoint) transaction is a transaction that either creates an anchor, or that spends an output from an earlier safe transaction.
-Unsafe receives are allowed, but safe receives (that are generally payjoins) are preferred as long as the receiver gets to finalize, which minimizes the risk of utxo spoofing. Sends should always be a safe transaction.
+Unsafe receives are allowed, but safe receives (that are generally payjoins) are preferred as long as the receiver gets to finalize, which minimizes the risk of utxo spoofing. Sends to others should always be a safe transaction (self-spends could be unsafe).
 
 A safe cancel requires an immediate self-spend of an input of the tx to be canceled.
 
@@ -107,12 +107,10 @@ _Note: Grin has a rule that an output that already exists in the UTXO set cannot
 
 ### Wallet transaction rules
 
-There are two known ways to protect against replay attacks using wallet rules. One is to utilize the `Protected` outputs in transactions, the other one is to keep a history of outputs that were spent and label as 'unsafe' those that the wallet does not remember creating.
-
 #### Replay protection with utilization of Protected outputs
 
 In order to protect ourselves from replay attacks, we need to follow a simple rule:
-**When we are sending money to someone, we need to either include a `Protected` input or create an anchor output as a part of the transaction.** This is to prevent someone doing a replay of the transaction which would move the coins away from us. Self-spends are an exception and can be left unprotected because we don't really mind them being replayed since the transaction doesn't give coins to anyone else.
+**When we are sending money to someone, we need to either include a `Protected` input or create an anchor output as a part of the transaction.** This is to prevent someone doing a replay of the transaction which would move the coins away from us. Self-spends are an exception and can be left unsafe because we don't really mind them being replayed since the transaction doesn't give coins to anyone else.
 
 This means that:
 1. We can send money through a regular 1-2 transaction if our input is labeled as `Protected`
@@ -204,9 +202,9 @@ TODO: Check this is safe.
 
 #### Protection with wallet history
 
-A wallet can remember which outputs were spent. This way, if a spent output reappears, the default wallet behaviour could be to ignore such output and not count it in the balance. Wallet configuration could allow users to see these outputs and decide to either accept it or refresh it through a self-spend transaction.
+A wallet can keep a history of spent outputs. This way, if a spent output reappears, the default wallet behaviour could be to ignore such output and not count it in the balance. Wallet configuration could allow users to see these outputs and decide to either accept it or refresh it through a self-spend transaction.
 
-The downside of this approach is that a replay attacks are still possible in which case it would mean that a user would need to make a manual choice what to do with outputs that are unknown to the history of the wallet. Unknown outputs are also those created from the same seed on a different device and from child wallets since they each have their own history. The cross device scenario could be mitigated by export and import of wallet history and the child wallet outputs can be labeled and hence assumed as safe. It's up to the child wallet to protect itself from the attacks.
+The downside of this approach is that replay attacks are still possible in which case it would mean that a user would need to make a manual choice what to do with outputs that are unknown to the history of the wallet. Unknown outputs are also those created from the same seed on a different device and from possible child wallets since they each have their own history. The cross device scenario could be mitigated by export and import of wallet history and the child wallet outputs can be labeled and hence assumed as safe. It's up to the child wallet to protect itself from the attacks.
 
 ### Receive-only wallets
  
