@@ -83,7 +83,7 @@ If we will be doing both `Regular` and `PayJoin` transactions, then only some of
 
 ### Separation of replay protected outputs
 
-We need a clear separation of outputs that are protected from those that are not. Let's define a protected output generator `GenP` that allows us to either `create` a protected output or `check` whether an output is `Protected`.
+We need a clear separation of outputs that are protected from those that are not. Let's define a function `Protected.create(v)` that allows us to create a new protected output holding `v` coins and `Protected.check(output)` that checks whether an output is `Protected`.
 
 #### Possible protected output generators implementations
 
@@ -95,107 +95,105 @@ There are a few options how to label outputs as `Protected` while still being ab
 
 In all cases, the output label should only be visible to the owner of the output. It seems necessary to have labeling information about the UTXO on the UTXO itself if we want it to be consistent with different wallet reusing the same seed. If the information is held only on the wallet side, then we hit much bigger issues because there comes a need for either a manual intervention and labeling or a robust solution for synchronization between wallets - which does not appear simple to build.
 
-### Simple bootstrapping of protected outputs
-
-We start off with all of our outputs marked as `Unprotected`. To create a `Protected` output out of nothing we create the following outputs:
-1. an `anchor` output that has a form `0*H + r*G` - generated from key derivation path `A`
-2. a set of protected outputs `PS` that hold our coins - generated from `GenP`
-
-We make a bootstrap transaction with `anchor` and `PS` outputs. The outputs in `PS` are labeled as `Protected` because they are joined in the same transaction output set as our anchor output. This transaction cannot be replayed because the anchor output will never be spent which means that `PS` outputs are safe from being recreated.
-
-_Note: Grin has a rule that an output that already exists in the UTXO set cannot be created - a transaction that would attempt to do that is invalid. This is why transactions that contain an anchor output can't be replayed._
 
 ### Wallet transaction rules
 
+#### Replay protection with utilization of an anchor
+
+Whenever we want to transact safely, but lack a confirmed protected output (we might have unconfirmed ones), we create another (possibly the first) anchor and some configurable number of protected change outputs. An anchor output has a form `0*H + r*G` and is generated from key derivation path `A`. Our set of newly created `Protected` outputs is generated from our implementation of `Protected.create` which labels the outputs as protected.
+
+_Note: Grin has a rule that an output that already exists in the UTXO set cannot be created - a transaction that would attempt to do that is invalid. This is why transactions that contain an anchor output can't be replayed. All the outputs that were created along the anchor output are also safe from being recreated through a replay which allows us to use them as new protected outputs._
+
 #### Replay protection with utilization of Protected outputs
 
-In order to protect ourselves from replay attacks, we need to follow a simple rule:
-**When we are sending money to someone, we need to either include a `Protected` input or create an anchor output as a part of the transaction.** This is to prevent someone doing a replay of the transaction which would move the coins away from us. Self-spends are an exception and can be left unsafe because we don't really mind them being replayed since the transaction doesn't give coins to anyone else.
+If we have a protected output available, we can make a transaction safe by adding a protected output as an input to the transaction. This prevents any malicious replay attacks. As we already mentioned, receives can be made through unsafe transactions so we really only need to make safe transactions when we are sending money to someone because these are the transactions that move the coins away from us. Self-spends are an exception and can be left unsafe because we don't really mind them being replayed since the transaction doesn't give coins to anyone else.
 
 This means that:
 1. We can send money through a regular 1-2 transaction if our input is labeled as `Protected`
 2. We can receive money through a regular 1-2 transaction
 
-The only thing we need to be aware is that our output that is created in a 1-2 receive transaction will be labeled as unprotected and will hence need to be spent in a safe transaction. A more general rule is that unprotected outputs need to be spent in a safe transaction - in most cases this means along side some of our `Protected` inputs. In theory, it should be impossible to replay a transaction that followed this rule.
+The only thing we need to be aware is that our output that is created in a 1-2 receive transaction will be labeled as unprotected and will hence need to be spent in a safe transaction. A more general rule is that unprotected outputs need to be spent in a safe transaction (except self-spends) - in most cases this means along side some of our `Protected` inputs. In theory, it should be impossible to replay a transaction that followed this rule.
 
 _Note: If we are the sender in a 1-2 transaction where we use a `Protected` output as an input, we create a change output which is also a `Protected` output. Since we spent 1 protected input and created another one, it means that the sender can chain such 1-2 transactions safely._
 
-This protects the user from all replay attacks and it can happen behind the scenes without the user knowing there are different types of outputs.
+This protects the user from all malicious replay attacks and it can happen behind the scenes without the user knowing there are different types of outputs.
 
-Wallet pseudo-code (WIP):
+Wallet pseudo-code:
 ```rust
-// The general idea is to also have at least one protected output available at all times after
-// the bootstrap phase. Might want to have a dozen of these in case of high number of transactions
-// being performed which would be useful for parties that perform multiple concurrent transactions e.g. exchanges
+// The general idea is to also have at least a handful of protected output available most of
+// the time. Might want to have a dozen of these in case of high number of transactions being
+// performed which would be useful for parties that perform concurrent transactions e.g. exchanges
 
-// Bootstrap transaction outputs by creating an anchor and an initial set of protected outputs PS
-fn bootstrap_outputs() -> []Output {
-  anchor = generate_anchor_output()
-  PS = generate_protected_outputs()
-  return [anchor] + PS
+// Suppose we have the following interfaces available:
+// struct Protected {
+//   create(value) -> Output         // Creates a new protected output hold 'value' coins
+//   create_multi(value) -> []Output // Create multiple protected outputs with the same value
+//   is_available() -> bool          // Returns true if a protected output is available
+//   pick_random() -> Output         // Returns a random available protected output (or error)
+// }
+
+// Create a safe transaction by creating an anchor and an initial set of protected outputs PS
+fn anchor_tx() -> ([]Output, []Output) {
+  anchor = Anchor.create()        // generates an anchor
+  PS = Protected.create_multi(0)  // generates a few protected 0-value outputs
+  return [], [anchor] + PS
 }
 
-// A protected version of a receive transaction. Returns a list of inputs and a list of outputs
-// In case an anchor does not exist, it contributes an anchor and PS outputs. If an anchor already
-// exists, it is a PayJoin transaction - we add a protected output as an input
-fn receive_protected() -> ([]Output, []Output) {
-  // if we have no anchor, contribute anchor + PS outputs for replay protection
+// Returns inputs and outputs that should be added to make a transaction safe. In case
+// there is no available protected output, it creates an anchor and PS outputs. If we
+// have a protected output available, we make it a safe transaction by adding a protected
+// output as an input
+fn safe_tx() -> ([]Output, []Output) {
+  // If we have no available protected output, contribute anchor + PS outputs for replay protection
   // TODO: this might be too obvious from the chain analysis perspective
-  if anchor_not_exists {
-    return [], bootstrap_outputs()
+  if !Protected.is_available() {
+    // Safe transaction with an anchor
+    return anchor_tx()
   }
-  // PayJoin - protect the transaction with a protect output as an input
-  return [random_protected_output()], []
+  // Safe transaction with a protect output as an input
+  return [Protected.pick_random()], []
 }
 
-// Receive txs don't need an absolute protection so we flip a coin to determine whether
-// it will be a regular or protected transaction based on the wallet configuration
+// Receive txs don't need to be safe so we flip a coin to determine whether
+// it will be a regular or safe transaction based on the wallet configuration
+// receive-only wallets could have safe_receive_prob=0.0 to always have 1-2 receive transactions
 fn receive(value: int64) -> ([]Output, []Output) {
-  receiver_inputs = []
-  receiver_outputs = []
-  // receive-only wallets could have receive_protected_prob=0.0 to always have 1-2 receive transactions
-  is_protected = random() <= config.receive_protected_prob
-  if is_protected {
-    receiver_inputs, receiver_outputs = receive_protected()
-    receiver_outputs += [generate_protected_output(value)]
-  } else {
-    receiver_outputs += [generate_unprotected_output(value)]
+  is_safe = random() <= config.safe_receive_prob
+  if !is_safe{
+    // If the receive transaction is unsafe, then we simply add an unprotected output
+    return [], [Unprotected.create(value)]
   }
-  return receiver_inputs, receiver_outputs
+  // A safe receive is just a safe tx to which we add a protected output that holds our received value
+  receiver_inputs, receiver_outputs = safe_tx()
+  // We add a protected output to a safe transaction regardless whether it has an anchor or
+  // a protected input (safe PayJoin)
+  return receiver_inputs, receiver_outputs + [Protected.create(value)]
 }
 
-// A 'send' transaction needs to always be protected from replays so we MUST
-// either add a protected output as an input or make it a bootstrap transaction
-// if an anchor does not exist yet
+// A 'send' transaction needs to always be protected from replays so it MUST be a safe transaction.
+// We need to either add a protected output as an input or create an anchor if we have no available
+// protected outputs
 fn send(value: int64) -> ([]Output, []Output) {
-  // first pick the inputs that hold enough value to perform a tx
-  inputs = pick_random_inputs()
-  outputs = []
-
-  // if we have no anchor, contribute anchor + PS outputs for replay protection
-  if anchor_not_exists() {
-    outputs = bootstrap_outputs()
-  // otherwise, add a protected output as input to protect the transaction
-  } else {
-    // contribute a protected output as an input if it's not already contributed
-    if count_protected_output(inputs) == 0 {
-        inputs += [random_protected_output()]
-    }
-  }
+  // Start with a safe tx
+  inputs, outputs = safe_tx()
+  // Add the inputs whose sum of values is enough to perform the tx - favor unprotected inputs
+  inputs = pick_inputs_sum(inputs, value)  // we pick additional inputs to get the sum coins >= value
   change_value = sum(input.v for input in inputs) - value  // fee is missing from here
-  // we know our change output will be protected either by bootstrap outputs or by
-  // a protected input so we label it as a protected output
-  change_output = generate_protected_output(change_value)
+  // Add a protected change output - send is always a safe tx
+  change_output = Protected.create(change_value)
   outputs += [change_output]
   return inputs, outputs
 }
 
 // NOTE: There are many possible strategies that can keep the number of protected outputs
 // higher than the specified n_protected_outputs configuration. These can be created by:
-// 1. doing self-spend 1-2 transactions (needs to pay fee)
+// 1. doing self-spend 1-2 transactions (more private but comes at a cost of tx fees)
 // 2. adding new outputs to existing transactions
 // 3. attaching outputs to transactions that pass by and have overpaid the fees
-// The handling of these is left to the wallet implementation.
+// The strategy choice is left to the wallet implementation.
+
+// There are a number of improvements that can be made with regards to picking specific protected
+// outputs e.g. we might want to pick low value outputs as protected inputs in a receive transaction
 ```
 
 TODO: Check this is safe.
@@ -208,7 +206,7 @@ The downside of this approach is that replay attacks are still possible in which
 
 ### Receive-only wallets
  
-Any kind of automated receiving should default to 1-2 transactions and thus creating _unprotected_ outputs to avoid utxo spoofing attack which would reveal our inputs. Always performing 1-2 receive transactions can be achieved by setting the configuration `receive_protected_prob = 0.0` which is explained in the next section.
+Any kind of automated receiving should default to 1-2 transactions and thus creating _unprotected_ outputs to avoid utxo spoofing attack which would reveal our inputs. Always performing 1-2 receive transactions can be achieved by setting the configuration `safe_receive_prob = 0.0` which is explained in the next section.
 
 ### Transaction building configuration
 
@@ -228,8 +226,8 @@ transaction_building:
       // they don't generate new outputs.
       // If PayJoin transactions are not wanted due to privacy concerns, you can set this value to 0.0 in which case
       // receive transactions will never contribute an input.
-      // Default: receive_protected_prob: 0.9
-      receive_protected_prob: 0.9
+      // Default: safe_receive_prob: 0.9
+      safe_receive_prob: 0.9
 
       // The number of protected outputs we want to have available at any time. This is to be able to have concurrent
       // transactions that are safe from replay attacks. If we had only 1 protected output and wanted to make two
@@ -241,11 +239,11 @@ transaction_building:
 
     // PayJoins configuration
     - name: all_payjoins
-      receive_protected_prob: 1.0
+      safe_receive_prob: 1.0
 
     // No PayJoins configuration - e.g. could be used for withdrawals from exchanges or other untrusted parties
     - name: no_payjoins
-      receive_protected_prob: 0.0
+      safe_receive_prob: 0.0
     
   // We can predefine some fixed transaction building configurations for specific addresses, but we should note
   // that this comes at a privacy risk due to the SlatepackAddress reuse.
@@ -255,7 +253,7 @@ transaction_building:
     grin1fsdf9fd83e3fjvcxruxp3qgl6qpphvc9p4u24347ec0mvvg6342fdoiosl: no_payjoins
 ```
 
-TODO: Automated wallet `receive` actions open up the receiver to dusting attacks if an address can be reused. Should we clearly separate automated `receive` wallets from others? At the very least, `receive` PayJoin transactions should be confirmed manually otherwise the utxos are vulnerable to UTXO spoofing attack. Perhaps we should have `receive_protected_prob: 0.0` by default to avoid leaking inputs? should all transactions by default be inherently interactive and thus requiring a manual step from the receiver?
+TODO: Automated wallet `receive` actions open up the receiver to dusting attacks if an address can be reused. Should we clearly separate automated `receive` wallets from others? At the very least, `receive` PayJoin transactions should be confirmed manually otherwise the utxos are vulnerable to UTXO spoofing attack. Perhaps we should have `safe_receive_prob: 0.0` by default to avoid leaking inputs? should all transactions by default be inherently interactive and thus requiring a manual step from the receiver?
 
 ### Wallet accounts
 
@@ -265,7 +263,7 @@ Each wallet account should have its own `anchor` output protecting it.
 
 #### Exchange configuration
 
-As mentioned in the configuration section, exchanges would likely need a bigger set of protected outputs so they would need to adjust the `n_protected_outputs` configuration. It would be encouraged that exchanges have `receive_protected_prob` set to `1.0` to help mask the user input.
+As mentioned in the configuration section, exchanges would likely need a bigger set of protected outputs so they would need to adjust the `n_protected_outputs` configuration. It would be encouraged that exchanges have `safe_receive_prob` set to `1.0` to help mask the user input.
 
 #### User withdrawing from an exchange configuration
 
