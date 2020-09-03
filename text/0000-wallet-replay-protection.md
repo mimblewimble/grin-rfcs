@@ -134,6 +134,9 @@ Wallet pseudo-code:
 
 // Create a safe transaction by creating an anchor and an initial set of protected outputs PS
 fn anchor_tx() -> ([]Output, []Output) {
+  // It's not needed to create any protected output because the anchor output will always be joined
+  // by another output we own - change output as a sender and value output as a receiver. This
+  // output will be protected because of the anchor
   anchor = Anchor.create()        // generates an anchor
   PS = Protected.create_multi(0)  // generates a few protected 0-value outputs
   return [], [anchor] + PS
@@ -165,9 +168,11 @@ fn receive(value: int64) -> ([]Output, []Output) {
   }
   // A safe receive is just a safe tx to which we add a protected output that holds our received value
   receiver_inputs, receiver_outputs = safe_tx()
+  // If we have added a protected output as an input, we need to add its value to the value output
+  new_value = value + sum(input.v for input in receiver_inputs)
   // We add a protected output to a safe transaction regardless whether it has an anchor or
   // a protected input (safe PayJoin)
-  return receiver_inputs, receiver_outputs + [Protected.create(value)]
+  return receiver_inputs, receiver_outputs + [Protected.create(new_value)]
 }
 
 // A 'send' transaction needs to always be protected from replays so it MUST be a safe transaction.
