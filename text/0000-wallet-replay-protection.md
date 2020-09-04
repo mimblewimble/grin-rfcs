@@ -201,8 +201,6 @@ fn send(value: int64) -> ([]Output, []Output) {
 // outputs e.g. we might want to pick low value outputs as protected inputs in a receive transaction
 ```
 
-TODO: Check this is safe.
-
 #### Protection with wallet history
 
 A wallet can keep a history of spent outputs. This way, if a spent output reappears, the default wallet behaviour could be to ignore such output and not count it in the balance. Wallet configuration could allow users to see these outputs and decide to either accept it or refresh it through a self-spend transaction.
@@ -258,7 +256,8 @@ transaction_building:
     grin1fsdf9fd83e3fjvcxruxp3qgl6qpphvc9p4u24347ec0mvvg6342fdoiosl: no_payjoins
 ```
 
-TODO: Automated wallet `receive` actions open up the receiver to dusting attacks if an address can be reused. Should we clearly separate automated `receive` wallets from others? At the very least, `receive` PayJoin transactions should be confirmed manually otherwise the utxos are vulnerable to UTXO spoofing attack. Perhaps we should have `safe_receive_prob: 0.0` by default to avoid leaking inputs? should all transactions by default be inherently interactive and thus requiring a manual step from the receiver?
+_NOTE: it is highly recommended that all payjoin transactions require a manual confirmation from the receiver. This should limit the scope of the UTXO spoofing attacks which allow the sender to find out all the inputs of the receiver - something that is possible with automated payjoins. Having all of the transactions require manual confirmation prevents also dusting attacks. Perhaps the most important advantage of manually confirming the transactions the user wants to receive is that the user gains a complete control over what they have in the wallet - something that can't be guaranteed without interactivity because it requires the receiver confirmation in some form which makes it interactive. It is possible to limit the UTXO spoofing attacks without manual confirmation if the SlatepackAddress can be used only once._
+
 
 ### Wallet accounts
 
