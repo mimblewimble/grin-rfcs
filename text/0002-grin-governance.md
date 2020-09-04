@@ -78,7 +78,6 @@ The core team leads the wider Grin project as a whole. In particular:
 
 #### Organization & Processes
 
-- Ignotus Peverell, as creator of Grin, is considered BDFL and leader of the core team.
 - There's no defined maximum size of the team.
 - New members are added through a core decision; A core member can nominate a new member for inclusion, there’s discussion, and the process is consensus seeking.
 - The general decision making process is consensus seeking - no majority rule based voting, but also not blocked by lack of explicit consensus.
