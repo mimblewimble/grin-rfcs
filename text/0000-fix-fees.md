@@ -85,7 +85,7 @@ While the input and kernel weights are pretty fixed, the output weight is subjec
 If Grin implements BP+, the weight should go down from 21 to 18. That would make outputs incur slightly less than a Grin-cent in fees,
 which is not worth bothering with. If range proofs were to halve in size though, then we might want to double the base fee to compensate.
 
-In Grin ever becomes worth many dollars, then a lowering of fees is desirable.
+If Grin ever becomes worth many dollars, then a lowering of fees is desirable.
 This can then be achieved by getting the majority of running nodes to reconfigure their base fee to a lower value,
 after which wallets can have their fee computation adjusted.
 In the converse case, where Grin becomes worth only a few cents, then an increase in fees might be needed to avoid spam.
@@ -95,6 +95,6 @@ Both cases will be much easier to deal with if they coincide with a hard fork, b
 # References
 [references]: #references
 
-[1] https://en.bitcoin.it/wiki/Satoshi\_Dice
+[1] [Satoshi Dice](https://en.bitcoin.it/wiki/Satoshi_Dice)
 
-[2] https://github.com/nanocurrency/nano-node/issues/1883
+[2] [Nano github](https://github.com/nanocurrency/nano-node/issues/1883)
