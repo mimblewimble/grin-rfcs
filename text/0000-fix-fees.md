@@ -42,16 +42,16 @@ Formerly, we used Transaction::weight\_as\_block,
 which uses arbitrary weights of -1, 4, and 1 respectively, but also non-linearly rounds negative results up to 0
 (as happens when the number of inputs exceeds the number of kernels plus 4 times the number of outputs).
 The Transaction::weight\_as\_block shall be multiplied by a base fee.
-This will not be hardcoded, but configurable in grin-server.log.
+This will not be hardcoded, but configurable in grin-server.toml.
 The already present accept\_fee\_base parameter appears suitable for this, as
-there as no reason to use different fees for relay and mempool acceptance. Its
+there is no reason to use different fees for relay and mempool acceptance. Its
 value shall default to GRIN\_BASE / 100 / 20 = 500000, which make each output
 incur just over 1 Grin-cent in fees.
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-I think there is only a perceived drawback, which is what led to the former fee rules.`
+I think there is only a perceived drawback, which is what led to the former fee rules.
 A negative weight on inputs is supposed to encourage spending many outputs, and lead to a reduction in UTXO size.
 A positive weight on inputs is not really a drawback however, as long as creation of outputs is more strongly discouraged.
 Most wallets, especially those relying on payjoins, do about equal amounts of output creation and spending,
