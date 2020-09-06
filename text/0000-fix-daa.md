@@ -109,8 +109,8 @@ Having such a well vetted DAA will be a reassurance for years to come.
 # References
 [references]: #references
 
-[1] https://web.archive.org/web/20181120082228if\_/https://www.yours.org/content/the-wtema-difficulty-adjustment-algorithm-855a3405606a/
+[1] [archive.org](https://web.archive.org/web/20181120082228if_/https://www.yours.org/content/the-wtema-difficulty-adjustment-algorithm-855a3405606a/)
 
-[2] https://read.cash/@jtoomim/bch-upgrade-proposal-use-asert-as-the-new-daa-1d875696
+[2] [read.cash](https://read.cash/@jtoomim/bch-upgrade-proposal-use-asert-as-the-new-daa-1d875696)
 
-[3] https://github.com/tromp/difficulty
+[3] (tromp github)https://github.com/tromp/difficulty
