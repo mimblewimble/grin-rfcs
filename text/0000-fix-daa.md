@@ -25,7 +25,7 @@ Thus, if the last block took exactly 1 minute to solve, then network difficulty 
 If it took 2 minutes to solve, then network difficulty should be decreased.
 But only by a small percentage. Halving network difficulty would make it way too erratic. 
 Similarly, if the last block took less than a minute to solve, then network difficulty should be increased a little.
-Grin's DDA uses a simple formula to express the factor by which to change network difficulty, in terms of the ratio of last block time to ideal block time.
+Grin's DAA uses a simple formula to express the factor by which to change network difficulty, in terms of the ratio of last block time to ideal block time.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -109,7 +109,7 @@ Having such a well vetted DAA will be a reassurance for years to come.
 # References
 [references]: #references
 
-[1] https://www.yours.org/content/the-wtema-difficulty-adjustment-algorithm-855a3405606a
+[1] https://web.archive.org/web/20181120082228if\_/https://www.yours.org/content/the-wtema-difficulty-adjustment-algorithm-855a3405606a/
 
 [2] https://read.cash/@jtoomim/bch-upgrade-proposal-use-asert-as-the-new-daa-1d875696
 
