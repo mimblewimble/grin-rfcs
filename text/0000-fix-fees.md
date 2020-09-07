@@ -38,7 +38,7 @@ while splitting the kernel fee.
 The minimum relay fee of a transaction shall be proportional to Transaction::weight\_as\_block,
 which uses weights of BLOCK\_INPUT\_WEIGHT = 1, BLOCK\_OUTPUT\_WEIGHT = 21, and BLOCK\_KERNEL\_WEIGHT = 3,
 which correspond to the nearest multiple of 32 bytes that it takes to serialize.
-Formerly, we used Transaction::weight\_as\_block,
+Formerly, we used Transaction::weight,
 which uses arbitrary weights of -1, 4, and 1 respectively, but also non-linearly rounds negative results up to 0
 (as happens when the number of inputs exceeds the number of kernels plus 4 times the number of outputs).
 The Transaction::weight\_as\_block shall be multiplied by a base fee.
