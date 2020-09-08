@@ -14,8 +14,8 @@ Allow for non-interactive transactions
 # Motivation
 [motivation]: #motivation
 
-The current 3 round interaction required for building a transaction is somewhat cumbersome when requiring manual intervention.
-In particular, the initiator has to wait an arbitrary time between sending their first and second message.
+The current 2 round interaction required for building a transaction is somewhat cumbersome when requiring manual intervention.
+In particular, the initiator has to wait an arbitrary time between sending their first and receiving the second message.
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
@@ -56,7 +56,10 @@ a 1 round interaction protocol may be possible within the pure MW consensus mode
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-[TODO]
+The major unresolved question is how to do payment proofs.
+How would one distinguish between the sender spending the 1-of-2 and the receiver spending the 1-of-2?
+Only the latter should allow for a payment proof.
+As this seems impossible to achieve, this proposal may be considered Dead On Arrival...
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
