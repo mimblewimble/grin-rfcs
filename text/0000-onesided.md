@@ -9,7 +9,7 @@
 # Summary
 [summary]: #summary
 
-Allow for non-interactive transactions
+Allow for non-interactive transactions in cases where payment proofs are not needed.
 
 # Motivation
 [motivation]: #motivation
@@ -36,6 +36,11 @@ The payment is not considered complete until the receiving transaction confirms.
 [drawbacks]: #drawbacks
 
 Transactions require double the fees and kernels. Doesn't allow for payjoins.
+The major drawback though is that payment proofs are not possible, 
+as a 3rd party could never distinguish between the sender spending the 1-of-2 and the receiver spending the 1-of-2.
+Therefore, these one sided payments are only useful where payment proofs are redundant.
+This includes tipping, donations, and any case where a recveiver fully trusts the sender,
+like children receiving pocket money from their parents.
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
@@ -55,11 +60,6 @@ a 1 round interaction protocol may be possible within the pure MW consensus mode
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
-
-The major unresolved question is how to do payment proofs.
-How would one distinguish between the sender spending the 1-of-2 and the receiver spending the 1-of-2?
-Only the latter should allow for a payment proof.
-As this seems impossible to achieve, this proposal may be considered Dead On Arrival...
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
