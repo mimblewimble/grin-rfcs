@@ -104,7 +104,7 @@ Whenever we want to transact safely, but lack a confirmed protected output (we m
 
 _Note: Grin has a rule that an output that already exists in the UTXO set cannot be created - a transaction that would attempt to do that is invalid. This is why transactions that contain an anchor output can't be replayed. All the outputs that were created along the anchor output are also safe from being recreated through a replay which allows us to use them as new protected outputs._
 
-If we are worried that the number of created outputs could hint that we are creating an anchor, we can create an anchor in an isolated transaction. Since we only need to have send transactions safe, we never really need to create an anchor in a receiving transaction. If we have no protected outputs available and we want to create a safe send transaction, we can first create an _unsafe_ send transaction and in parallel create another self-spend transaction that creates an anchor output. An unsafe send transaction should not be broadcasted. We can aggregate the unsafe send transaction with the self-spend transaction that creates an anchor to obtain a safe aggregated transaction which can be broadcasted. This requires at least another unprotected output available that can be used as an input in the anchoring transaction and costs slightly more fees.
+If we are worried that the number of created outputs could hint that we are creating an anchor, we can create an anchor in an isolated transaction that gets aggregated with the transaction we want to protect. For receiving transactions this would mean we need to contribute some inputs, outputs and a kernel to simulate an aggregated transaction. Since we only need to have send transactions safe, we never really need to create an anchor in a receiving transaction. If we have no protected outputs available and we want to create a safe send transaction, we can first create an _unsafe_ send transaction and in parallel create another self-spend transaction that creates an anchor output. An unsafe send transaction should not be broadcasted. We can aggregate the unsafe send transaction with the self-spend transaction that creates an anchor to obtain a safe aggregated transaction which can be broadcasted. This requires at least another unprotected output available that can be used as an input in the anchoring transaction and costs slightly more fees.
 
 #### Replay protection with utilization of Protected outputs
 
@@ -150,7 +150,9 @@ fn anchor_tx() -> ([]Output, []Output) {
 // output as an input
 fn safe_tx() -> ([]Output, []Output) {
   // If we have no available protected output, contribute anchor + PS outputs for replay protection
-  // TODO: this might be too obvious from the chain analysis perspective
+  // NOTE: this might be too obvious from the chain analysis perspective. If we are worried about this
+  // we could decide to create anchors in a separate transaction that gets aggregated with our
+  // transaction to obtain a safe aggregated transaction.
   if !Protected.is_available() {
     // Safe transaction with an anchor
     return anchor_tx()
