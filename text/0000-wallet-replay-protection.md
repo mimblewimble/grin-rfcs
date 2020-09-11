@@ -265,7 +265,7 @@ _NOTE: it is highly recommended that all payjoin transactions require a manual c
 
 ### Wallet accounts
 
-Each wallet account should have its own `anchor` output protecting it.
+Each wallet account should have its  `anchor` outputs protecting it.
 
 ### Exchanges scenarios
 
@@ -296,7 +296,7 @@ _Note: If we make another transaction to the same user, we should either wait en
 # Drawbacks
 [drawbacks]: #drawbacks
 
-It requires an `anchor` input that is never spent which increases the chain 700 bytes per wallet. These outputs might be easier to identify because they never move. How easy/hard would it be to identify them is unclear because each wallet is expected to have only one such output and a lot of wallets will get lost and hence a lot of outputs will never move.
+It requires an `anchor` input that is never spent which increases the chain 700 bytes per wallet. These outputs might be easier to identify because they never move. How easy/hard would it be to identify them is unclear. Most wallets are expected to have only one few such outputs and a lot of wallets will get lost and hence a lot of outputs will never move.
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
