@@ -36,11 +36,19 @@ The payment is not considered complete until the receiving transaction confirms.
 [drawbacks]: #drawbacks
 
 Transactions require double the fees and kernels. Doesn't allow for payjoins.
+
 The major drawback though is that payment proofs are not possible, 
 as a 3rd party could never distinguish between the sender spending the 1-of-2 and the receiver spending the 1-of-2.
 Therefore, these one sided payments are only useful where payment proofs are redundant.
 This includes tipping, donations, and any case where a recveiver fully trusts the sender,
 like children receiving pocket money from their parents.
+
+Constructing the shared secret requires the sender to pick a random secret key
+whose corresponding public key must be passed on-chain to the receiver. This is unlikely
+to fit in the limited space available in Bulletproofs, while creating an extra output field
+is highly undesirable.
+
+These drawbacks make this proposal unacceptable. It may still serve a documentary purpose on its way to rejection.
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
@@ -60,6 +68,7 @@ a 1 round interaction protocol may be possible within the pure MW consensus mode
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
+
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
