@@ -1,11 +1,12 @@
-# 0002-grin-governance
 
 - Title: grin-governance
 - Authors: [lehnberg](mailto:daniel.lehnberg@protonmail.com), [yeastplume](mailto:yeastplume@protonmail.com)
 - Start date: June 24th, 2019
-- Related issue: [/grin-pm/#167](https://github.com/mimblewimble/grin-pm/issues/167) 
+- Tracking issue: [mimblewimble/grin-pm/#167](https://github.com/mimblewimble/grin-pm/issues/167)
 
-# Summary
+---
+
+## Summary
 [summary]: #summary
 
 Evolve Grin's governance:
@@ -14,7 +15,7 @@ Evolve Grin's governance:
 - Introduce RFC process;
 - Introduce self-governing teams that steward and guide work in each of their focus areas.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 ### Background
@@ -29,7 +30,7 @@ This is a proposal to evolve our governance process.
 
 ### Objectives
 
-- **Reward and recognize contributions better.** Offer different ways to become more engaged and give better recognition for work 
+- **Reward and recognize contributions better.** Offer different ways to become more engaged and give better recognition for work
 - **Empower more to contribute.** Encourage more community members to participate, facilitate more initiative.
 - **Make Grin less centralized.** Rather than relying on a small group of people, share responsibilities and make the project more resilient against shocks.
 - **Create a more transparent process.**
@@ -40,22 +41,22 @@ This is a proposal to evolve our governance process.
 - **Do not create bureaucracy for the sake of bureaucracy.** Do not impose death by a thousand papercuts or let forms and administration get in the way of making progress.
 - **Do not discourage contributions.** Nobody can prevent someone else from doing work. Anyone can contribute in which ever way they find meaningful. You do not need to ask for permission.
 
-# Community-level explanation
+## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
 This proposal outlines a set of loose principles to guide the work we do. While some of these may already be in use, they might not have been articulated before. It converts the council into a core team, and outlines its responsibilities for the first time. In addition, it's proposed that additional teams are introduced alongside it, as well as an RFC process. An initial teams breakdown is suggested, and the proposal concludes with a path to adoption.
 
 ### General principles
 
-- **Lead by example.** "Cypherpunks write code." We don't tell others what to do. We do what we can, and if we need to we ask for help. We suggest, but never command. We act as we want others to act. 
+- **Lead by example.** "Cypherpunks write code." We don't tell others what to do. We do what we can, and if we need to we ask for help. We suggest, but never command. We act as we want others to act.
 - **Not a democracy.** We are evaluated based on the work we do. It's not a popularity contest, and the majority is not always right. Community members are here by their free will, participation is optional.
-- **Influence is measured by recent and not historical work.** We are grateful for and respect historical contributions, but they do not lead to lifelong positions of authority. Influence is earned by making contributions consistently over time, allowing new contributors to join the ranks of the old. 
+- **Influence is measured by recent and not historical work.** We are grateful for and respect historical contributions, but they do not lead to lifelong positions of authority. Influence is earned by making contributions consistently over time, allowing new contributors to join the ranks of the old.
 - **Transparency.** Where possible, discussions and decisions are made in the open. We have nothing to hide, and we do not try to limit oversight unless there's a defensible reason to do so.
-- **Keep things lightweight.** We strive to only put in place the minimal structure and organization that's needed, neither more nor less.   
-- **Groups organize themselves.** Structures do not need to be imposed tops down, and we recognise that what works for one group will not necessarily work for the other. Teams self-organize and define their own workflows and processes as they see fit.  
-- **Consensus-seeking decision making.** Voting creates winners and losers, and is polarizing. We recognize there are trade offs with everything and rarely any single right answer. This does not mean design by committee. We seek consensus through dialogue and discussion, but where there is a lack of consensus, we do not let it block us indefinitely. We're ready to make judgment calls to the best of our abilities. 
-- **We speak for ourselves.** We can only speak in the name of ourselves, as contributors to the project. We do not write blog posts, articles, tweets, or give interviews speaking on behalf of the project as a whole. Grin itself has no single voice.   
-- **There's no need to ask for permission.** We are not afraid to take decisions. We ask for feedback and opinions from others, but we do not need to ask for somebody's permission. If we believe it's in the best interest of  Grin, we act, and are accountable for our actions. 
+- **Keep things lightweight.** We strive to only put in place the minimal structure and organization that's needed, neither more nor less.
+- **Groups organize themselves.** Structures do not need to be imposed tops down, and we recognise that what works for one group will not necessarily work for the other. Teams self-organize and define their own workflows and processes as they see fit.
+- **Consensus-seeking decision making.** Voting creates winners and losers, and is polarizing. We recognize there are trade offs with everything and rarely any single right answer. This does not mean design by committee. We seek consensus through dialogue and discussion, but where there is a lack of consensus, we do not let it block us indefinitely. We're ready to make judgment calls to the best of our abilities.
+- **We speak for ourselves.** We can only speak in the name of ourselves, as contributors to the project. We do not write blog posts, articles, tweets, or give interviews speaking on behalf of the project as a whole. Grin itself has no single voice.
+- **There's no need to ask for permission.** We are not afraid to take decisions. We ask for feedback and opinions from others, but we do not need to ask for somebody's permission. If we believe it's in the best interest of  Grin, we act, and are accountable for our actions.
 - **Mistakes are tolerated.** As with any organization structure, mistakes happen. This is understood, and mistakes are accepted. We try to learn from them and improve. We assume we all act in good faith, until proven otherwise.
 
 ### Core team
@@ -70,10 +71,10 @@ The core team leads the wider Grin project as a whole. In particular:
 
 * **Sets overall direction and vision.** Values and philosophies. Steering towards use cases and targets.
 * **Sets priorities and plans releases.** Maintains high level planning, roadmaps, focus areas, decides on pace and the release schedule.
-* **Work on broader, cross-sectional issues.** What falls in-between teams, taking a global view. 
+* **Work on broader, cross-sectional issues.** What falls in-between teams, taking a global view.
 * **Adds and removes teams.** While proposals for new teams can come from anywhere, the core team is responsible to ensure structures are productive and make sense.
 * **Appoints initial team leadership.** Once a new team is established, core appoints a leader that has the responsibility to grow the team.
-* **Responsible for security.** Handles disclosures, vulnerabilities, audits, processes. 
+* **Responsible for security.** Handles disclosures, vulnerabilities, audits, processes.
 * **Handles multi-sig keys and takes high level spending decisions.** Spending proposals can be made by anyone, and teams can have their own own budgets to deal with as they please.
 
 #### Organization & Processes
@@ -88,7 +89,7 @@ The core team leads the wider Grin project as a whole. In particular:
 - A core member can resign by notifying the rest of the team.
 - If unreachable for 30 days without any news, a core member can be removed through a core decision.
 - The core team *does not* make rulings on RFCs of other teams, although individual team members might also participate in the discussions of sub teams or be members of those teams.
-- Meeting notes should be published and made transparent to the community on a regular basis. 
+- Meeting notes should be published and made transparent to the community on a regular basis.
 
 ### RFC process
 
@@ -96,9 +97,9 @@ An RFC is a Request For Comments document, outlining a proposed improvement or d
 
 ### Teams
 
-#### Overview 
+#### Overview
 
-Teams are groups organized around specific areas or knowledge fields. They are responsible for these areas, but do not do all the work. Anyone can contribute anywhere, and do not need to hold a particular title to do so. 
+Teams are groups organized around specific areas or knowledge fields. They are responsible for these areas, but do not do all the work. Anyone can contribute anywhere, and do not need to hold a particular title to do so.
 
 Rather, teams work on policies, processes, and workflows for their specific areas, as required. They are in charge of the RFC process in their specific field: They determine what requires an RFC in their area, they assign RFC shepherds that guide an RFC through its various stages and ensures the right stakeholders become aware of it and solicit their feedback. Ultimately, teams decide whether an RFC in their area should be accepted or rejected. They are responsible to ensure that each RFC in their area has a tracked status, and that they progress towards an outcome.
 
@@ -108,7 +109,7 @@ Teams can be broken down into smaller working groups or teams, permanent or temp
 
 Each team has a dedicated section on the forum, they should meet regularly, and keep some notes on what was covered and decided. Decisions do not need to happen in meetings, and could for example be handled asynchronously or in the RFC process.
 
-Meeting notes should be published and made transparent to the community on a regular basis. 
+Meeting notes should be published and made transparent to the community on a regular basis.
 
 ### The teams
 
@@ -136,7 +137,7 @@ In practice, core team members might be engaging with teams as individual contri
 
 If there are conflicts within teams, these should ideally be resolved within the teams themselves. If this is not possible and there's contentious disagreements that need outside arbitration, teams can invite core or another team to become involved.
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 - Adds a lot more structure. This might create overhead.
@@ -144,18 +145,18 @@ If there are conflicts within teams, these should ideally be resolved within the
 - Could lead to situations where one team does work that conflicts with other teams, "left hand not talking to the right".
 
 
-# Rationale and alternatives
+## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
 * Keep the process as is.
 * Change the process to something else.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 Python conducted a comprehensive survey of the governance structures of various open source projects in 2018 through [PEP-8002](https://www.python.org/dev/peps/pep-8002/). This document is highly recommended reading for various alternative structures.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
 Far too many to all be listed here, but here are some:
@@ -164,7 +165,7 @@ Far too many to all be listed here, but here are some:
 - Does this approach really address the problems as highlighted in the motivation?
 - Does this legitimize the core team enough in the community?
 
-# Future possibilities
+## Future possibilities
 [future-possibilities]: #future-possibilities
 
 - Introduce more teams
@@ -172,16 +173,19 @@ Far too many to all be listed here, but here are some:
 - Introduce terms
 - Define firmer structures and organizational rules
 
-# References
+## References
 [references]: #references
 
 **Rust's governance process**
-- https://rust-lang.github.io/rfcs/1068-rust-governance.html
-- https://predictablynoisy.com/rust-governance
-- http://mgattozzi.com/oss-governance-and-sustainablility-i/
+
+- [https://rust-lang.github.io/rfcs/1068-rust-governance.html](https://rust-lang.github.io/rfcs/1068-rust-governance.html)
+- [https://predictablynoisy.com/rust-governance](https://predictablynoisy.com/rust-governance)
+- [http://mgattozzi.com/oss-governance-and-sustainablility-i/](http://mgattozzi.com/oss-governance-and-sustainablility-i/)
 
 **Node.js governance**
-- https://medium.com/the-node-js-collection/healthy-open-source-967fa8be7951
+
+- [https://medium.com/the-node-js-collection/healthy-open-source-967fa8be7951](https://medium.com/the-node-js-collection/healthy-open-source-967fa8be7951)
 
 **Swarmwise, by Rick Falkvinge**
-- https://falkvinge.net/files/2013/04/Swarmwise-2013-by-Rick-Falkvinge-v1.1-2013Sep01.pdf
+
+- [https://falkvinge.net/files/2013/04/Swarmwise-2013-by-Rick-Falkvinge-v1.1-2013Sep01.pdf](https://falkvinge.net/files/2013/04/Swarmwise-2013-by-Rick-Falkvinge-v1.1-2013Sep01.pdf)
