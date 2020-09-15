@@ -10,6 +10,7 @@
 [summary]: #summary
 
 Change Grin's minimum relay fees to be weight proportional and make output creation cost about a Grin-cent.
+Use least significant bits in fee to specify desired tx priority.
 
 # Motivation
 [motivation]: #motivation
@@ -18,6 +19,7 @@ The current fee requirements suffer from being somewhat arbitrary, and not miner
 They are not even linear; the fees required for the aggregate of two transactions is not necessarily equal to the sum
 of required fees.
 The current (and foreseeable) low price of Grin makes spamming the UTXO set rather cheaper than desired.
+Fee overpaying for higher priority to be included in full blocks fails when aggregated with minimal fee transactions.
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
@@ -31,6 +33,7 @@ We therefore want the minimum relay fee be proportional to the weight of the tra
 We can calibrate the fee system by stipulating that creating one output should cost at least one Grin-cent (formerly 0.4 Grin-cent).
 Linearity is another desirable property, which for instance allows the two parties in a payjoin to each pay their own input and output fees,
 while splitting the kernel fee.
+The least significant bits will specify a minimum fee overpayment factor, preventing aggregation with lesser overpaying transactions.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -47,6 +50,11 @@ The already present accept\_fee\_base parameter appears suitable for this, as
 there is no reason to use different fees for relay and mempool acceptance. Its
 value shall default to GRIN\_BASE / 100 / 20 = 500000, which make each output
 incur just over 1 Grin-cent in fees.
+We fix some parameter FEE\_FACTOR\_BITS, possibly configured through
+grin-server.toml.  If the least significant FEE\_FACTOR\_BITS of a fee have
+value f, then the total fees of the transaction containining this kernel must
+exceed the required minimum by a factor f+1, inclusive.
+We recommend a default value of FEE\_FACTOR\_BITS = 10.
 The new tx relay rules and new fee computation in wallets shall take effect at the HF4 block height of 1048320 (but see below about alternatives for 3rd party wallets).
 
 # Drawbacks
@@ -67,6 +75,9 @@ There are no good alternative to economically significant fees. Any blockchain l
 For chains with a maximum blocksize, fees are also necessary to allow prioritization of transactions.
 
 There is a small window prior to HF4 where transactions constructed using the former lower won't be finalized before HF4 and will thus fail to be relayed. Third party wallets are free to switch fee computation some arbitrary time before HF4 to minimize this risk.
+
+The fee factor could have been specified in a new fee field, but that requires a consensus change and takes up more space.
+
 
 # Prior art
 Several chains have suffered spam attacks. In early days, bitcoin was swamped with feeless wagers on Satoshi Dice [1].
