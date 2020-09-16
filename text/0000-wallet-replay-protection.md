@@ -296,7 +296,13 @@ _Note: If we make another transaction to the same user, we should either wait en
 # Drawbacks
 [drawbacks]: #drawbacks
 
+## Replay attacks solution
+
 It requires an `anchor` input that is never spent which increases the chain 700 bytes per wallet. These outputs might be easier to identify because they never move. How easy/hard would it be to identify them is unclear. Most wallets are expected to have only one few such outputs and a lot of wallets will get lost and hence a lot of outputs will never move.
+
+## Play attacks solution
+
+Cancelling a transaction now takes some time because the user should wait for the self-spend to be confirmed. Adding another transaction on the chain for every cancelled transaction means that a cancel costs fees and adds a kernel on the chain. The side effect is a bit more kernel bloat, though that's very likely to be negligible.
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
