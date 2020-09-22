@@ -7,12 +7,12 @@
 
 ---
 
-# Summary
+## Summary
 [summary]: #summary
 
 Grin supports a limited implementation of "relative timelocks" with "No Recent Duplicate" (NRD) transaction kernels. Transactions can be constructed such that they share duplicate kernels. An NRD kernel instance is not valid within a specified number of blocks relative to a prior duplicate instance of the kernel. A minimum height difference must therefore exist between two instances of an NRD kernel. This provides the relative height lock between transactions.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Relative timelocks are a prerequisite for robust payment channels. NRD kernels can be used to implement a _revocable_ channel close mechanism.
@@ -20,7 +20,7 @@ A mandatory revocation period can be introduced through a relative timelock betw
 
 Recently, Ruben Somsen announced a design for [Succinct Atomic Swaps (SAS)][10] reducing the number of on-chain transactions required to implement the swap. This design uses a combination of relative locks and [adaptor signatures][11]. SAS would appear to be compatible with Grin/MW but with some caveats, namely the need for an additional transaction kernel as the NRD lock and the adaptor signature cannot co-exist on the same kernel. This is discussed in [Unresolved questions](#unresolved-questions) below.
 
-# Community-level explanation
+## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
 A minimum distance in block height is enforced between successive duplicate instances of a given NRD kernel. This can be used to enforce a relative lock height between two transactions. A transaction containing an NRD kernel will not be accepted as valid within the specified block height relative to any prior instance of the NRD kernel.
@@ -29,7 +29,7 @@ Transactions can be constructed around an existing transaction kernel by introdu
 
 The NRD kernel implementation aims for simplicity and a minimal approach to solving the problem of "relative locks". Grin does not support a general solution for arbitrary length locks between arbitrary kernels. The implementation is limited in scope to avoid adversely impacting performance and scalability. References between duplicate kernels are _implicit_, avoiding the need to store kernel references. Locks are limited in length to _recent_ history, avoiding the need to inspect the full historical kernel set during verification.
 
-# Reference-level explanation
+## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
 An NRD kernel is not valid within a specified number of blocks of a previous duplicate instance of the same NRD kernel. We define duplicate here as two NRD kernels sharing the same public excess commitment. NRD kernels with different excess commitments are not treated as duplicates. An NRD kernel and a non-NRD kernel (plain kernel, coinbase kernel etc.) sharing the same excess commitment are not treated as duplicates.
@@ -80,7 +80,7 @@ Each kernel variant includes feature specific data -
 
 ```
 # Plain
-{    
+{
   "fee": 8
 }
 # Coinbase
@@ -117,12 +117,12 @@ In V1 all kernels are serialized to the same "fixed" number of bytes:
 
 	03 | 00 00 00 00 01 f7 8a 40 | 00 00 00 00 00 00 05 A0 | 08 b1 ... 22 d8 | 33 11 ... b9 69
 
-NRD kernels use the last 2 bytes of feature specific data for the relative lock height as big-endian u16. 
+NRD kernels use the last 2 bytes of feature specific data for the relative lock height as big-endian u16.
 The first 6 bytes of feature specific data must be all zero:
 
 	00 00 00 00 00 00 05 A0
 
-Note: absolute lock height (u64) and relative lock height (u16) have identical serialization in practice. 
+Note: absolute lock height (u64) and relative lock height (u16) have identical serialization in practice.
 
 V1 is supported for backward compatibility with nodes that do not support V2 "variable size kernels".
 
@@ -270,14 +270,14 @@ The additional 2 bytes of "relative height" on NRD kernels are ignored for the p
 For the purpose of minimum transaction relay fees all kernels are treated as 1 "fee unit" with each unit being 1 milligrin.
 We plan to revisit the entire transaction fee structure in a future RFC. Kernel variants may affect the transaction fee calculations differently in the future.
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 NRD kernels are a limited and restricted form of "relative locks" between kernels. These locks are limited to a period of 7 days and "fail open" beyond that window. This approach meets the requirements for limited revocable payment channel operations but there are likely to be use cases where this approach is not sufficient or unsuitable.
 
 While it would be nice to provide a fully general purpose solution that would allow arbitrary locks to be implemented, it does appear to be hard, if not impossible, to do this in Grin/MW.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
 Referencing historical data in Grin and in Mimblewimble in general is difficult due to the possibility of pruning historical data. It is not possible to reference old outputs once they are spent. Historical validators must have access to any referenced data to validate consensus rules. This leaves transaction kernels as the only available data to be referenced. While arbitrary historical kernels _can_ be referenced this is not desirable as we do not want to impose additional constraints on nodes, requiring them to maintain historical data that would otherwise be prunable.
@@ -292,7 +292,7 @@ To prevent "spam" a signature can be used to verify the reference was indeed a v
 
 The idea of using Merkle proofs to verify inclusion of a historical referenced kernel in the kernel MMR was also considered. This gets expensive both in terms of transaction size and increased verification cost. There is also the problem of position not yet being known at transaction creation time, necessitating Merkle proof generation at block creation time by miners which adds complexity.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 Bitcoin allows transaction inputs to be "encumbered" with a relative locktime based on the sequence number field. This restricts an input from spending the associated output until a certain number of blocks have passed. BIP112 describes the CHECKSEQUENCEVERIFY opcode in Bitcoin and BIP68 describes the underlying consensus changes around the sequence number field.
@@ -304,16 +304,16 @@ Bitcoin allows transaction inputs to be "encumbered" with a relative locktime ba
 
 Note that relative locks in Bitcoin are based on transaction _inputs_ and _outputs_, with inputs only able to spend outputs once confirmed beneath a certain number of blocks. We cannot do this in Grin due to the pruning of old data. Spent outputs will eventually be removed and cannot be relied upon as part of the validation process. Bitcoin encumbers individual outputs whereas in Grin we encumber transactions via the constituent transaction kernels.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
 Some investigation is still needed around the conditions necessary to allow a kernel to simply be reused with an adjustment to the kernel offset and where an additional kernel is necessary. An adjustment to the kernel offset will expose the private excess under certain conditions and cannot be done safely for all transactions.
 
 One outstanding question is what use cases are not covered by NRD kernels. We believe them to be sufficient for the revocable payment channel close mechanism. But they may not be sufficient for all use cases.
 
-[Succinct Atomic Swaps (SAS)][10] describes the use of both relative locks and [adaptor signatures][11] to implement atomic swaps with only two on-chain transactions. The secret associated with the adaptor signature is swapped to allow funds to be claimed while the relative lock locks funds prior to a refund being claimed. We note that NRD kernels and adaptor signatures are not directly compatible as a prior instance of an NRD kernel would have revealed the secret associated with the adaptor signature. That said we can produce transactions with multiple kernels and we can use this to isolate the adaptor signature on a separate kernel alongside an NRD kernel. It is an unresolved question if there is a way to modify the SAS protocol and avoid the need for these additional kernels in Grin/MW.  
+[Succinct Atomic Swaps (SAS)][10] describes the use of both relative locks and [adaptor signatures][11] to implement atomic swaps with only two on-chain transactions. The secret associated with the adaptor signature is swapped to allow funds to be claimed while the relative lock locks funds prior to a refund being claimed. We note that NRD kernels and adaptor signatures are not directly compatible as a prior instance of an NRD kernel would have revealed the secret associated with the adaptor signature. That said we can produce transactions with multiple kernels and we can use this to isolate the adaptor signature on a separate kernel alongside an NRD kernel. It is an unresolved question if there is a way to modify the SAS protocol and avoid the need for these additional kernels in Grin/MW.
 
-# References
+## References
 [references]: #references
 
 * [Original "triggers" mailing list post by Ruben Somsen][1]
@@ -329,15 +329,15 @@ One outstanding question is what use cases are not covered by NRD kernels. We be
 * [Scriptless Scripts][11]
 * [RFC-0005 "Variable Size Kernels"][12]
 
-[1]: https://lists.launchpad.net/mimblewimble/msg00025.html 
-[2]: https://lists.launchpad.net/mimblewimble/msg00635.html 
-[3]: https://lists.launchpad.net/mimblewimble/msg00635.html 
-[4]: https://lists.launchpad.net/mimblewimble/msg00636.html 
+[1]: https://lists.launchpad.net/mimblewimble/msg00025.html
+[2]: https://lists.launchpad.net/mimblewimble/msg00635.html
+[3]: https://lists.launchpad.net/mimblewimble/msg00635.html
+[4]: https://lists.launchpad.net/mimblewimble/msg00636.html
 [5]: https://gist.github.com/antiochp/78fe813b6c2c0612593f8747390a8aae
 [6]: https://en.bitcoin.it/wiki/Timelock#CheckSequenceVerify
 [7]: https://en.bitcoin.it/wiki/CheckSequenceVerify
 [8]: https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki
 [9]: https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki
 [10]: https://www.reddit.com/r/Bitcoin/comments/gi6ciw/sas_succinct_atomic_swaps_half_the_number_of/
-[11]: http://diyhpl.us/wiki/transcripts/layer2-summit/2018/scriptless-scripts/ 
+[11]: http://diyhpl.us/wiki/transcripts/layer2-summit/2018/scriptless-scripts/
 [12]: https://github.com/mimblewimble/grin-rfcs/blob/master/text/0005-variable-size-kernels.md

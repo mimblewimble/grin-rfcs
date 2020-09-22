@@ -1,5 +1,5 @@
 
-- Title: `variable-size-kernels`
+- Title: variable-size-kernels
 - Authors: [Antioch Peverell](mailto:apeverell@protonmail.com)
 - Start date: Aug 13, 2019
 - RFC PR: [mimblewimble/grin-rfcs#21](https://github.com/mimblewimble/grin-rfcs/pull/21)
@@ -7,17 +7,17 @@
 
 ---
 
-# Summary
+## Summary
 [summary]: #summary
 
 We minimize the size of binary serialized transaction kernels by including only the data applicable for each kernel variant. Height locked kernels include a fee and a lock height. Plain kernels include only a fee. Coinbase kernels include neither a fee nor a lock height. Each kernel feature variant will serialize to a fixed size in bytes but this size will differ across the kernel variants.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 We were originally including both fee and lock_height on _every_ kernel in the binary serialization format. We were storing a fee of 0 on coinbase kernels and a lock_height of 0 on both plain and coinbase kernels. Kernels are never pruned and must be maintained forever so this overhead is relatively expensive. By only serializing data strictly necessary for each kernel variant we minimize storage and transmission costs. This also provides the flexibility necessary to introduce new kernel variants in the future, for example the proposed [relative kernels][0].
 
-# Community-level explanation
+## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
 Each transaction kernel variant may have associated data. For example, height locked kernels include an associated lock height and non-coinbase kernels have an associated fee. Each kernel variant serializes to a fixed size in bytes but this size may be different for each kernel variants. This allows kernels to be serialized efficiently and provides flexibility to introduce new kernel variants that have additional associated data in the future.
@@ -26,7 +26,7 @@ A plain kernel is 106 bytes compared to 114 bytes for a height locked kernel. Om
 
 These changes affect serialization/deserialization of transaction kernels. Kernels are included in p2p messages for transactions and full blocks. Older nodes will serialize transaction kernels differently so nodes on the network need to be able to handle old and new serialization formats. The kernel MMR is also included in the txhashset state file during fast sync so nodes need to be able to support old and new formats of the state file.
 
-# Reference-level explanation
+## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
 ### Protocol Version 1 (Previous Version)
@@ -143,20 +143,14 @@ To minimize compatibility issues between wallets we have maintained this existin
 ]
 ```
 
-# Future possibilities
+## Future possibilities
 [future-possibilities]: #future-possibilities
 
 Support for variable size kernels allows new kernel variants to be introduced in the future. One proposed kernel variant is [No Recent Duplicate (NRD) kernels][0]. Kernels with relative lock heights will have an associated reference to a prior kernel in addition to a lock height based on that prior kernel.
 
-# References
+## References
 [references]: #references
 
-* [RFC 0000-nrd-kernels][0] [fix link once RFC merged]
-* [PR #2734 Support for variable size MMRs][1]
-* [PR #2824 Protocol version support][2]
-* [PR #2859 Kernel feature variants][3]
-
-[0]: https://github.com/mimblewimble/grin-rfcs/blob/master/text/0000-relative-kernels.md
-[1]: https://github.com/mimblewimble/grin/pull/2734
-[2]: https://github.com/mimblewimble/grin/pull/2824
-[3]: https://github.com/mimblewimble/grin/pull/2859
+* [PR #2734 Support for variable size MMRs](https://github.com/mimblewimble/grin/pull/2734)
+* [PR #2824 Protocol version support](https://github.com/mimblewimble/grin/pull/2824)
+* [PR #2859 Kernel feature variants](https://github.com/mimblewimble/grin/pull/2859)

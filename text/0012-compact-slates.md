@@ -7,15 +7,15 @@
 
 ---
 
-# Summary
+## Summary
 [summary]: #summary
 
 This RFC describes the changes between version 3 and version 4 of the Slate transaction exchange format, which had the goal of reducing the contents of the Slate to be as minimal as possible.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
-Previously, the definition of Slate versions up to V3 had been put together with no regard for its size or/and redundant/irrelevant content. In order to facilitate future exchange method possibilities, it's desirable to ensure the Slate is as compact as possible, particularly on the 'first leg' of a transaction exchange which only actually requires minimal information from the transaction initiator. 
+Previously, the definition of Slate versions up to V3 had been put together with no regard for its size or/and redundant/irrelevant content. In order to facilitate future exchange method possibilities, it's desirable to ensure the Slate is as compact as possible, particularly on the 'first leg' of a transaction exchange which only actually requires minimal information from the transaction initiator.
 
 This RFC aims to define the contents of a streamlined "compact" slate by:
 
@@ -29,7 +29,7 @@ Although this RFC doesn't address any particular transaction exchange methods th
 * An exchange placing the entire initial slate in a QR code
 * Encoding the initial slate as an easily-cut-and-paste chunk
 
-# Community-level explanation
+## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
 There are two basic transaction workflows in a two-party Grin transaction:
@@ -148,7 +148,7 @@ The 'return' slate from the recipient to the originator is expected to be larger
 
 Compacting the slate also acts as a minor privacy-enhancer by hiding the initiator's outputs from the other party.
 
-# Reference-level explanation
+## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
 ### Slate Definition - JSON
@@ -193,14 +193,16 @@ A description of all fields and their meanings is as follows:
 
 ### Top-Level Slate Struct
 
-##### Fields - Always present
+#### Fields - Always present
+
 * `ver` - The slate version and supported block header version, separated by a `:`
 * `id` - The slate's UUID, standard hex-string encoding for UUIDs
 * `sta` - 2 character String representing the current stage of the the transaction. See [Status Codes](#status-codes)
 * `off` - The running transaction offset total, hex-string encoded. All parties select a random offset at the beginning of the transaction and subtract their offset from the excess value of their outputs.
 They then subtract the value of the inputs from the offset when committing to inputs, updating the total offset before sending to the next stage.
 
-##### Fields - Optional, depending on State and transaction options
+#### Fields - Optional, depending on State and transaction options
+
 * `num_parts` - The number of participants in the transaction, assumed to be 2 if omitted
 * `amt` - The transaction amount as a string parseable as a u64. May be omitted on a return journey.
 * `fee` - The transaction fee as a string parseable as a u64. May be omitted on a return journey, except during an invoice transaction.
@@ -209,10 +211,12 @@ particular kernel feature set will be found in the `feat_args` struct.
 * `ttl` - Time to Live, or block height beyond which wallets should refuse to further process the transaction. Assumed 0 (no ttl) if omitted
 from the slate.
 
-##### Structs - Always present
+#### Structs - Always present
+
 * `sigs` - An array of signature data containing the signature information of the last participant. See [Signature Data](#signature-data)
 
-##### Structs - Optional, depending on state of transaction
+#### Structs - Optional, depending on state of transaction
+
 * `proof` - An optional payment proof request. See [Payment Proof Data](#payment-proof-data)
 * `coms` - The [Transaction](https://github.com/mimblewimble/grin/blob/34ff103bb02bc093fe73d36641eb193f7ef2404f/core/src/core/transaction.rs#L871); is removed from the slate in favour of including this top-level Slate field that can be used to reconstruction the transaction object as expected by the Grin node. See [Transaction Object Fields](#transaction-object-fields)
 * `feat_args` - Optional arguments for Kernel features.
@@ -324,7 +328,7 @@ depend on the value of `feat`. Currently, the only supported kernel is HeightLoc
 * `ttl_cutoff_height` is renamed to `ttl`
 * `ttl` may be omitted from the slate. If omitted its value is assumed to be 0 (no TTL).
 *  The `participant_data` struct is renamed to `sigs`
-* `tx` is removed 
+* `tx` is removed
 *  The `coms` (commitments) array is added, from which the final transaction object can be reconstructed
 *  The `payment_proof` struct is renamed to `proof`
 *  The `feat_args` struct is added, which may be populated for non-Plain kernels
@@ -469,13 +473,13 @@ value of the `feat` field. Currently only present if `feat` is 2.
 | ----------: | ----- | --  | ------------------------------------ |
 | `lock_hgt`  | u64   | 8   | Lock height, present if `feat` is 2  |
 
-# Unresolved questions
+## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
 - Is block header version needed?
 - Nerd Kernels need to be included
 
-# Future possibilities
+## Future possibilities
 [future-possibilities]: #future-possibilities
 
 This RFC is envisaged as a necessary first step for all slate-exchange possibilities that would benefit from compactness, e.g:
