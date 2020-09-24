@@ -114,8 +114,15 @@ after which wallets can have their fee computation adjusted.
 In the converse case, where Grin becomes worth only a few cents, then an increase in fees might be needed to avoid spam.
 Both cases will be much easier to deal with if they coincide with a hard fork, but those may not be on the horizon.
 
-If we go with the alternative of a consensus changing fee mask, then this sets a precedent for stealing most significant fee bits as a sort of soft-forking mechanism. As long as the next available bits remain inconceivably large for use in fees, we can further reduce the fee mask in future and use the freed up bits for new restrictions. These restrictions can be either within the consensus model, or outside of it in the mempool and relay conventions, such as with this fee factor proposal.
-While any fee mask reduction is in principle a hard fork, and the code implementing it may have to be height dependent if enough Grin has been emitted to exceed the mask, as long as no-one is willing to pay such a high fee, the height dependency can be removed later.
+If we go with the alternative of a consensus changing fee mask, then this sets
+a precedent for stealing other masked out fee bits as a possible soft-forking
+mechanism. Suppose we limit fees to 40 bits, giving a maximum possible fee of
+2^40 - 1 nanogrin, or approximately 1099.5 grin. (As a side effect, this limits
+the damage of fat fingering a manually entered fee amount.)  This gives us 64-40
+= 24 bits, of which we use `FEE_FACTOR_BITS` bits for fee factor, and leave the
+remainder available for future use.
+We can imagine a future soft-fork further constraining the validity of kernels, depending on the value of some of these bits.
+These restrictions can be either within the consensus model, or outside of it in the mempool and relay conventions, such as with the fee factors in this proposal.
 
 
 ## References
