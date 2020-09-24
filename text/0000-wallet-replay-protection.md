@@ -1,18 +1,18 @@
 
 - Title: `wallet-(re)play-protection`
 - Authors: Phyro, John Tromp, Yeastplume
-- Start date: Aug 9, 2020
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
+- Start date: `Aug 9, 2020`
+- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
 - Tracking issue: [Edit if merged with link to tracking github issue]
 
 ---
 
-# Summary
+## Summary
 [summary]: #summary
 
 Given certain conditions, UTXOs that belong to a user can be moved without their explicit permission. This document outlines the fixes that prevents this behaviour from occuring by introducing additional rules a wallet should follow.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 A new class of attacks was found on Grin that we call (re)play attacks. A Mimblewimble transaction that already happened can be replayed if the exact conditions are recreated. In order to be able to replay a transaction the following conditions must be true:
@@ -22,7 +22,7 @@ A new class of attacks was found on Grin that we call (re)play attacks. A Mimble
 This means that if Alice sent some coins to Bob and the outputs have been spent, anyone that saw their original transaction could replay the transaction if the same inputs existed in the utxo set. But why would the same inputs exist on the chain in the first place? Alice could send those coins to Bob again, using different inputs but the same output for Bob, and trick Bob into thinking that this constitutes a new payment. If Bob accepts it as such, then Alice can replay Bob's spend of the recreated output at an opportune moment. Similarly, a _play_ attack comes from the same reasoning, but with the difference that a transaction never made it to the chain for some reason. One such reason could be that an input was spent before it was broadcasted which would make the current transaction invalid. In this document, we propose new wallet behaviours that make it robust in the face of (re)play attacks so the end users can't be victims of these attacks.
 
 
-# Community-level explanation
+## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
 We propose that wallets follow the following 2 rules to fully protect users from (re)play attacks.
@@ -38,10 +38,10 @@ A safe cancel requires an immediate self-spend of an input of the tx to be cance
 
 The wallet rules for spending safely would happen behind the scenes, so the end user would not be aware of any changes. Canceling a transaction would be a different experience than it is now, but it is required to change it to prevent the play attacks from occuring. A possible cancel flow would be to make the cancellation a longer event which is not finished until the self-spend transaction has been confirmed on the chain.  
 
-# Reference-level explanation
+## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
-## General technical overview
+### General technical overview
 
 As we have already mentioned, a transaction can be replayed if the inputs are recreated and its outputs don't exist. One way to stop this attack would be to make it impossible to recreate an input. Of course the owner can always recreate it, but the problem is really if anyone else recreates it by replaying the transaction that created the input. Luckily, there is a way to make an input that is protected and can't be recreated by anyone else except by the owner. This seems impossible because you can always just go one transaction back and recreate the outputs that created the inputs and keep repeating this until you hit a transaction that can be replay at which point you can replay all the next transactions and thus successfully recreate the target input. To prevent this, we create a 'stopping' transaction `T` for which we _know_ it can't be recreated. We achieve this by creating an output in `T` that we call an `anchor` output which will never be spent. Since Grin does not allow duplicate outputs, it means that the transaction that created `anchor` output can't be recreated because it would attempt to insert a duplicate output in the UTXO set which is invalid by Grin rules. Along with an `anchor` output we create additional outputs `O1` and `O2` in `T` which we call `Protected` outputs - it's not obvious why they have this name yet.
 
@@ -71,7 +71,7 @@ O3  -> O4 (change output)
 This is the main idea used in this proposal to protect against replay attacks. This is why we name the outputs we created along side the `anchor` output `Protected` outputs. They provide protection for subsequent transactions we make if we use them as inputs to our transactions. Key thing to note here is that while we started with 2 protected outputs `O1` and `O2`, the outputs that we create in a transaction to which we add a protected input automatically become `Protected` outputs as well. This property is what allows us to continue creating new protected outputs without the need to create more than one `anchor` output.
 
 
-## Wallet rules for replay protection
+### Wallet rules for replay protection
 
 Most common transaction types are:
 1. A `Regular` tx which has inputs from a single party - the sender
@@ -81,11 +81,11 @@ Let's call an output `Protected` if it is a part of the graph that leads back to
 
 If we will be doing both `Regular` and `PayJoin` transactions, then only some of our outputs will be protected. The first problem we have is that after a wallet restore, we can't tell whether an output is protected or not. It would be nice if we could label our outputs as either `Protected` or `Unprotected` after a wallet restore.
 
-### Separation of replay protected outputs
+#### Separation of replay protected outputs
 
 We need a clear separation of outputs that are protected from those that are not. Let's define a function `Protected.create(v)` that allows us to create a new protected output holding `v` coins and `Protected.check(output)` that checks whether an output is `Protected`.
 
-#### Possible protected output generators implementations
+##### Possible protected output generators implementations
 
 As we mentioned above, generator of `Protected` outputs would need to have `create` and `check` functions defined.
 
@@ -96,9 +96,9 @@ There are a few options how to label outputs as `Protected` while still being ab
 In all cases, the output label should only be visible to the owner of the output. It seems necessary to have labeling information about the UTXO on the UTXO itself if we want it to be consistent with different wallet reusing the same seed. If the information is held only on the wallet side, then we hit much bigger issues because there comes a need for either a manual intervention and labeling or a robust solution for synchronization between wallets - which does not appear simple to build.
 
 
-### Wallet transaction rules
+#### Wallet transaction rules
 
-#### Replay protection with utilization of an anchor
+##### Replay protection with utilization of an anchor
 
 Whenever we want to transact safely, but lack a confirmed protected output (we might have unconfirmed ones), we create another (possibly the first) anchor and some configurable number of protected change outputs. An anchor output has a form `0*H + r*G` and is generated from key derivation path `A`. Our set of newly created `Protected` outputs is generated from our implementation of `Protected.create` which labels the outputs as protected.
 
@@ -106,7 +106,7 @@ _Note: Grin has a rule that an output that already exists in the UTXO set cannot
 
 If we are worried that the number of created outputs could hint that we are creating an anchor, we can create an anchor in an isolated transaction that gets aggregated with the transaction we want to protect. For receiving transactions this would mean we need to contribute some inputs, outputs and a kernel to simulate an aggregated transaction. Since we only need to have send transactions safe, we never really need to create an anchor in a receiving transaction. If we have no protected outputs available and we want to create a safe send transaction, we can first create an _unsafe_ send transaction and in parallel create another self-spend transaction that creates an anchor output. An unsafe send transaction should not be broadcasted. We can aggregate the unsafe send transaction with the self-spend transaction that creates an anchor to obtain a safe aggregated transaction which can be broadcasted. This requires at least another unprotected output available that can be used as an input in the anchoring transaction and costs slightly more fees.
 
-#### Replay protection with utilization of Protected outputs
+##### Replay protection with utilization of Protected outputs
 
 If we have a protected output available, we can make a transaction safe by adding a protected output as an input to the transaction. This prevents any malicious replay attacks. As we already mentioned, receives can be made through unsafe transactions so we really only need to make safe transactions when we are sending money to someone because these are the transactions that move the coins away from us. Self-spends are an exception and can be left unsafe because we don't really mind them being replayed since the transaction doesn't give coins to anyone else.
 
@@ -205,17 +205,17 @@ fn send(value: int64) -> ([]Output, []Output) {
 // outputs e.g. we might want to pick low value outputs as protected inputs in a receive transaction
 ```
 
-#### Protection with wallet history
+##### Protection with wallet history
 
 A wallet can keep a history of spent outputs. This way, if a spent output reappears, the default wallet behaviour could be to ignore such output and not count it in the balance. Wallet configuration could allow users to see these outputs and decide to either accept it or refresh it through a self-spend transaction.
 
 The downside of this approach is that replay attacks are still possible in which case it would mean that a user would need to make a manual choice what to do with outputs that are unknown to the history of the wallet. Unknown outputs are also those created from the same seed on a different device and from possible child wallets since they each have their own history. The cross device scenario could be mitigated by export and import of wallet history and the child wallet outputs can be labeled and hence assumed as safe. It's up to the child wallet to protect itself from the attacks.
 
-### Receive-only wallets
+#### Receive-only wallets
  
 Any kind of automated receiving should default to 1-2 transactions and thus creating _unprotected_ outputs to avoid utxo spoofing attack which would reveal our inputs. Always performing 1-2 receive transactions can be achieved by setting the configuration `safe_receive_prob = 0.0` which is explained in the next section.
 
-### Transaction building configuration
+#### Transaction building configuration
 
 ```yaml
 // Defines a list of wallet configurations to define different behaviour that we do as a receiver of a
@@ -263,21 +263,21 @@ transaction_building:
 _NOTE: it is highly recommended that all payjoin transactions require a manual confirmation from the receiver. This should limit the scope of the UTXO spoofing attacks which allow the sender to find out all the inputs of the receiver - something that is possible with automated payjoins. Having all of the transactions require manual confirmation prevents also dusting attacks. Perhaps the most important advantage of manually confirming the transactions the user wants to receive is that the user gains a complete control over what they have in the wallet - something that can't be guaranteed without interactivity because it requires the receiver confirmation in some form which makes it interactive. It is possible to limit the UTXO spoofing attacks without manual confirmation if the SlatepackAddress can be used only once._
 
 
-### Wallet accounts
+#### Wallet accounts
 
 Each wallet account should have its  `anchor` outputs protecting it.
 
-### Exchanges scenarios
+#### Exchanges scenarios
 
-#### Exchange configuration
+##### Exchange configuration
 
 As mentioned in the configuration section, exchanges would likely need a bigger set of protected outputs so they would need to adjust the `n_protected_outputs` configuration. It would be encouraged that exchanges have `safe_receive_prob` set to `1.0` to help mask the user input.
 
-#### User withdrawing from an exchange configuration
+##### User withdrawing from an exchange configuration
 
 We probably don't want to be doing a PayJoin transaction when we are withdrawing from an exchange because we'd be showing them one of our inputs. To avoid this, we can generate a `SlatepackAddress` from a configuration option that has 0% chance to do a PayJoin receive transaction.
 
-### PayJoin transactions
+#### PayJoin transactions
 
 PayJoin transactions are one possible way to break the [common-input-ownership heuristic](https://en.bitcoin.it/wiki/Common-input-ownership_heuristic). They achieve this by having the receiver contribute some inputs to the transaction. It might seem like payjoin transactions only benefit the sender while hurting the privacy of the receiver, but the receiver also wants to spend outputs in an input set with a mixed ownership. Each transaction is an opportunity for the receiver to spend outputs on the input side that will have mixed owners. Doing so comes at a cost of showing the contributed receiver's inputs (usually just one) to the sender, but also at a benefit of having multiple owners of inputs which should in most cases be in the interest of both the sender and the receiver. Important thing to note here is that if there are very few or no payjoins happening on the network, this same receiver could in a future transaction spend multiple inputs together and show their spent inputs not only to the transacting party, but to everyone else as well, which seems like a worse privacy tradeoff than doing payjoins. Spending multiple inputs together is not uncommon, so we want most of the transactions be payjoins to help us obfuscate our own inputs when we spend them. A positive side effect of doing a payjoin as a receiver is that we consolidate some of the outputs to create an output that holds more coins, so we are less likely to come in a situation where we need to spend multiple inputs together. Having the majority of the transactions be payjoins is also beneficial for the whole network because it creates probabilistic input ownership which makes backwards chain analysis _much_ harder to do since we can't tell whether an input belongs to the sender of the receiver.
 
@@ -285,7 +285,7 @@ Currently, PayJoin transactions are cheaper than regular transactions because th
 
 _PayJoin transactions also allow for the possibility of the receiver paying their share of fees. Whether users would find this useful is not clear yet._
 
-### Play attack protection
+#### Play attack protection
 
 The difference between a Play and Replay attack is that in a Play attack, the transaction never lands on the chain. Suppose Alice wants to pay Bob, but after constructing the transaction and broadcasting it, the transaction does not land on the chain for some reason. Alice and Bob recreate a new transaction where Alice uses different inputs. This second transaction goes through and both Alice and Bob are happy. However, if Bob saw the first transaction, if it becomes valid at some point, then it's possible for him to 'play' it or broadcast it on the chain after the second transaction was already confirmed on the chain. This way, Bob receives his payment twice. A Play attack attacks the sender by tricking them into signing a transaction multiple times. Transactions that don't make it to the chain should _always_ be cancelled by the user before sending a new transaction.
 
@@ -293,35 +293,35 @@ To protect against this, a user should have an option to cancel a transaction wh
 
 _Note: If we make another transaction to the same user, we should either wait enough confirmations or use the new self-spend outputs that were created and confirmed on the chain as inputs for this new transaction. This is to avoid a possible short reorg attack which could remove the self-spend transaction and publish both transaction which would result in a double-spend._
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
-## Replay attacks solution
+### Replay attacks solution
 
 It requires an `anchor` input that is never spent which increases the chain 700 bytes per wallet. These outputs might be easier to identify because they never move. How easy/hard would it be to identify them is unclear. Most wallets are expected to have only one few such outputs and a lot of wallets will get lost and hence a lot of outputs will never move.
 
-## Play attacks solution
+### Play attacks solution
 
 Cancelling a transaction now takes some time because the user should wait for the self-spend to be confirmed. Adding another transaction on the chain for every cancelled transaction means that a cancel costs fees and adds a kernel on the chain. The side effect is a bit more kernel bloat, though that's very likely to be negligible.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
 There are also other ideas on how to protect against replay attacks that solve the problem at the consensus level. Both wallet and consensus level solutions have their own tradeoffs. The main benefit of solutions at the wallet level is that they can't introduce a consensus failure and because they are only a change in the wallet behaviour, they can later be replaced by a consensus level solution if needed.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
 - Should we use two bits for labeling the outputs to clearly distinguish the old outputs that did not use the labeling scheme? This could come in handy to immediately spend an output that is received with the old scheme as it could be susceptible to a replay attack so it should be immediately spent.
 - Is it worth implementing other solutions as well (e.g. output history + sweeping) which seem to have more problems and introduce complexity to wallet handling?
 - Should the user have a transaction configuration option that, when enabled, would require a manual confirmation of the receiving transactions? The user manually confirming the outputs they would receive prevents dusting attacks (regardless of the cost) and severely limits any other utxo spoofing methods. It also allows the user to have full control over what outputs they will have in their wallet.
 
-# Future possibilities
+## Future possibilities
 [future-possibilities]: #future-possibilities
 
 The options of transaction building configuration and programmability are only limited by our imagination. PayJoins could be researched a bit more and used more often if we don't interact with parties that are known to collect data on their users.
 
-# References
+## References
 [references]: #references
 
 [Replay attacks and possible mitigations](https://forum.grin.mw/t/replay-attacks-and-possible-mitigations/7415)
