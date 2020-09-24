@@ -57,7 +57,7 @@ grin-server.toml. If the least significant `FEE_FACTOR_BITS` of a fee have
 value f, then the total fees of the transaction containining this kernel must
 exceed the required minimum by a factor f+1, inclusive.
 We recommend a default value of `FEE_FACTOR_BITS` = 8.
-By linearity, aggregating transactions with the same specified fee factor will preserve 
+By linearity, aggregating transactions with the same specified fee factor will preserve their relay validity.
 
 The new tx relay rules and new fee computation in wallets shall take effect at
 the HF4 block height of 1048320 (but see below about alternatives for 3rd party
