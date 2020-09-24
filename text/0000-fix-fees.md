@@ -1,18 +1,18 @@
 - Title: fix-fees
 - Authors: [John Tromp](mailto:john.tromp@gmail.com)
 - Start date: August 23, 2020
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
+- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
 - Tracking issue: [Edit if merged with link to tracking github issue]
 
 ---
 
-# Summary
+## Summary
 [summary]: #summary
 
 Change Grin's minimum relay fees to be weight proportional and make output creation cost about a Grin-cent.
 Use least significant bits in fee to specify desired tx priority.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 The current fee requirements suffer from being somewhat arbitrary, and not miner incentive compatible.
@@ -21,7 +21,7 @@ of required fees.
 The current (and foreseeable) low price of Grin makes spamming the UTXO set rather cheaper than desired.
 Fee overpaying for higher priority to be included in full blocks fails when aggregated with minimal fee transactions.
 
-# Community-level explanation
+## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
 Grin constrains the size of blocks by a maximum block weight, which is a linear combination of the number of inputs, outputs, and kernels.
@@ -35,40 +35,46 @@ Linearity is another desirable property, which for instance allows the two parti
 while splitting the kernel fee.
 The least significant bits will specify a minimum fee overpayment factor, preventing aggregation with lesser overpaying transactions.
 
-# Reference-level explanation
+## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
-The minimum relay fee of a transaction shall be proportional to Transaction::weight\_as\_block,
-which uses weights of BLOCK\_INPUT\_WEIGHT = 1, BLOCK\_OUTPUT\_WEIGHT = 21, and BLOCK\_KERNEL\_WEIGHT = 3,
+The minimum relay fee of a transaction shall be proportional to `Transaction::weight_as_block`,
+which uses weights of `BLOCK_INPUT_WEIGHT` = 1, `BLOCK_OUTPUT_WEIGHT` = 21, and `BLOCK_KERNEL_WEIGHT` = 3,
 which correspond to the nearest multiple of 32 bytes that it takes to serialize.
 Formerly, we used Transaction::weight,
 which uses arbitrary weights of -1, 4, and 1 respectively, but also non-linearly rounds negative results up to 0
 (as happens when the number of inputs exceeds the number of kernels plus 4 times the number of outputs).
-The Transaction::weight\_as\_block shall be multiplied by a base fee.
+
+The `Transaction::weight_as_block` shall be multiplied by a base fee.
 This will not be hardcoded, but configurable in grin-server.toml.
-The already present accept\_fee\_base parameter appears suitable for this, as
+The already present `accept_fee_base` parameter appears suitable for this, as
 there is no reason to use different fees for relay and mempool acceptance. Its
-value shall default to GRIN\_BASE / 100 / 20 = 500000, which make each output
+value shall default to `GRIN_BASE` / 100 / 20 = 500000, which make each output
 incur just over 1 Grin-cent in fees.
-We fix some parameter FEE\_FACTOR\_BITS, possibly configured through
-grin-server.toml.  If the least significant FEE\_FACTOR\_BITS of a fee have
+
+We fix some parameter `FEE_FACTOR_BITS`, possibly configured through
+grin-server.toml. If the least significant `FEE_FACTOR_BITS` of a fee have
 value f, then the total fees of the transaction containining this kernel must
 exceed the required minimum by a factor f+1, inclusive.
-We recommend a default value of FEE\_FACTOR\_BITS = 10.
-The new tx relay rules and new fee computation in wallets shall take effect at the HF4 block height of 1048320 (but see below about alternatives for 3rd party wallets).
+We recommend a default value of `FEE_FACTOR_BITS` = 8.
+By linearity, aggregating transactions with the same specified fee factor will preserve 
 
-# Drawbacks
+The new tx relay rules and new fee computation in wallets shall take effect at
+the HF4 block height of 1048320 (but see below about alternatives for 3rd party
+wallets).
+
+## Drawbacks
 [drawbacks]: #drawbacks
 
-I think there is only a perceived drawback, which is what led to the former fee rules.
-A negative weight on inputs is supposed to encourage spending many outputs, and lead to a reduction in UTXO size.
+At the time of writing, only a single perceived drawback could be identified, which is what motivated the former fee rules.
+A negative weight on inputs was supposed to encourage spending many outputs, and lead to a reduction in UTXO size.
 A positive weight on inputs is not really a drawback however, as long as creation of outputs is more strongly discouraged.
 Most wallets, especially those relying on payjoins, do about equal amounts of output creation and spending,
 the difference being just the wallet's UTXO set. 
 Mining pools are the major exception. While they obviously don't incur any fees in coinbase creation, they need not
 spend fees on spending them either, as they can mine these payout transactions directly.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
 There are no good alternative to economically significant fees. Any blockchain lacking them is an open invitation to abuse.
@@ -76,10 +82,14 @@ For chains with a maximum blocksize, fees are also necessary to allow prioritiza
 
 There is a small window prior to HF4 where transactions constructed using the former lower won't be finalized before HF4 and will thus fail to be relayed. Third party wallets are free to switch fee computation some arbitrary time before HF4 to minimize this risk.
 
-The fee factor could have been specified in a new fee field, but that requires a consensus change and takes up more space.
+The fee factor could be specified separately from the fee, but that requires a consensus change, namely masking the fee
+to only the least significant 64 - `FEE_FACTOR_BITS`, allowing the 
+up most significant bits to be used for specifying the fee factor.
+The advantage of this separation is that even with higher fee factors, fees can remain a milligrin multiple,
+and thus the amounts that users deal with don't need too many digits for fractional grins.
+This can be considered a plus for wallet UX.
 
-
-# Prior art
+## Prior art
 Several chains have suffered spam attacks. In early days, bitcoin was swamped with feeless wagers on Satoshi Dice [1].
 At least those served some purpose.
 
@@ -88,10 +98,10 @@ that added dozens of GB of redundant bloat to its chain data [2]. Although nano 
 these attacks showed that the PoW was poorly calibrated and not an effective deterrant.
 
 
-# Unresolved questions
+## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-# Future possibilities
+## Future possibilities
 [future-possibilities]: #future-possibilities
 
 While the input and kernel weights are pretty fixed, the output weight is subject to improvements in range proof technology.
@@ -104,8 +114,11 @@ after which wallets can have their fee computation adjusted.
 In the converse case, where Grin becomes worth only a few cents, then an increase in fees might be needed to avoid spam.
 Both cases will be much easier to deal with if they coincide with a hard fork, but those may not be on the horizon.
 
+If we go with the alternative of a consensus changing fee mask, then this sets a precedent for stealing most significant fee bits as a sort of soft-forking mechanism. As long as the next available bits remain inconceivably large for use in fees, we can further reduce the fee mask in future and use the freed up bits for new restrictions. These restrictions can be either within the consensus model, or outside of it in the mempool and relay conventions, such as with this fee factor proposal.
+While any fee mask reduction is in principle a hard fork, and the code implementing it may have to be height dependent if enough Grin has been emitted to exceed the mask, as long as no-one is willing to pay such a high fee, the height dependency can be removed later.
 
-# References
+
+## References
 [references]: #references
 
 [1] [Satoshi Dice](https://en.bitcoin.it/wiki/Satoshi_Dice)
