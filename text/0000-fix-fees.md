@@ -84,7 +84,7 @@ There is a small window prior to HF4 where transactions constructed using the fo
 
 The fee factor could be specified separately from the fee, but that requires a consensus change, namely masking the fee
 to only the least significant 64 - `FEE_FACTOR_BITS`, allowing the 
-up most significant bits to be used for specifying the fee factor.
+freed up most significant bits to be used for specifying the fee factor.
 The advantage of this separation is that even with higher fee factors, fees can remain a milligrin multiple,
 and thus the amounts that users deal with don't need too many digits for fractional grins.
 This can be considered a plus for wallet UX.
