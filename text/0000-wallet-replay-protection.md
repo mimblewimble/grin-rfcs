@@ -291,7 +291,13 @@ The difference between a Play and Replay attack is that in a Play attack, the tr
 
 To protect against this, a user should have an option to cancel a transaction which would immediately create a self-spend transaction with the same inputs that the canceled transaction used and broadcast it to the network. The reason why the sender would want to reuse the inputs is to make the previous transaction invalid. So now, only 1 of the two transactions that have been signed can make it to the chain. As already mentioned, the cancel would not be confirmed until the self-spend transaction has been confirmed on the chain.
 
-_Note: If we make another transaction to the same user, we should either wait enough confirmations or use the new self-spend outputs that were created and confirmed on the chain as inputs for this new transaction. This is to avoid a possible short reorg attack which could remove the self-spend transaction and publish both transaction which would result in a double-spend._
+It is advised to have a detection mechanism to catch a potentially malicious attempt from the receiver. A wallet needs to remember the inputs and outputs that the receiver contributed to the transaction and check if our transaction kernel does _not_ exist on the chain and at least one of the two is true:
+1. At least one of the receiver contributed outputs appears on the chain - transaction is invalid due to duplicate outputs being forbidden
+2. At least one of the receiver contributed inputs is spent - transaction is invalid due to an input being already spent
+
+If our transaction is not present and any of the two is true, then our transaction is invalid and we should immediately cancel the transaction.
+
+_Note: If we make another transaction to the same user, we should either wait for the cancel transaction to get enough confirmations or use the new outputs created in the cancel transaction (self-spend) as inputs for this new transaction. This is to avoid a possible short reorg attack which could remove the self-spend transaction and publish both transaction which would result in a double-spend._
 
 ## Drawbacks
 [drawbacks]: #drawbacks
