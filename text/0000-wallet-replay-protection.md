@@ -295,7 +295,7 @@ It is advised to have a detection mechanism to catch a potentially malicious att
 1. At least one of the receiver contributed outputs appears on the chain - transaction is invalid due to duplicate outputs being forbidden
 2. At least one of the receiver contributed inputs is spent - transaction is invalid due to an input being already spent
 
-If our transaction is not present and any of the two is true, then our transaction is invalid and we should immediately cancel the transaction.
+If our transaction is not present and any of the two conditions is true, then our transaction is invalid and we should immediately spend the inputs of the transaction. On a transaction cancel, a wallet could present the user with an option to replace the transaction with another payment. Similarly, if the user initiated a new payment to a user for which a transaction is already pending, it could offer the user an option to respend the transaction. Both of these options would not produce an additional kernel because the inputs are used in a non self-spend transaction.
 
 _Note: If we make another transaction to the same user, we should either wait for the cancel transaction to get enough confirmations or use the new outputs created in the cancel transaction (self-spend) as inputs for this new transaction. This is to avoid a possible short reorg attack which could remove the self-spend transaction and publish both transaction which would result in a double-spend._
 
