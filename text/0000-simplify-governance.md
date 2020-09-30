@@ -58,6 +58,7 @@ The explicit remit of this governance structure is defined as all the repos that
 - [/grin](https://github.com/mimblewimble/grin), [/grin-wallet](https://github.com/mimblewimble/grin-wallet), and [/grin-miner](https://github.com/mimblewimble/grin-miner)
 - [/grin-pm](https://github.com/mimblewimble/grin-pm), [/grin-rfcs](https://github.com/mimblewimble/grin-rfcs), and [/grin-security](https://github.com/mimblewimble/grin-security)
 - https://grin.mw
+- https://docs.grin.mw
 - https://forum.grin.mw
 - keybase [@grincoin](https://keybase.io/team/grincoin) team
 - [Mimblewimble mailing list](https://lists.launchpad.net/mimblewimble/)
@@ -136,7 +137,7 @@ The rationale for pursuing the specific approach that is outlined in this RFC is
 ## Prior art
 [prior-art]: #prior-art
 
-This replaces RFC0002 with something closer to the governance process that was in place earlier in the project's life cycle.
+This replaces RFC#0002 with something closer to the governance process that was in place earlier in the project's life cycle.
 
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
