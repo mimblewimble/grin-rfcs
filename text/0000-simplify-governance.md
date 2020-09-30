@@ -152,7 +152,7 @@ The rationale for pursuing the specific approach that is outlined in this RFC is
 ## Prior art
 [prior-art]: #prior-art
 
-This replaces RFC0002 with something closer to the governance process that was in place earlier in the project's life cycle.
+This replaces RFC#0002 with something closer to the governance process that was in place earlier in the project's life cycle.
 
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
