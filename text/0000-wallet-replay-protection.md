@@ -81,26 +81,21 @@ Let's call an output `Protected` if it is a part of the graph that leads back to
 
 If we will be doing both `Regular` and `PayJoin` transactions, then only some of our outputs will be protected. The first problem we have is that after a wallet restore, we can't tell whether an output is protected or not. It would be nice if we could label our outputs as either `Protected` or `Unprotected` after a wallet restore.
 
-#### Separation of replay protected outputs
+#### Output types/labels
 
-We need a clear separation of outputs that are protected from those that are not. Let's define a function `Protected.create(v)` that allows us to create a new protected output holding `v` coins and `Protected.check(output)` that checks whether an output is `Protected`.
+We need a clear separation of outputs that are protected from those that are not and we need to be able to recognize an anchor output. Let's define three possible output types: `Protected`, `Unprotected` and `Anchor`. Each of the output types also has a function `create(amount)` with which we can create an output of that type that holds some amount of coins. An `Anchor` output is an exception because it has a form `0*H + r*G`, so the `create` function takes no amount value. Only the owner of the output should be able to see the output's type. For this reason we need a way for the owner to read the type of an output from the output itself.
 
-##### Possible protected output generators implementations
+##### Storing an output type
 
-As we mentioned above, generator of `Protected` outputs would need to have `create` and `check` functions defined.
+It seems necessary to have output type information on the output itself if we want it to be consistent with different wallets reusing the same seed.  Since we have 3 different types, we need at least two bits to store the type. We suggest storing the output type information in the available bits in the Bulletproofs where the currently unused bits are set to 0. This means that the bit representation of the `Unprotected` type needs to be `00` to account for all the previous unprotected outputs. Mapping of other types to bits is left to the wallet implementation. The message that is encoded in the Bulletproof is already private so only the owner would be able see the type of an output.
 
-There are a few options how to label outputs as `Protected` while still being able to identify them across difference devices:
-1. Call to `create` uses a new derivation path `P` that is used only for creating `Protected` outputs. Similarly `check` uses the same `P` to check whether an output is protected. Perhaps we could have `N` labels possible which would be labeled by the `r % N` result
-2. Call to `create` uses additional output information in the bytes that are available in the Bulletproofs to tell whether the output is protected. These bytes are right now 'zero' bytes meaning their binary representation is all zeros. We label an output as `Protected` by setting the `label` bit that is unused now to `1`. `Unprotected` outputs will have the label bit set to `0` which includes all the old outputs as well. The label bit can be read only by the owner of the output because the message that is encoded in the Bulletproof is already private. If we went such path, we would need to think of the possible drawbacks.
-
-In all cases, the output label should only be visible to the owner of the output. It seems necessary to have labeling information about the UTXO on the UTXO itself if we want it to be consistent with different wallet reusing the same seed. If the information is held only on the wallet side, then we hit much bigger issues because there comes a need for either a manual intervention and labeling or a robust solution for synchronization between wallets - which does not appear simple to build.
-
+_NOTE: Solutions that use wallets local storage to store the output types lose track of the types on a wallet restore or when the same seed is used across multiple devices. Solving this problem is non-trivial as it requires either storing and syncing type information between wallet instances or user manually assigning types to their outputs, both of which are much less friendly._
 
 #### Wallet transaction rules
 
 ##### Replay protection with utilization of an anchor
 
-Whenever we want to transact safely, but lack a confirmed protected output (we might have unconfirmed ones), we create another (possibly the first) anchor and some configurable number of protected change outputs. An anchor output has a form `0*H + r*G` and is generated from key derivation path `A`. Our set of newly created `Protected` outputs is generated from our implementation of `Protected.create` which labels the outputs as protected.
+Whenever we want to transact safely, but lack a confirmed protected output (we might have unconfirmed ones), we create another (possibly the first) anchor and some configurable number of protected change outputs. An anchor output is created from our `Anchor.create` implementation. Our set of newly created `Protected` outputs is generated from our implementation of `Protected.create` which labels the outputs as protected.
 
 _Note: Grin has a rule that an output that already exists in the UTXO set cannot be created - a transaction that would attempt to do that is invalid. This is why transactions that contain an anchor output can't be replayed. All the outputs that were created along the anchor output are also safe from being recreated through a replay which allows us to use them as new protected outputs._
 
@@ -111,7 +106,7 @@ If we are worried that the number of created outputs could hint that we are crea
 If we have a protected output available, we can make a transaction safe by adding a protected output as an input to the transaction. This prevents any malicious replay attacks. As we already mentioned, receives can be made through unsafe transactions so we really only need to make safe transactions when we are sending money to someone because these are the transactions that move the coins away from us. Self-spends are an exception and can be left unsafe because we don't really mind them being replayed since the transaction doesn't give coins to anyone else.
 
 This means that:
-1. We can send money through a regular 1-2 transaction if our input is labeled as `Protected`
+1. We can send money through a regular 1-2 transaction if our input is of type `Protected`
 2. We can receive money through a regular 1-2 transaction
 
 The only thing we need to be aware is that our output that is created in a 1-2 receive transaction will be labeled as unprotected and will hence need to be spent in a safe transaction. A more general rule is that unprotected outputs need to be spent in a safe transaction (except self-spends) - in most cases this means along side some of our `Protected` inputs. In theory, it should be impossible to replay a transaction that followed this rule.
@@ -126,12 +121,11 @@ Wallet pseudo-code:
 // the time. Might want to have a dozen of these in case of high number of transactions being
 // performed which would be useful for parties that perform concurrent transactions e.g. exchanges
 
-// Suppose we have the following interfaces available:
+// Suppose we have outputs separated by type and the following interfaces available:
 // struct Protected {
-//   create(value) -> Output         // Creates a new protected output hold 'value' coins
+//   create(value) -> Output         // Creates a new protected output holding 'value' coins
 //   create_multi(value) -> []Output // Create multiple protected outputs with the same value
-//   is_available() -> bool          // Returns true if a protected output is available
-//   pick_random() -> Output         // Returns a random available protected output (or error)
+//   outputs() -> {}Output           // A set of outputs of type Protected and sufficiently confirmed 
 // }
 
 // Create a safe transaction by creating an anchor and an initial set of protected outputs PS
@@ -153,12 +147,12 @@ fn safe_tx() -> ([]Output, []Output) {
   // NOTE: this might be too obvious from the chain analysis perspective. If we are worried about this
   // we could decide to create anchors in a separate transaction that gets aggregated with our
   // transaction to obtain a safe aggregated transaction.
-  if !Protected.is_available() {
+  if !Protected.outputs() {
     // Safe transaction with an anchor
     return anchor_tx()
   }
   // Safe transaction with a protect output as an input
-  return [Protected.pick_random()], []
+  return [Protected.outputs.pop()], []
 }
 
 // Receive txs don't need to be safe so we flip a coin to determine whether
@@ -209,7 +203,7 @@ fn send(value: int64) -> ([]Output, []Output) {
 
 A wallet can keep a history of spent outputs. This way, if a spent output reappears, the default wallet behaviour could be to ignore such output and not count it in the balance. Wallet configuration could allow users to see these outputs and decide to either accept it or refresh it through a self-spend transaction.
 
-The downside of this approach is that replay attacks are still possible in which case it would mean that a user would need to make a manual choice what to do with outputs that are unknown to the history of the wallet. Unknown outputs are also those created from the same seed on a different device and from possible child wallets since they each have their own history. The cross device scenario could be mitigated by export and import of wallet history and the child wallet outputs can be labeled and hence assumed as safe. It's up to the child wallet to protect itself from the attacks.
+The downside of this approach is that malicious replay attacks are still possible in which case it would mean that a user would need to make a manual choice what to do with outputs that are unknown to the history of the wallet. Unknown outputs are also those created from the same seed on a different device and from possible child wallets since they each have their own history. The cross device scenario could be mitigated by export and import of wallet history.
 
 #### Receive-only wallets
  
@@ -304,11 +298,11 @@ _Note: If we make another transaction to the same user, we should either wait fo
 
 ### Replay attacks solution
 
-It requires an `anchor` input that is never spent which increases the chain 700 bytes per wallet. These outputs might be easier to identify because they never move. How easy/hard would it be to identify them is unclear. Most wallets are expected to have only one few such outputs and a lot of wallets will get lost and hence a lot of outputs will never move.
+It requires an `anchor` input that is never spent which increases the chain 700 bytes per wallet. These outputs might be easier to identify because they never move. How easy/hard would it be to identify them is unclear. Most wallets are expected to have only a few such outputs and a lot of wallets will get lost and hence a lot of outputs will never move.
 
 ### Play attacks solution
 
-Cancelling a transaction now takes some time because the user should wait for the self-spend to be confirmed. Adding another transaction on the chain for every cancelled transaction means that a cancel costs fees and adds a kernel on the chain. The side effect is a bit more kernel bloat, though that's very likely to be negligible.
+Cancelling a transaction now takes some time because the user should wait for the self-spend to be confirmed. Adding another transaction on the chain for every cancelled transaction means that a cancel costs fees and adds a kernel on the chain. The side effect is a bit more kernel bloat, though that's very likely to be negligible and could be avoided by offering the user to respend the transaction.
 
 ## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
@@ -318,7 +312,6 @@ There are also other ideas on how to protect against replay attacks that solve t
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-- Should we use two bits for labeling the outputs to clearly distinguish the old outputs that did not use the labeling scheme? This could come in handy to immediately spend an output that is received with the old scheme as it could be susceptible to a replay attack so it should be immediately spent.
 - Is it worth implementing other solutions as well (e.g. output history + sweeping) which seem to have more problems and introduce complexity to wallet handling?
 - Should the user have a transaction configuration option that, when enabled, would require a manual confirmation of the receiving transactions? The user manually confirming the outputs they would receive prevents dusting attacks (regardless of the cost) and severely limits any other utxo spoofing methods. It also allows the user to have full control over what outputs they will have in their wallet.
 
