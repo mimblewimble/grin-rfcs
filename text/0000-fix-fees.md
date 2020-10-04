@@ -17,11 +17,11 @@ NOTE: this is a hard-forking change.
 ## Motivation
 [motivation]: #motivation
 
-The current fee requirements suffer from being somewhat arbitrary, and not miner incentive compatible.
+The former fee requirements suffer from being somewhat arbitrary, and not miner incentive compatible.
 They are not even linear; to avoid a negative minimum fee, they are rounded up to zero.
 As a consequence, the minimum fees for the aggregate of two
-transactions is not necessarily equal to the sum of the individual ones.
-Worse, a miner has no incentive to include a transaction that pays 0 fees, while they take resources to relay.
+transactions was not necessarily equal to the sum of the individual ones.
+Worse, a miner had no incentive to include a transaction that pays 0 fees, while they take resources to relay.
 The current (and foreseeable) low price of Grin makes spamming the UTXO set rather cheaper than desired.
 Fee overpaying, for higher priority to be included in full blocks. fails when aggregated with minimal fee transactions.
 
