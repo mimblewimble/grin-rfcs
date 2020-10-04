@@ -28,11 +28,11 @@ Fee overpaying, for higher priority to be included in full blocks. fails when ag
 ## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-For clarity, let's adopt define the following definitions. Let the `feerate' of
+For clarity, let's adopt define the following definitions. Let the feerate of
 a transaction be the fees paid by the transaction divided by the transaction
 weight with regards to block inclusion (`Transaction::weight_as_block`).
-Let the `minfee' of a transaction be the amount of fees required for relay and mempool inclusion.
-A transaction paying at least `minfee' in fees is said to be relayable.
+Let the `minfee` of a transaction be the amount of fees required for relay and mempool inclusion.
+A transaction paying at least `minfee` in fees is said to be relayable.
 
 Grin constrains the size of blocks by a maximum block weight, which is a linear
 combination of the number of inputs, outputs, and kernels.  When blocks fill
@@ -78,13 +78,13 @@ There is no reason to use different fees for relay and mempool acceptance.
 Its value shall default to `GRIN_BASE` / 100 / 20 = 500000, which makes each output
 incur just over 1 Grin-cent in fees.
 
-The 64-bit fee field in kernel types Plain and HeightLocked shall be renamed to `fee_bits' and be composed of bitfields
-{ `future_use': 20, `fee_shift': 4, fee: 40 }. All former uses of the fee will use `fee_bits' & `FEE_MASK',
-where `FEE_MASK' = 0xffffffffff.
+The 64-bit fee field in kernel types Plain and HeightLocked shall be renamed to `fee_bits` and be composed of bitfields
+{ `future_use`: 20, `fee_shift`: 4, fee: 40 }. All former uses of the fee will use `fee_bits` & `FEE_MASK`,
+where `FEE_MASK` = 0xffffffffff.
 
 A nonzero fee shift places an additional restriction on transaction relay and mempool inclusion.
-Namely, a transaction containining a kernel with `fee_shift' = s must pay a total fee
-of at least 2^s times the minfee (the minfee shifted left by `fee_shift').
+Namely, a transaction containining a kernel with `fee_shift` = s must pay a total fee
+of at least 2^s times the minfee (the minfee shifted left by `fee_shift`).
 
 Aggregation of two relayable transactions should only happen when the result remains relayable.
 By linearity, this is always the case for two transactions with identical fee shift.
@@ -101,14 +101,14 @@ the fee shift provides for 16 different levels of protection against feerate dil
 The new tx relay rules and new fee computation in wallets shall take effect at
 the HF4 block height of 1048320 (but see below about alternatives for 3rd party wallets).
 
-The 20 bits of `future_use bits' provide a possible soft-forking mechanism.
+The 20 bits of `future_use bits` provide a possible soft-forking mechanism.
 We can imagine a future soft-fork further constraining the validity of kernels,
 or the relayability of transactions containing them, depending on the value of some of these bits.
 
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-Leaving 20 bits of `future_use' increases the amount of zero cost zero friction
+Leaving 20 bits of `future_use` increases the amount of zero cost zero friction
 spam that can be added to the chain.  However, we already have a similar amount
 of spammable bits in the lock height of HeightLocked kernels, where any lock
 height under the current height of around a million has no effect.
@@ -132,7 +132,7 @@ For chains with a maximum blocksize, fees are also necessary to allow prioritiza
 There is a small window prior to HF4 where transactions constructed using the former lower won't be finalized before HF4 and will thus fail to be relayed. Third party wallets are free to switch fee computation some arbitrary time before HF4 to minimize this risk.
 
 Instead of a fee shift, one could specify a fee factor.
-So then a transaction containing a kernel with the `fee_factor' bitfield having value f would require total fees
+So then a transaction containing a kernel with the `fee_factor` bitfield having value f would require total fees
 of at least f+1 times minfee (preserving old behaviour for a 0 bitfield).
 A reasonable overpayment range would then require 8 bits instead of the 4 used for fee
 shift, and would create 256 levels of priority. It does seem
