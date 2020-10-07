@@ -1,4 +1,3 @@
-
 - Title: `wallet-(re)play-protection`
 - Authors: Phyro, John Tromp, Yeastplume
 - Start date: `Aug 9, 2020`
