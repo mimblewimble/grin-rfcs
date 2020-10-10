@@ -17,14 +17,13 @@ Support generating and validating payment proofs for all transactions, including
 Payment proofs prevent a payment receiver from claiming they didn't receive payment.
 Such fraud prevention is an essential ingredient to commercial adoption.
 
-Former payment proofs used in Grin didn't apply to invcoice flow, at least not
+Former payment proofs used in Grin didn't apply to invoice flow, at least not
 without additional rounds of communication, which made invoices a difficult proposition.
 
-They also lacked the ability to specify dating and purpose of payment.
+They also lacked the ability to specify the time and purpose of payment.
 
-This RFC changes the transaction building process where payers can require
-payees to create a "proof" they've received a payment before the payer
-finalizes and broadcasts the transaction.
+This RFC changes the transaction building process so that
+payees commit to a proof of payment before the payer signs for the transaction.
 
 # Community-level explanation
 [community-level-explanation]: #community-level-explanation
@@ -45,7 +44,8 @@ The slate will include the following payment proof related fields:
 
 * `receiver_address` - An ed25519 public key for the receiver, typically the public key of the user's v3 onion address.
 * `timestamp` - The time at which the receiver generates the payment proof
-* `memo` - A string of limited size that may contain additional payment details
+* `memo` - A string of size at most 32 bytes that may contain additional payment details,
+  or the hash of an arbitrary invoice document
 * `receiver_signature` - A signature that validates against the `receiver_address`
    over a payment message consisting of the following fields:
   - receiver public nonce
@@ -102,8 +102,6 @@ Before signing, the sender verifies the receiver signature and checks the paymen
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
-
-* What limit is imposed on the size of the memo field?
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
