@@ -77,6 +77,15 @@ The proof can be verified as follows:
 2. Verify that s\*G = R + e\*X, where e is the hash challenge of the i'th kernel.
 3. Verify that the `receiver_signature` is valid.
 
+Step 1. benefits from knowing the kernel index rather than the kernel itself, since nodes don't maintain
+an index of all kernels, and looking for the index of a potentially very old kernel is rather expensive.
+
+## Storing Proofs
+
+When a wallet stores or exports payment proofs, it should store the kernel as well as its index,
+in case the chain suffers a large reorg that relocates the kernel to a different index.
+
+
 ## Wallet actions
 
 ### receiver excess generation
