@@ -9,7 +9,7 @@
 # Summary
 [summary]: #summary
 
-Deprecating HTTP(S) as a transaction method helps preserve privacy for Grin users during the slate exchange process while building transactions. By only allowing the http listener in `grin-wallet` to listen on localhost by default, users and services will be encouraged to use more privacy-friendly transaction methods like Tor or directly exchanging armored slates. This improves privacy for the Grin ecosystem by ensuring that services do not force Grin users into transaction methods that can easily violate their privacy like HTTP(S).
+Deprecating HTTP(S) as a transaction method helps preserve privacy for Grin users during the slate exchange process while building transactions. By only allowing the http listener in `grin-wallet` to listen on localhost by default, users and services will be encouraged to use more privacy-friendly transaction methods like Tor or directly exchanging armored slates via the [Slatepack](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0015-slatepack.md) standard. This improves privacy for the Grin ecosystem by ensuring that services do not force Grin users into transaction methods that can easily violate their privacy like HTTP(S).
 
 # Motivation
 [motivation]: #motivation
@@ -35,13 +35,13 @@ Deprecating HTTP(S) means that the old method of sending and listening for trans
 
 This reduces the overall number of transaction transport methods that need to be supported but requires that all services and wallets that previously only accepted/sent HTTP(S) transactions to upgrade at least to the version this RFC is implemented in to support their users.
 
-For the average user this means that to send or receive Grin they can use the Tor method or file exchange (potentially to be replaced with armored slates). It is no longer possible to send and receive Grin via the HTTP(S) method without custom configuration.
+For the average user this means that to send or receive Grin they can use the [Slatepack](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0015-slatepack.md) method. It is no longer possible to send and receive Grin via the HTTP(S) method without custom configuration.
 
-For wallet developers, it is no longer necessary to be concerned about managing HTTP(S) endpoints. All transactions will be conducted via Tor or asynchronous exchange of armored slate strings or files. It can no longer be assumed that the counterparty in the transaction supports HTTP(S).
+For wallet developers, it is no longer necessary to be concerned about managing HTTP(S) endpoints. All transactions will be conducted via Tor or asynchronous exchange of armored slate strings with the Slatepack standard. It can no longer be assumed that the counterparty in the transaction supports HTTP(S).
 
 Previously, some services like exchanges _only_ supported HTTP(S) Grin transactions. This change impacts these services significantly.
 
-Tor is the closest replacement to HTTP(S), but for some services the use of Tor is unacceptable, not possible or not allowed. These services will will need to refactor the user flow to allow supporting file (potentially to be be replaced with armored slates) transactions instead, as the HTTP(S) method is no longer supported by default for `grin-wallet`.
+Slatepack with Tor is the closest replacement to HTTP(S), but for some services the use of Tor is unacceptable, not possible or not allowed. These services will will need to refactor the user flow to allow supporting manual copying and pasting of [Slatepack armored transaction messages](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0015-slatepack.md#slatepackmessage) instead, as the HTTP(S) method is no longer supported by default for `grin-wallet`.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -52,11 +52,9 @@ The technical and implementation details for this RFC are simple: no new feature
 
 - `grin-wallet listen` no longer accepts `-e` argument
 
-- `grin-wallet send -d` provides a strong warning if the destination is not a valid .onion address
+- `grin-wallet send -d` provides a strong warning if the destination is not a valid Slatepack address
 
 ## Deprecation Timeline
-
-If this RFC is adopted before v4.0.0 release:
 
 - With v4.0.0 a public announcement will be made to notify the Grin ecosystem that HTTP(S) will be fully deprecated in v5.0.0
 
@@ -71,7 +69,7 @@ If this RFC is adopted before v4.0.0 release:
 
 - Forces changes to existing transaction building workflows that use HTTP(S)
 
-- Remaining transaction options (Tor, armored slate, file) may not be appealing for services already exclusively using HTTP(S)
+- Remaining transaction options (Slatepack via Tor and armored message) may not be appealing for services already exclusively using HTTP(S)
 
 - Forces "always on" wallet listeners to use Tor or to build out logic to support handling armored slates in the UX flow
 
@@ -95,7 +93,7 @@ A [general comparison of transaction methods for Grin](https://github.com/mimble
 
 Bitcoin previously used a similar transaction method (send to IP) which was deprecated as well for many valid reasons. While the arguments presented in this RFC are primarily derived from the objective of delivering privacy, there are other good reasons previously discussed in the context of Bitcoin. These discussions can be found partially in the [bitcointalk post](https://bitcointalk.org/index.php?topic=9334.0) accompanying the [PR](https://github.com/bitcoin/bitcoin/pull/253) that removed this feature for Bitcoin.
 
-Note that Grin is not quite in the same position as Bitcoin was when they deprecated this method as an alternative method existed that did not require interaction was available (P2PKH). Grin will still require interaction for the forseeable future, either directly via Tor or asynchronously via armored slate or file.
+Note that Grin is not quite in the same position as Bitcoin was when they deprecated this method as an alternative method existed that did not require interaction was available (P2PKH). Grin will still require interaction for the foreseeable future, either directly via Tor or asynchronously via Slatepack armored messages.
 
 # Unresolved questions
 [unresolved-questions]: #unresolved-questions
@@ -121,3 +119,5 @@ https://bitcointalk.org/index.php?topic=9334.0
 https://github.com/bitcoin/bitcoin/pull/253
 
 https://github.com/mimblewimble/grin-pm/issues/283
+
+https://github.com/mimblewimble/grin-rfcs/blob/master/text/0015-slatepack.md
