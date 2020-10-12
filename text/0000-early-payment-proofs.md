@@ -118,7 +118,7 @@ The receiver will sign this data in the first round of RSR flow, leaving the
 sender to commit to remaining payment details in their following step.
 There is no need for this proof type in SRS flow, as the simpler Invoice type suffices.
 
-The witness is a quadruple (s,i,C,m) where i is the MMR index of an on-chain kernel K with commitment C,
+The witness is a quintuple (s,i,C,Rs',m) where i is the MMR index of an on-chain kernel K with commitment C,
 satisfying s\*G = R + e\*X, where R is the receiver public nonce, X is the receiver public excess,
 and e is the hash challenge of kernel K.
 Additionally, the sender nonce Rs, computed as the difference between kernel nonce and receiver public nonce,
