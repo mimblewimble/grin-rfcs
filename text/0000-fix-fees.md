@@ -18,17 +18,17 @@ NOTE: this is a hard-forking change.
 [motivation]: #motivation
 
 The former fee requirements suffer from being somewhat arbitrary, and not miner incentive compatible.
-They are not even linear; to avoid a negative minimum fee, they are rounded up to zero.
+They are not even linear; to avoid a negative minimum fee, they are rounded up to `BASE_FEE`.
 As a consequence, the minimum fees for the aggregate of two
 transactions was not necessarily equal to the sum of the individual ones.
 Worse, a miner had no incentive to include a transaction that pays 0 fees, while they take resources to relay.
 The current (and foreseeable) low price of Grin makes spamming the UTXO set rather cheaper than desired.
-Fee overpaying, for higher priority to be included in full blocks. fails when aggregated with minimal fee transactions.
+Fee overpaying, for higher priority to be included in full blocks, fails when aggregated with minimal fee transactions.
 
 ## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-For clarity, let's adopt define the following definitions. Let the feerate of
+For clarity, let's adopt the following definitions. Let the feerate of
 a transaction be the fees paid by the transaction divided by the transaction
 weight with regards to block inclusion (`Transaction::weight_as_block`).
 Let the `minfee` of a transaction be the amount of fees required for relay and mempool inclusion.
@@ -51,8 +51,8 @@ We want minfee to be linear to make splitting and combining of fees well-behaved
 For instance, two parties in a payjoin may each want pay their own input and output fees,
 while splitting the kernel fee, without overpaying for the whole transaction.
 
-Only the leat significant 40 bits will be used to specify a fee, while
-some of the remaining bits will specify a minimum fee overpayment factor,
+Only the least significant 40 bits will be used to specify a fee, while
+some of the remaining bits will specify a minimum fee overpayment factor as a power-of-2,
 preventing aggregation with lesser overpaying transactions, and earlier inclusion into full blocks.
 
 The largest possible 40-bit fee is 2^40 - 1 nanogrin, or approximately 1099.5 grin,
@@ -68,7 +68,7 @@ The minimum relay fee of a transaction shall be proportional to `Transaction::we
 which uses weights of `BLOCK_INPUT_WEIGHT` = 1, `BLOCK_OUTPUT_WEIGHT` = 21, and `BLOCK_KERNEL_WEIGHT` = 3,
 which correspond to the nearest multiple of 32 bytes that it takes to serialize.
 Formerly, we used Transaction::weight,
-which uses arbitrary weights of -1, 4, and 1 respectively, but also non-linearly rounds negative results up to 0
+which uses arbitrary weights of -1, 4, and 1 respectively, but also non-linearly rounds negative results up to 1
 (as happens when the number of inputs exceeds the number of kernels plus 4 times the number of outputs).
 
 The `Transaction::weight_as_block` shall be multiplied by a base fee.
