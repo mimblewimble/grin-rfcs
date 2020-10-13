@@ -29,13 +29,13 @@ Each transaction is an opportunity for the receiver to spend outputs on the inpu
 inputs (usually just one) to the sender, but also at a benefit of having multiple owners of inputs which should in most cases be in the interest of both the sender and the receiver.
 An important thing to note here is that if there are very few or no payjoins happening on the network, this same receiver could in a future transaction spend multiple inputs together and
 show their spent inputs not only to the transacting party, but to everyone else as well, which seems like a worse privacy tradeoff than doing payjoins. Spending multiple inputs together
-is not uncommon, so we want most of the transactions be payjoins to help us obfuscate our own inputs when we spend them. A positive side effect of doing a payjoin as a receiver is that
+is not uncommon, so we want most of the transactions to be payjoins to help us obfuscate our own inputs when we spend them. A positive side effect of doing a payjoin as a receiver is that
 we consolidate some of the outputs to create an output that holds more coins, so we are less likely to come in a situation where we need to spend multiple inputs together.
 Having the majority of the transactions be payjoins is also beneficial for the whole network because it creates probabilistic input ownership which makes backwards chain analysis much
 harder to do since we can't tell whether an input belongs to the sender of the receiver.
 
-Currently, PayJoin transactions are cheaper than regular transactions because they have more inputs. A 2-2 PayJoin transaction does not create a new output as opposed to a regular 1-2 transaction,
-which means that it can be thought of as an replacement of the value of the current output with a new value which does not increase the UTXO set size.
+Currently, PayJoin transactions are cheaper than regular transactions because they have more inputs. A 2-2 PayJoin transaction does not increase the number of outputs for the receiver
+unlike a regular 1-2 transaction, which means that it can be thought of as a replacement of the value of the current output with a new value which does not increase the UTXO set size.
 
 PayJoin transactions also allow for the possibility of the receiver paying their share of fees. Whether users would find this useful is not clear yet.
 
@@ -52,8 +52,8 @@ That said, it is possible to create a payjoin with a sender initiated flow, but 
 A wallet configuration includes a new configuration key:
 
 ```yaml
-srs_payjoin = True   # Use payoins for the sender-initiated flow
-rsr_payjoin = True   # Use payoins for the receiver-initiated flow (invoice)
+srs_payjoin = True   # Use payjoins for the sender-initiated flow
+rsr_payjoin = True   # Use payjoins for the receiver-initiated flow (invoice)
 ```
 
 Both invoice and sender-initiated workflows use payjoin transactions as the default behaviour. The configuration defaults can be changed by the user to avoid doing payjoin in a specific flow.
@@ -66,7 +66,7 @@ or, if the configuration defaults to False for the current flow, they can opt-in
 `grin-wallet receive --payjoin -d grin1dhvv9mvarqwl6fderuxp3qgl6qpphvc9p4u24347ec0mvvg6342q4w6x5r 60`
 
 
-If no flag is given, the transaction is built based on the defaults for the current transaction building flow.
+If no flag is given, the transaction is built based on configuration settings for the current transaction building flow.
 There should be no change apart from the wallet adding additional input from the receiver, the transaction flow should stay the same. Which inputs to pick is left as a decision to the wallet implementation.
 In case the wallet does not have an available output to add as an input, it would create a non-payjoin transaction.
 
@@ -99,7 +99,7 @@ I don't think any wallet implementation supports payjoins due to the lack of pay
 ## Future possibilities
 [future-possibilities]: #future-possibilities
 
-Perhaps having a walllet configuration for payjoin use would make it easier for those that want to partially use payjoins or never use them.
+Perhaps having a wallet configuration for payjoin use would make it easier for those that want to partially use payjoins or never use them.
 
 ## References
 [references]: #references
