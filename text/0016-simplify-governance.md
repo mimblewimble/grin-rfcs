@@ -2,8 +2,7 @@
 - Title: `simplify-governance`
 - Authors: [@paouky](mailto:ar.gis@protonmail.com), [@lehnberg](mailto:daniel.lehnberg@protonmail.com)
 - Start date: `Sep 11, 2020`
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
-- Tracking issue: [Edit if merged with link to tracking github issue]
+- RFC PR: [mimblewimble/grin-rfcs#67](https://github.com/mimblewimble/grin-rfcs/pull/67)
 
 ---
 

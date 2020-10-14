@@ -27,6 +27,7 @@ To begin writing your own RFC or to find out more about the process and the gene
 | [0013-nrd-kernels](text/0013-nrd-kernels.md) | Introduce relative timelocks through "No Recent Duplicate" transaction kernels |
 | [0014-general-fund-guidelines](text/0014-general-fund-guidelines.md) | Define general fund spending guidelines |
 | [0015-slatepack](text/0015-slatepack.md) | Universal transaction standard for Grin |
+| [0016-simplify-governance](text/0016-simplify-governance.md) | Simplify Grin governance model |
 
 ## License
 
