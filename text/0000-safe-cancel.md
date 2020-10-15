@@ -15,7 +15,7 @@ Allow for safe cancellation of pending transactions, preventing future so-called
 ## Motivation
 [motivation]: #motivation
 
-A wallet cannot simply cancel a pending transaction bu forgetting about it and returning its inputs to the wallet balance.
+A wallet cannot simply cancel a pending transaction but forgetting about it and returning its inputs to the wallet balance.
 Especially not when the other party is responsible for completing and broadcasting the transaction.
 They may still do so at any time as long as the inputs are not spent differently.
 
