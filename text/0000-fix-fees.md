@@ -67,7 +67,7 @@ As a side effect, this limits the damage of fat fingering a manually entered fee
 The minimum relay fee of a transaction shall be proportional to `Transaction::weight_as_block`,
 which uses weights of `BLOCK_INPUT_WEIGHT` = 1, `BLOCK_OUTPUT_WEIGHT` = 21, and `BLOCK_KERNEL_WEIGHT` = 3,
 which correspond to the nearest multiple of 32 bytes that it takes to serialize.
-Formerly, we used Transaction::weight,
+Formerly, we used `Transaction::weight`,
 which uses arbitrary weights of -1, 4, and 1 respectively, but also non-linearly rounds negative results up to 1
 (as happens when the number of inputs exceeds the number of kernels plus 4 times the number of outputs).
 
@@ -78,12 +78,12 @@ There is no reason to use different fees for relay and mempool acceptance.
 Its value shall default to `GRIN_BASE` / 100 / 20 = 500000, which makes each output
 incur just over 1 Grin-cent in fees.
 
-The 64-bit fee field in kernel types Plain and HeightLocked shall be renamed to `fee_bits` and be composed of bitfields
+The 64-bit fee field in kernel types `Plain` and `HeightLocked` shall be renamed to `fee_bits` and be composed of bitfields
 { `future_use`: 20, `fee_shift`: 4, fee: 40 }. All former uses of the fee will use `fee_bits` & `FEE_MASK`,
-where `FEE_MASK` = 0xffffffffff.
+where `FEE_MASK = 0xffffffffff`.
 
 A nonzero fee shift places an additional restriction on transaction relay and mempool inclusion.
-Namely, a transaction containining a kernel with `fee_shift` = s must pay a total fee
+Namely, a transaction containining a kernel with `fee_shift = s` must pay a total fee
 of at least 2^s times the minfee (the minfee shifted left by `fee_shift`).
 
 Aggregation of two relayable transactions should only happen when the result remains relayable.
