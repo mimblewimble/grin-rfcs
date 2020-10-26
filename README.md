@@ -29,6 +29,7 @@ To begin writing your own RFC or to find out more about the process and the gene
 | [0015-slatepack](text/0015-slatepack.md) | ACTIVE | Universal transaction standard for Grin. Replaces RFC#0010. |
 | [0016-simplify-governance](text/0016-simplify-governance.md) | ACTIVE | Simplify Grin governance model. Replaces RFC#0002. |
 | [0017-fix-fees](text/0017-fix-fees.md) | ACTIVE | Change minimum relay fees to be weight proportional, make output creation cost 0.01 Grin. |
+| [0018-fix-daa](text/0018-fix-daa.md) | ACTIVE | Change DAA (Difficulty Adjustment Algorithm) from damped simple moving average (dsma) to a weighted-target exponential moving average (wtema). Restrict the future-time-limit (FTL) window to 5 minutes. |
 
 ## License
 
