@@ -28,6 +28,7 @@ To begin writing your own RFC or to find out more about the process and the gene
 | [0014-general-fund-guidelines](text/0014-general-fund-guidelines.md) | ACTIVE | Define general fund spending guidelines |
 | [0015-slatepack](text/0015-slatepack.md) | ACTIVE | Universal transaction standard for Grin. Replaces RFC#0010. |
 | [0016-simplify-governance](text/0016-simplify-governance.md) | ACTIVE | Simplify Grin governance model. Replaces RFC#0002. |
+| [0017-fix-fees](text/0017-fix-fees.md) | ACTIVE | Change minimum relay fees to be weight proportional, make output creation cost 0.01 Grin. |
 
 ## License
 
