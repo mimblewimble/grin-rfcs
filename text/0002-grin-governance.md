@@ -6,6 +6,11 @@
 
 ---
 
+## RETIRED
+This RFC has been retired and has been superseded by [RFC#0016: simplify-governance](text/0016-simplify-governance.md).
+
+---
+
 ## Summary
 [summary]: #summary
 
