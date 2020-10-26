@@ -1,8 +1,8 @@
 - Title: fix-daa
 - Authors: [John Tromp](mailto:john.tromp@gmail.com)
 - Start date: July 23, 2020
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
-- Tracking issue: [Edit if merged with link to tracking github issue]
+- RFC PR: [mimblewimble/grin-rfcs#61](https://github.com/mimblewimble/grin-rfcs/pull/61) 
+- Tracking issue: [mimblewimble/grin#3473](https://github.com/mimblewimble/grin/issues/3473)
 
 ---
 
