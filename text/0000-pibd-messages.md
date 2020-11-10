@@ -60,7 +60,7 @@ The reference implementation for this RFC can be found in [\[3\]](#references), 
 ## MMR segments
 [mmr-segments]: #mmr-segments
 We define a (P)MMR **segment** at segment height `h` as a set of `N = 2^h` consecutive leaves, along with the necessary data to verify membership of the leaves in the original MMR.
-Each segment is consecutive with the previous and is identified by the tuple `(H, h, i)` where `H` is the block hash, `h` is the segment "height" and `i` is a zero-based segment index: segment `(H, h, i)` contains the non-pruned leaves with leave position in the interval `[i*N, (i+1)*N)`.
+Each segment is consecutive with the previous and is identified by the tuple `(H, h, i)` where `H` is the block hash, `h` is the segment "height" and `i` is a zero-based segment index: segment `(H, h, i)` contains the non-pruned leaves with leaf position in the interval `[i*N, (i+1)*N)` of the MMR state at the block with hash `H`.
 The final segment is allowed to have less than `N` elements because the full MMR does not necessarily contain a multiple of `N` leaves.
 
 Concretely, a segment contains the following items:
