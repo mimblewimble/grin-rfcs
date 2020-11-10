@@ -53,19 +53,22 @@ After some additional verification steps the new state is accepted and the node 
 This RFC introduces the concept of MMR segments, which are subtrees of the full MMR, along with hashes of pruned subtrees and a Merkle proof.
 For each of the four relevant (P)MMRs (output bitmap, output, rangeproof and kernel) we create 2 new peer-to-peer messages: a request and a response.
 
-The reference implementation for this RFC can be found in [\[3\]](#references) and [\[4\]](#references).
+Clients can signify support for segment requests by signaling it in their capabilities using a new bit flag: `PIBD_HIST = 1 << 4`.
+
+The reference implementation for this RFC can be found in [\[3\]](#references), [\[4\]](#references) and [\[5\]](#references).
 
 ## MMR segments
 [mmr-segments]: #mmr-segments
-We define a (P)MMR **segment** as a set of `N = 2^h` consecutive leaves, along with the necessary data to verify membership of the leaves in the original MMR.
+We define a (P)MMR **segment** at segment height `h` as a set of `N = 2^h` consecutive leaves, along with the necessary data to verify membership of the leaves in the original MMR.
 Each segment is consecutive with the previous and is identified by the tuple `(H, h, i)` where `H` is the block hash, `h` is the segment "height" and `i` is a zero-based segment index: segment `(H, h, i)` contains the non-pruned leaves with leave position in the interval `[i*N, (i+1)*N)`.
 The final segment is allowed to have less than `N` elements because the full MMR does not necessarily contain a multiple of `N` leaves.
 
 Concretely, a segment contains the following items:
 - The identifier tuple `(H, h, i)`.
-- For prunable MMRs only: list of intermediary hashes, sorted by MMR position in ascending order.
+- List of MMR positions and corresponding list of intermediary hashes, sorted by MMR position in ascending order.
 At a minimum it should contain all intermediary hashes that are required in order to reconstruct the subtree root.
-- A list of leaves in the segment (leaf index range `[i * 2^h, (i+1) * 2^h)`), sorted by MMR position in ascending order.
+These lists are ignored for non-prunable MMRs.
+- A list MMR positions and a corresponding list of leaves in the segment (leaf index range `[i * 2^h, (i+1) * 2^h)`), sorted by MMR position in ascending order.
 At a minimum it should contain all unpruned leaves and the direct sibling of every unpruned leaf.
 - [The segment Merkle proof](#segment-merkle-proof).
 
@@ -73,18 +76,24 @@ After receiving a segment, clients should verify if its contents are contained i
 1) calculate the [root of the segment](#segment-root) (using the leaf data and intermediary hashes) and 
 2) reconstruct the full MMR root using the segment root and the [segment merkle proof](#segment-merkle-proof) and compare it to the root in the block header.
 
-Implementations of this RFC should never request nor respond to requests of fully pruned segments.
-Implementations are free to choose a segment size by setting the height within a certain range in their requests.
+Clients are allowed to request fully pruned segments.
+In case of a fully pruned segment the list of leaves is expected to be empty and the list of hashes to contain a single entry: the first unpruned parent of the segment root.
+The proof is expected to contain the required hashes to reconstruct the MMR root from the first unpruned parent onwards.
+
+Clients should only ever request or respond with segments for the latest and first-to-latest canonical block for which `height % TXHASHSET_ARCHIVE_INTERVAL== 0`.
+
+Clients are free to choose a segment size by setting the height within a certain range in their requests.
 This allowed range is set differently depending on the MMR contents.
 The following table has concrete values for the different MMR types and the allowed height range.
-The upper bound has been chosen such that a single segment roughly corresponds to the maximum size of a block.
+The upper bound has been chosen such that a single segment roughly corresponds to the maximum size of a block (1,348,032 B).
+The lower bound is set such that the segment size is roughly an sixteenth of the maximum size.
 
-| MMR Type      | Prunable? | Leaf size (B)   | Height range   | Maximum segment size (B) |
-|---------------|-----------|-----------------|----------------|--------------------------|
-| Output bitmap | No        | 128             | \[1,TBD]       | TBD                      |
-| Outputs       | Yes       | 34              | \[1,TBD]       | TBD                      |
-| Range proofs  | Yes       | 675             | \[1,TBD]       | TBD                      |
-| Kernels       | No        | ~114 (variable) | \[1,TBD]       | TBD                      |
+| MMR Type      | Prunable? | Leaf size (B)   | Height range | Maximum segment size (B) |
+|---------------|-----------|-----------------|--------------|--------------------------|
+| Output bitmap | No        | 128             | \[9,13]      | 1,114,177 + proof        |
+| Outputs       | Yes       | 34              | \[11,15]     | 1,376,353 + proof        |
+| Range proofs  | Yes       | 675             | \[7,11]      | 1,398,881 + proof        |
+| Kernels       | No        | ~114 (variable) | \[9,13]      |   999,489 + proof        |
 
 Because the block header only commits to `H(output_root|bitmap_root)` [\[2\]](#references) as opposed to each of the roots separately, the output bitmap segments and output segments require an additional field to specify the root of the other MMR. 
 
@@ -110,7 +119,7 @@ Whenever a node receives an MMR segment, it needs to be able to verify that its 
 This is usually done by providing a merkle proof, which in short is a list of hashes that, combined with a leaf hash, is used to calculate the root.
 If it successfully reproduces the root, the proof is considered to be valid.
 
-It would be very inefficient to provide a separate merkle proof for each leaf in the segment.
+It would be very inefficient and redundant to provide a separate merkle proof for each leaf in the segment.
 Therefore we create a single optimized merkle proof per segment, based on two observations: firstly, a full segment (`2^h` elements) forms a full binary subtree in the MMR. 
 This means it has a single root. 
 Secondly, the final segment is potentially only partially filled (number of elements is not a power of 2). 
@@ -166,31 +175,50 @@ The new p2p message are as follows:
 # Drawbacks
 [drawbacks]: #drawbacks
 
-TODO
+Rewinding the bitmap accumulator to an old state is a relatively expensive operation.
+The accumulator is not append-only and a rewind can cause large parts of it to be rewritten.
+Implementations will most likely be required to (temporarily) store the old accumulator state either on disk or in memory, increasing the memory/storage requirements of running a node.
+
+The amount of data required to be stored here is however much less than is required to support the txhashset.zip sync method.
 
 # Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-Introducing new p2p messages 
+The most obvious alternative to this proposal would be to keep the txhashset.zip sync method around indefinitely.
+However, we do believe that this would be detrimental in the long term.
+Outside of the disadvantages of this method mentioned in the [motivation section](#motivation), the method relies on the precise on-disk bit representation of MMRs.
+We would be unable to improve upon the storage without breaking this sync method.
+Furthermore, the zip sync method has been victim to a critical vulnerability before [\[6\]](#references).
+While this vulnerability is long since patched, it is a testament to the complications that could arise in using zip archives as a synchronisation method.
+Zip archives are a blunt tool and it would be unfortunate to have to permanently support it when we have access to a much more precise and efficient method.
 
-# Prior art
-[prior-art]: #prior-art
+We briefly considered adding a separate request for the output and bitmap roots at a certain height, as a block header only commits to the hash of the concatenated values: `H(output_root|bitmap_root)`.
+While this would save a small amount of bandwidth compared to the current proposal, it would hurt our ability to precisely determine malicious peers.
+If verification on a bitmap or output segment were to fail, it could be caused by either an invalid segment or by a collision in the roots.
+We would be unable to distinguish between these two scenarios, forcing us to assume both peers are malicious.
+However by including the other root hash directly into the segment response messages, we ensure all required data originates from the same peer.
 
-TODO
-
-# Unresolved questions
-[unresolved-questions]: #unresolved-questions
-
-- When/How do we activate this feature on the network?
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
-Possibly phase out of txhashset.zip method
+Upon connection, nodes signal whether they support zip sync and/or PIBD sync separately.
+This allows us to deprecate and eventually remove support for the zip sync method in a future version.
+It would remove the need for nodes to keep a copy of the most recent txhashset archive around, saving disk space.
+
+Once the txhashset zip method has been removed, we could possibly relax a requirement on our segments.
+Currently, for any pair of sibling leaves where only one of them is spent, we require _both_ of them to still be present in the segment.
+This is because it is expected nodes will still support the zip sync method.
+In this sync method, this property of sibling leaves has to hold due to historical implementation reasons.
+Removing support for the zip sync could allow us to remove this requirement.
+
+The precise details of the removal of support of the sync method and relaxation of segment requirement is considered to be out of the scope of this RFC. 
 
 # References
 [references]: #references
 - \[1\] [Merkle mountain ranges](https://github.com/mimblewimble/grin/blob/master/doc/mmr.md)
 - \[2\] [RFC 0009: enable faster sync](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0009-enable-faster-sync.md)
-- \[3\] [Reference implementation pt. 1](https://github.com/mimblewimble/grin/pull/3453)
-- \[4\] [Reference implementation pt. 2](https://github.com/mimblewimble/grin/pull/3470)
+- \[3\] [Reference implementation - segments](https://github.com/mimblewimble/grin/pull/3453)
+- \[4\] [Reference implementation - segmenter](https://github.com/mimblewimble/grin/pull/3482)
+- \[5\] [Reference implementation - messages](https://github.com/mimblewimble/grin/pull/3470)
+- \[6\] [CVE-2019-9195](https://github.com/mimblewimble/grin-security/blob/master/CVEs/CVE-2019-9195.md)
