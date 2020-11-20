@@ -41,7 +41,7 @@ For wallet developers, it is no longer necessary to be concerned about managing 
 
 Previously, some services like exchanges _only_ supported HTTP(S) Grin transactions. This change impacts these services significantly.
 
-Slatepack with Tor is the closest replacement to HTTP(S), but for some services the use of Tor is unacceptable, not possible or not allowed. These services will will need to refactor the user flow to allow supporting manual copying and pasting of [Slatepack armored transaction messages](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0015-slatepack.md#slatepackmessage) instead, as the HTTP(S) method is no longer supported by default for `grin-wallet`.
+Slatepack with Tor is the closest replacement to HTTP(S), but for some services the use of Tor is unacceptable, not possible or not allowed. These services will will need to refactor the user flow to allow supporting manual copying and pasting of [Slatepack armored transaction messages](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0015-slatepack.md#slatepackmessage) instead, as the HTTP(S) method is no longer supported for `grin-wallet`.
 
 # Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -52,7 +52,7 @@ The technical and implementation details for this RFC are simple: no new feature
 
 - `grin-wallet listen` no longer accepts `-e` argument
 
-- `grin-wallet send -d` provides a strong warning if the destination is not a valid Slatepack address
+- `grin-wallet send -d` requires a valid Slatepack address
 
 ## Deprecation Timeline
 
@@ -60,7 +60,7 @@ The technical and implementation details for this RFC are simple: no new feature
 
 - With v4.0.0 wallets will warn users that their privacy may be at risk when sending or listening via HTTP(S) and that the method will be deprecated in next major release
 
-- With v5.0.0 wallets will warn users when sending transactions via HTTP(S)
+- With v5.0.0 wallets will no longer support sending transactions via HTTP(S)
 
 - With v5.0.0 wallets will only accept connections from localhost by default.
 
@@ -103,8 +103,6 @@ Note that Grin is not quite in the same position as Bitcoin was when they deprec
 - Will the adoption of this RFC cause an unacceptable loss of support from existing adopting services?
 
 - Will deprecating HTTP(S) grow or reduce adoption in the next 6-12 months? 1-3 years? 5-10 years?
-
-- Should sending to non-onion addresses via `grin-wallet send -d` be blocked once HTTP(S) is fully deprecated or should it only prompt a warning as written above?
 
 # Future possibilities
 [future-possibilities]: #future-possibilities
