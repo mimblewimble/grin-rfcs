@@ -202,6 +202,7 @@ However by including the other root hash directly into the segment response mess
 # Future possibilities
 [future-possibilities]: #future-possibilities
 
+## Deprecate txhashet.zip
 Upon connection, nodes signal whether they support zip sync and/or PIBD sync separately.
 This allows us to deprecate and eventually remove support for the zip sync method in a future version.
 It would remove the need for nodes to keep a copy of the most recent txhashset archive around, saving disk space.
@@ -212,7 +213,11 @@ This is because it is expected nodes will still support the zip sync method.
 In this sync method, this property of sibling leaves has to hold due to historical implementation reasons.
 Removing support for the zip sync could allow us to remove this requirement.
 
-The precise details of the removal of support of the sync method and relaxation of segment requirement is considered to be out of the scope of this RFC. 
+The precise details of the removal of support of the sync method and relaxation of segment requirement is considered to be out of the scope of this RFC.
+
+## Header segments
+Since nodes already maintain a block header MMR, we could re-use the existing segment infrastructure to introduce block header segments.
+Although further investigation is required, this has the potential to speed up the header sync, which is the first step in the synchronisation process.
 
 # References
 [references]: #references
