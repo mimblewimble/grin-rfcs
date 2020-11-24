@@ -55,7 +55,7 @@ For each of the four relevant (P)MMRs (output bitmap, output, rangeproof and ker
 
 Clients can signify support for segment requests by signaling it in their capabilities using a new bit flag: `PIBD_HIST = 1 << 4`.
 
-The reference implementation for this RFC can be found in [\[3\]](#references), [\[4\]](#references) and [\[5\]](#references).
+The reference implementation for this RFC can be found in [\[3-6\]](#references).
 
 ## MMR segments
 [mmr-segments]: #mmr-segments
