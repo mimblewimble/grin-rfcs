@@ -145,7 +145,7 @@ Each request contains the segment identifier triplet `(H, h, i)`:
 - segment height `h` (1 byte)
 - zero-based segment index `i` (8 bytes)
 
-The corresponding reference impl Rust type is `SegmentRequest` [\[5\]](#references).
+The corresponding reference impl Rust type is `SegmentRequest` [\[6\]](#references).
 
 The response is a segment as explained in the [previous section](#mmr-segments):
 - block hash `H` (32 bytes)
@@ -160,14 +160,14 @@ The response is a segment as explained in the [previous section](#mmr-segments):
 - segment merkle proof: number of hashes `N_m` (8 bytes) and the list of hashes (`32 * N_m` bytes)
 - _OutputSegment only:_  root hash of the output bitmap MMR at block hash `H` (32 bytes)
 
-The corresponding reference impl Rust types are `SegmentResponse<T>` and `OutputSegmentResponse` [\[5\]](#references).
+The corresponding reference impl Rust types are `SegmentResponse<T>` and `OutputSegmentResponse` [\[6\]](#references).
 
 The output bitmap segments use a specialized (de)serialization scheme instead.
 First, consider all the leaves in the segment as belonging to a single continuous bitmap.
 Split this bitmap up in blocks of `2^16` bits each.
-Each block is (de)serialized independently, with different encodings depending on the block cardinality (reference impl. [\[6\]](#references)).
+Each block is (de)serialized independently, with different encodings depending on the block cardinality (reference impl. [\[5\]](#references)).
 
-First, start of by writing the following data:
+First, start off by writing the following data:
 - number of chunks contained in the block `N_ch <= 64` (1 byte)
 
 If the cardinality is less than 4096, write the following data:
@@ -193,7 +193,7 @@ The full output bitmap segment response is defined as followed:
 - segment merkle proof: number of hashes `N_m` (8 bytes) and the list of hashes (`32 * N_m` bytes)
 - root hash of the output PMMR at block hash `H` (32 bytes)
 
-The corresponding reference impl Rust type is `OutputBitmapSegmentResponse` [\[5\]](#references).
+The corresponding reference impl Rust type is `OutputBitmapSegmentResponse` [\[6\]](#references).
 
 Finally, the new p2p message are as follows:
 
@@ -261,6 +261,6 @@ Although further investigation is required, this has the potential to speed up t
 - \[2\] [RFC 0009: enable faster sync](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0009-enable-faster-sync.md)
 - \[3\] [Reference implementation - segments](https://github.com/mimblewimble/grin/pull/3453)
 - \[4\] [Reference implementation - segmenter](https://github.com/mimblewimble/grin/pull/3482)
-- \[5\] [Reference implementation - messages](https://github.com/mimblewimble/grin/pull/3470)
-- \[6\] [Reference implementation - output bitmap message (de)ser](https://github.com/mimblewimble/grin/pull/3492)
+- \[5\] [Reference implementation - output bitmap message (de)ser](https://github.com/mimblewimble/grin/pull/3492)
+- \[6\] [Reference implementation - messages](https://github.com/mimblewimble/grin/pull/3470)
 - \[7\] [CVE-2019-9195](https://github.com/mimblewimble/grin-security/blob/master/CVEs/CVE-2019-9195.md)
