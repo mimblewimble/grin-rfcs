@@ -145,6 +145,8 @@ Each request contains the segment identifier triplet `(H, h, i)`:
 - segment height `h` (1 byte)
 - zero-based segment index `i` (8 bytes)
 
+The corresponding reference impl Rust type is `SegmentRequest` [\[5\]](#references).
+
 The response is a segment as explained in the [previous section](#mmr-segments):
 - block hash `H` (32 bytes)
 - segment height `h` (1 byte)
@@ -156,21 +158,55 @@ The response is a segment as explained in the [previous section](#mmr-segments):
 - list of leaf positions (`8 * N_l` bytes)
 - list of leaf data (variable, depends on leaf data type)
 - segment merkle proof: number of hashes `N_m` (8 bytes) and the list of hashes (`32 * N_m` bytes)
-- _OutputBitmapSegment only:_ root hash of the output PMMR at block hash `H` (32 bytes)
 - _OutputSegment only:_  root hash of the output bitmap MMR at block hash `H` (32 bytes)
 
-The new p2p message are as follows:
+The corresponding reference impl Rust types are `SegmentResponse<T>` and `OutputSegmentResponse` [\[5\]](#references).
 
-| ID | Name                   | MMR type      | Message type |
-|----|------------------------|---------------|--------------|
-| 21 | GetOutputBitmapSegment | Output bitmap | Request      |
-| 22 | OutputBitmapSegment    | Output bitmap | Response     |
-| 23 | GetOutputSegment       | Output        | Request      |
-| 24 | OutputSegment          | Output        | Response     |
-| 25 | GetRangeProofSegment   | Range proof   | Request      |
-| 26 | RangeProofSegment      | Range proof   | Response     |
-| 27 | GetKernelSegment       | Kernel        | Request      |
-| 28 | KernelSegment          | Kernel        | Response     |
+The output bitmap segments use a specialized (de)serialization scheme instead.
+First, consider all the leaves in the segment as belonging to a single continuous bitmap.
+Split this bitmap up in blocks of `2^16` bits each.
+Each block is (de)serialized independently, with different encodings depending on the block cardinality (reference impl. [\[6\]](#references)).
+
+First, start of by writing the following data:
+- number of chunks contained in the block `N_ch <= 64` (1 byte)
+
+If the cardinality is less than 4096, write the following data:
+- serialization mode `1u8` (1 byte)
+- cardinality `N_pos` (2 bytes)
+- list of positive positions (`2 * N_pos` bytes)
+
+If `2^16 - cardinality = N_neg` is less than 4096, write the following data instead:
+- serialization mode `2u8` (1 byte)
+- "inverse" cardinality `N_neg` (2 bytes)
+- list of negative positions (`2 * N_neg` bytes)
+
+In any other case, write the following data instead:
+- serialization mode `0u8` (1 byte)
+- full bitmap as raw bytes (`128 * N_ch` bytes)
+
+The full output bitmap segment response is defined as followed:
+- block hash `H` (32 bytes)
+- segment height `h` (1 byte)
+- zero-based segment index `i` (8 bytes)
+- number of blocks (2 bytes)
+- list of blocks (variable \# of bytes)
+- segment merkle proof: number of hashes `N_m` (8 bytes) and the list of hashes (`32 * N_m` bytes)
+- root hash of the output PMMR at block hash `H` (32 bytes)
+
+The corresponding reference impl Rust type is `OutputBitmapSegmentResponse` [\[5\]](#references).
+
+Finally, the new p2p message are as follows:
+
+| ID | Name                   | MMR type      | Message type | Rust ref. impl. type |
+|----|------------------------|---------------|--------------|-----------|
+| 21 | GetOutputBitmapSegment | Output bitmap | Request      | `SegmentRequest` |
+| 22 | OutputBitmapSegment    | Output bitmap | Response     | `OutputBitmapSegmentResponse` |
+| 23 | GetOutputSegment       | Output        | Request      | `SegmentRequest` |
+| 24 | OutputSegment          | Output        | Response     | `OutputSegmentResponse` |
+| 25 | GetRangeProofSegment   | Range proof   | Request      | `SegmentRequest` |
+| 26 | RangeProofSegment      | Range proof   | Response     | `SegmentResponse<RangeProof>` |
+| 27 | GetKernelSegment       | Kernel        | Request      | `SegmentRequest` |
+| 28 | KernelSegment          | Kernel        | Response     | `SegmentResponse<TxKernel>` |
 
 # Drawbacks
 [drawbacks]: #drawbacks
@@ -188,7 +224,7 @@ The most obvious alternative to this proposal would be to keep the txhashset.zip
 However, we do believe that this would be detrimental in the long term.
 Outside of the disadvantages of this method mentioned in the [motivation section](#motivation), the method relies on the precise on-disk bit representation of MMRs.
 We would be unable to improve upon the storage without breaking this sync method.
-Furthermore, the zip sync method has been victim to a critical vulnerability before [\[6\]](#references).
+Furthermore, the zip sync method has been victim to a critical vulnerability before [\[7\]](#references).
 While this vulnerability is long since patched, it is a testament to the complications that could arise in using zip archives as a synchronisation method.
 Zip archives are a blunt tool and it would be unfortunate to have to permanently support it when we have access to a much more precise and efficient method.
 
@@ -226,4 +262,5 @@ Although further investigation is required, this has the potential to speed up t
 - \[3\] [Reference implementation - segments](https://github.com/mimblewimble/grin/pull/3453)
 - \[4\] [Reference implementation - segmenter](https://github.com/mimblewimble/grin/pull/3482)
 - \[5\] [Reference implementation - messages](https://github.com/mimblewimble/grin/pull/3470)
-- \[6\] [CVE-2019-9195](https://github.com/mimblewimble/grin-security/blob/master/CVEs/CVE-2019-9195.md)
+- \[6\] [Reference implementation - output bitmap message (de)ser](https://github.com/mimblewimble/grin/pull/3492)
+- \[7\] [CVE-2019-9195](https://github.com/mimblewimble/grin-security/blob/master/CVEs/CVE-2019-9195.md)
