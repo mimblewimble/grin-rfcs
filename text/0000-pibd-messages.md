@@ -80,7 +80,8 @@ Clients are allowed to request fully pruned segments.
 In case of a fully pruned segment the list of leaves is expected to be empty and the list of hashes to contain a single entry: the first unpruned parent of the segment root.
 The proof is expected to contain the required hashes to reconstruct the MMR root from the first unpruned parent onwards.
 
-Clients should only ever request or respond with segments for the latest and first-to-latest canonical block for which `height % TXHASHSET_ARCHIVE_INTERVAL== 0`.
+Clients should only ever request or respond with segments for the most recent canonical block for which `height <= STATE_SYNC_THRESHOLD && height % TXHASHSET_ARCHIVE_INTERVAL == 0`.
+This is the same block as the txhashset.zip file is based on.
 
 Clients are free to choose a segment size by setting the height within a certain range in their requests.
 This allowed range is set differently depending on the MMR contents.
@@ -195,7 +196,7 @@ The full output bitmap segment response is defined as followed:
 
 The corresponding reference impl Rust type is `OutputBitmapSegmentResponse` [\[6\]](#references).
 
-Finally, the new p2p message are as follows:
+Finally, the new p2p messages are as follows:
 
 | ID | Name                   | MMR type      | Message type | Rust ref. impl. type |
 |----|------------------------|---------------|--------------|-----------|
