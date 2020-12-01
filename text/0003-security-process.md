@@ -1,13 +1,13 @@
 
 - Title: security-process
-- Authors: [John Woeltz](mailto:joltz@protonmail.com)
+- Authors: [joltz](mailto:joltz@protonmail.com)
 - Start date : July 18, 2019
 - RFC PR: [mimblewimble/grin-rfcs#13](https://github.com/mimblewimble/grin-rfcs/pull/13)
 - Tracking issue: [mimblewimble/grin-pm#178](https://github.com/mimblewimble/grin-pm/issues/178)
 
 ---
 
-# Summary
+## Summary
 [summary]: #summary
 
 This RFC improves the security processes for Grin by adopting a community
@@ -16,7 +16,7 @@ The standard proposed for adoption describes the norms for ethical disclosure
 behavior and provides a public pre-commitment scheme for the Grin community to
 clarify security process actions and expectations [2].
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 - Improves transparency around Grin security and disclosure processes
@@ -26,7 +26,7 @@ clarify security process actions and expectations [2].
 - Provides clarity around ethical behavior and expected deviations
 - Makes possible the mapping of the vulnerability disclosure surface
 
-# Community-level explanation
+## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
 This RFC proposes adopting a
@@ -57,7 +57,7 @@ An example of another project adopting the same standard can be found
 [here](https://github.com/zcash/zcash/blob/master/responsible_disclosure.md)
 in Zcash's vulnerability disclosure document.
 
-# Reference-level explanation
+## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
 - This RFC proposes to adopt a community responsible disclosure standard for Grin: https://github.com/RD-Crypto-Spec/Responsible-Disclosure
@@ -72,7 +72,7 @@ which adopts the same standard proposed here for Grin.
 _All links to the standard in the actual implementation of SECURITY.md must be
 permanent._
 
-## Changes to [SECURITY.md](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md)
+### Changes to [SECURITY.md](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md)
 
 - The original
 [Recognition and Bug Bounties](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#recognition-and-bug-bounties)
@@ -109,7 +109,7 @@ in the main repository.
 _**The following sections will be added to
 [SECURITY.md](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md) and may replace existing sections as noted below.**_
 
-### Responsible Disclosure Standard
+#### Responsible Disclosure Standard
 
 _This section will replace the
 [original vulnerability handling section](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#vulnerability-handling)_
@@ -130,7 +130,7 @@ initial contact
 - [Setting Dates](https://github.com/RD-Crypto-Spec/Responsible-Disclosure#setting-dates):
 details for when to release updates and publicize details of the issue
 
-### Receiving Disclosures
+#### Receiving Disclosures
 
 _This section will replace the
 will replace the
@@ -154,10 +154,7 @@ and
 [Public Key](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md#public-keys)
 sections.
 
-
-
-
-### Sending Disclosures
+#### Sending Disclosures
 
 >In the case where we become aware of security issues affecting other projects
 that has never affected Grin, our intention is to inform those projects of
@@ -168,7 +165,7 @@ neighboring projects, our intention is to engage in responsible disclosures with
 them as described in https://github.com/RD-Crypto-Spec/Responsible-Disclosure,
 subject to the deviations described in the 'Deviations from the Standard' section.
 
-### Bilateral Responsible Disclosure Agreements
+#### Bilateral Responsible Disclosure Agreements
 
 Here we would list any agreements we have with neighboring projects to share
 vulnerability information in accordance with the standard itself and the
@@ -177,7 +174,7 @@ Agreements would be made by the core team or security team based on capacity
 to engage and relevance/impact on Grin's ecosystem and to an extent the greater
 cryptocurrency ecosystem.
 
-### Deviations from the Standard
+#### Deviations from the Standard
 
 >Grin is a technology that provides strong privacy with zero-knowledge
 commitments and rangeproofs. Due to the nature of the cryptography used, if a
@@ -195,7 +192,7 @@ has - allowing the development team to accurately prioritize and resolve the iss
 decide not to include those details with our reports to partners ahead of
 coordinated release, so long as we are sure that they are vulnerable.
 
-### Canaries
+#### Canaries
 
 For a privacy preserving project such as Grin, adversaries wishing to break that
 privacy may have incentive to disrupt Grin's security processes. This could be
@@ -213,7 +210,7 @@ security contact fails to keep their canary alive, they will be removed from the
 list of contacts. The specific language of each canary can be up to each contact
 unless a canary standard is adopted.
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 This proposal could add complexity and overhead that a donation-supported decentralized
@@ -226,10 +223,10 @@ For a project with extremely limited resources (relative to large companies)
 and no source of steady funding, it may not be possible to support the time and
 resources required to follow through on such a commitment.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-#### Why is this design the best in the space of possible designs?
+### Why is this design the best in the space of possible designs?
 
 This seems to be the most transparent and least centralized option that still
 provides the ability to efficiently handle cases of severe vulnerabilities that
@@ -240,7 +237,7 @@ of failure. Additionally, not having clear pre-commitments to sharing agreements
 and expected ethical deviations can cause community contention at best and
 failure to successfully mitigate a vulnerability before it is exploited at worst.
 
-#### What other designs have been considered and what is the rationale for not choosing them?
+### What other designs have been considered and what is the rationale for not choosing them?
 
 A less centralized model would be to attempt to guide this process with on-chain
 governance or an on-chain bug bounty program. Both of those not only challenge
@@ -254,7 +251,7 @@ formally verified. This may be more viable in the future, but it would require
 significant time and resource investment. It would not be responsible to rely
 on formal verification for a project like Grin today.
 
-#### What is the impact of not doing this?
+### What is the impact of not doing this?
 
 If we do not adopt a standard as proposed here, the community is left with
 unresolved problems:
@@ -277,7 +274,7 @@ disclosure, Grin runs the risk of alienating the community in pursuit of
 security, or even worse, not implementing a critical fix before any user
 experiences privacy or value loss.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 The traditional disclosure model (RF Policy/security@) [0] handles interaction between
@@ -302,7 +299,7 @@ that inspired the creation of the standard this RFC proposes to adopt [1]. Due
 to the similar nature of the Zcash and Grin ecosystems, this prior art is highly
 relevant to the security process for Grin.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
 - How can we further reduce centralization risk for Grin's security process?
@@ -324,7 +321,7 @@ relevant to the security process for Grin.
 
 - What form, if any, will the Bug Bounty process take?
 
-# Future possibilities
+## Future possibilities
 [future-possibilities]: #future-possibilities
 
 - Security team
@@ -333,21 +330,14 @@ relevant to the security process for Grin.
 - Bug bounty program
 - Formal verification
 
-# References
+## References
 [references]: #references
 
-[0] https://dl.packetstormsecurity.net/papers/general/rfpolicy-2.0.txt
-
-[1] https://www.youtube.com/watch?v=h7W1u1K2VjQ
-
-[2] https://github.com/RD-Crypto-Spec/Responsible-Disclosure
-
-[3] https://github.com/zcash/zcash/blob/master/responsible_disclosure.md
-
-[4] https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md
-
-[5] https://github.com/QubesOS/qubes-secpack/blob/master/canaries/canary-020-2019.txt
-
-[6] https://riseup.net/about-us/canary/canary-statement-signed.txt
-
-[7] https://protonmail.com/blog/transparency-report/
+- [0] [https://dl.packetstormsecurity.net/papers/general/rfpolicy-2.0.txt](https://dl.packetstormsecurity.net/papers/general/rfpolicy-2.0.txt)
+- [1] [https://www.youtube.com/watch?v=h7W1u1K2VjQ](https://www.youtube.com/watch?v=h7W1u1K2VjQ)
+- [2] [https://github.com/RD-Crypto-Spec/Responsible-Disclosure](https://github.com/RD-Crypto-Spec/Responsible-Disclosure)
+- [3] [https://github.com/zcash/zcash/blob/master/responsible_disclosure.md](https://github.com/zcash/zcash/blob/master/responsible_disclosure.md)
+- [4] [https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md)
+- [5] [https://github.com/QubesOS/qubes-secpack/blob/master/canaries/canary-020-2019.txt](https://github.com/QubesOS/qubes-secpack/blob/master/canaries/canary-020-2019.txt)
+- [6] [https://riseup.net/about-us/canary/canary-statement-signed.txt](https://riseup.net/about-us/canary/canary-statement-signed.txt)
+- [7] [https://protonmail.com/blog/transparency-report/](https://protonmail.com/blog/transparency-report/)
