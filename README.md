@@ -31,6 +31,7 @@ To begin writing your own RFC or to find out more about the process and the gene
 | [0017-fix-fees](text/0017-fix-fees.md) | ACTIVE | Change minimum relay fees to be weight proportional, make output creation cost 0.01 Grin. |
 | [0018-fix-daa](text/0018-fix-daa.md) | ACTIVE | Change DAA (Difficulty Adjustment Algorithm) from damped simple moving average (dsma) to a weighted-target exponential moving average (wtema). Restrict the future-time-limit (FTL) window to 5 minutes. |
 | [0019-deprecate-http-tx](text/0019-deprecate-http-tx.md) | ACTIVE | Deprecating HTTP(S) as a transaction method in grin-wallet. |
+| [0020-pibd-messages](text/0020-pibd-messages.md) | ACTIVE | Define new peer-to-peer messages to enable a novel sync method, using packets of self-contained partial state that can be downloaded and verified independently from each other. |
 
 ## License
 
