@@ -2,8 +2,8 @@
 - Title: pibd-messages
 - Authors: [Jasper van der Maarel](mailto:j@sper.dev), [Antioch Peverell](mailto:apeverell@protonmail.com)
 - Start date: September 14, 2020
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000) 
-- Tracking issue: [Edit if merged with link to tracking github issue]
+- RFC PR: [mimblewimble/grin-rfcs#68](https://github.com/mimblewimble/grin-rfcs/pull/68) 
+- Tracking issue: [mimblewimble/grin#68](https://github.com/mimblewimble/grin/issues/3471)
 
 ---
 
