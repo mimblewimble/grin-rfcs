@@ -35,7 +35,7 @@ shall prove payment for a specified purpose.
 
 This early provision of a payment proof promise enables its use in all possible transaction building flows.
 
-Ta avoid confusion, the invoice flow shall be called receiver-sender-receiver (RSR) flow and
+To avoid confusion, the invoice flow shall be called receiver-sender-receiver (RSR) flow and
 the "regular" flow shall be called sender-receiver-sender (SRS) flow.
 
 The first byte of signed data will be used as payment proof type or version (similar to how we encode kernel features).
@@ -89,9 +89,10 @@ The signature is over
   - `sender_address`
   - `timestamp`
   - `memo`
+
 The receiver will sign this data either in the first round of RSR flow, or the second round of SRS flow.
 In the latter case, the sender can use the slate fields `amount` and `memo` to set suggested values for
-the receiver to use. The `timestamp` should correspong to the time of signature generation.
+the receiver to use. The `timestamp` should correspond to the time of signature generation.
 
 For consistency with the old proof type, the amount is again limited to 7 bytes.
 The witness is a triple (s,i,C) where i is the MMR index of an on-chain kernel K with commitment C,
@@ -114,6 +115,7 @@ The signature is over
   - receiver public nonce
   - receiver public excess
   - `sender_address`
+
 The receiver will sign this data in the first round of RSR flow, leaving the
 sender to commit to remaining payment details in their following step.
 There is no need for this proof type in SRS flow, as the simpler Invoice type suffices.
