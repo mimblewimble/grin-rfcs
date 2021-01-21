@@ -54,15 +54,13 @@ and let a payment proof consist of a promise paired with a witness.
 To accomodate the various proof types, the slate will include the following related fields:
 
 * `receiver_address` - An ed25519 public key for the receiver, typically the public key of the user's v3 onion address.
-* `timestamp` - The time at which the receiver generates the payment proof
+* `timestamp` - The time at which the receiver generates the payment promise
 * `memo` - A string of size at most 32 bytes that may contain additional payment details,
   or the hash of an arbitrary invoice document
 * `promise_signature` - A signature that validates against the `receiver_address`
    over a promise message consisting of 1 byte of proof type, followed by type specific data
 
-Note that although the sender address is commonly among the signed data, it need not be included in the slate,
-as both sender and receiver necessarily know it. Slates should only contain the absolute minimum of information
-that needs to be relayed to the other party.
+Note that although the sender address is commonly among the signed data, it need not be included in an slate that's encrypted for the sender, as both sender and receiver necessarily know it. Slates should only contain the absolute minimum of information that needs to be relayed to the other party.
 
 ### Proof type Legacy
 
@@ -80,26 +78,20 @@ The amount field is accordingly limited to 7 bytes.
 
 ### Proof type Invoice
 
-This will be the type for regular invoices, where receiver specifies the time, amount and purpose of payment.
-The signature is over
+This will be the type for regular invoices, where receiver specifies the time, amount and purpose of payment.  The signature is over
   - proof type `0x01`
   - `amount`
-  - receiver public nonce
-  - receiver public excess
+  - `receiver_public_nonce`
+  - `receiver_public_excess`
   - `sender_address`
   - `timestamp`
   - `memo`
 
-The receiver will sign this data either in the first round of RSR flow, or the second round of SRS flow.
-In the latter case, the sender can use the slate fields `amount` and `memo` to set suggested values for
-the receiver to use. The `timestamp` should correspond to the time of signature generation.
+The receiver will sign this data either in the first round of RSR flow, or the second round of SRS flow. In the latter case, the sender can use the slate fields `amount` and `memo` to set suggested values for the receiver to use. The `timestamp` should correspond to the time of signature generation.
 
 For consistency with the old proof type, the amount is again limited to 7 bytes.
-The witness is a triple (s,i,C) where i is the MMR index of an on-chain kernel K with commitment C,
-satisfying s\*G = R + e\*X, where R is the receiver public nonce, X is the receiver public excess,
-and e is the hash challenge of kernel K.
-The reason for including the kernel index is that nodes don't maintain
-an index of all kernels, and looking for the index of a potentially very old kernel is rather expensive,
+The witness is a triple (s,i,C) where i is the MMR index of an on-chain kernel K with commitment C, satisfying s\*G = R + e\*X, where R is the `receiver_public_nonce`, X is the `receiver_public_excess`, and e is the hash challenge of kernel K.
+The reason for including the kernel index is that nodes don't maintain an index of all kernels, and looking for the index of a potentially very old kernel is rather expensive,
 and proof verification should not be a DoS vector.
 The reason for including the kernel commitment is so that the prover can recompute the index
 when necessitated by chain reorgs.
@@ -112,16 +104,15 @@ This roughly follows the payment proofs in David Burkett's Eliminate Finalize St
 The signature is over
   - proof type `0x02`
   - 7 zero bytes
-  - receiver public nonce
-  - receiver public excess
+  - `receiver_public_nonce`
+  - `receiver_public_excess`
   - `sender_address`
 
 The receiver will sign this data in the first round of RSR flow, leaving the
 sender to commit to remaining payment details in their following step.
 There is no need for this proof type in SRS flow, as the simpler Invoice type suffices.
 
-The witness is a quintuple (s,i,C,Rs',m) where i is the MMR index of an on-chain kernel K with commitment C,
-satisfying s\*G = R + e\*X, where R is the receiver public nonce, X is the receiver public excess,
+The witness is a quintuple (s,i,C,Rs',m) where i is the MMR index of an on-chain kernel K with commitment C, satisfying s\*G = R + e\*X, where R is the `receiver_public_nonce`, X is the `receiver_public_excess`, and e is the hash challenge of kernel K.
 and e is the hash challenge of kernel K.
 Additionally, the sender nonce Rs, computed as the difference between kernel nonce and receiver public nonce,
 must be of the form Rs' + H(Rs' | m) \* G, where message m contains the promise fields
