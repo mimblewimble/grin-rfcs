@@ -712,7 +712,7 @@ Retrieves details about specifics outputs. Supports retrieval of multiple output
 {
     "jsonrpc": "2.0",
     "method": "get_outputs",
-    "params": [["09bab2bdba2e6aed690b5eda11accc13c06723ca5965bb460c5f2383655989af3f","08ecd94ae293863286e99d37f4685f07369bc084ba74d5c59c7f15359a75c84c03"],376150, 376154, true, true],
+    "params": ["09bab2bdba2e6aed690b5eda11accc13c06723ca5965bb460c5f2383655989af3f","08ecd94ae293863286e99d37f4685f07369bc084ba74d5c59c7f15359a75c84c03"],376150, 376154, true, true],
     "id": 1
 }
 {
