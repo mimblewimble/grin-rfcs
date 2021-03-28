@@ -22,15 +22,16 @@ They may still do so at any time as long as the inputs are not spent differently
 ## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-Suppose Bob sends Alice an invoice slatepack to which Alice responds, but then
-Bob doesn't finalize it.  He might suggest a problem with the invoice, with his
+Suppose Bob as the receiver sends Alice as the sender an invoice slatepack
+(Receiver-Sender-Receiver or RSR flow) to which Alice responds, but then Bob
+doesn't finalize it.  He might suggest a problem with the invoice, with his
 wallet, or the exchange rate, or the (suddenly realized)
 need to pay in a different currency. Whatever the case, he convinces Alice to
 have the current transaction cancelled.  Alice is fine with that, but needs to
 make sure that Bob doesn't later complete the transaction and steal Alice's
 inputs.
 
-Alice has two options; spend a transaction input back to herself, or
+Alice has two options; spend a transaction input back to herself (a self-spend), or
 construct a new transaction that shares at least one input with the
 old transaction. The former is cleaner, but requires separate fees, and possibly waiting
 for confirmation.
@@ -46,6 +47,21 @@ grin-wallet unspend [OPTIONS]
 
 will generate and broadcast a self spend of an input of 
 the pending transaction, specified either by ID or TxID UUID,
+
+The problem is not limited to RSR flow. In the more common SRS flow, once the
+sender has signed and published the transaction, it can still fail to confirm.
+
+It could be that one of the nodes in the Dandelion stem drops it, either by
+accident or on purpose.  Alternatively, it could be explicitly rejected by the
+mempool.
+The receiver can arrange for that to happen by (slightly earlier) publishing
+another transaction with an identical output.  When two transaction conflict by
+sharing either an input or an output, the first to enter the mempool will block
+the second from entering.
+
+In case the sender's wallet notices that failure to confirm is due to a
+conflicting transaction, it should alert the user that the receiver is being
+malicious. 
 
 ## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
