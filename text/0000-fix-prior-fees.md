@@ -23,11 +23,15 @@ with no downsise, which is always a good thing.
 ## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-The largest fee to appear on mainnet prior to Hark Fork 4 is 2.404 Grin. This means that extending the current 40-bit fee restriction to the pre-HF4 history preserves validity.
-While this is technically a hard-forking change, it would only have any visible
-An attacker could in theory split the network by creating an ultra-deep reorg that includes
-a pre-HF4 fee exceeding 40 bits. However, the split damage would utterly pale in comparison to having a many months deep reorg in the first place.
-So in practice this change does not justify a header version bump and mandatory upgrade.
+The largest fee to appear on mainnet prior to Hark Fork 4 is 2.404 Grin. This
+means that extending the current 40-bit fee restriction to the pre-HF4 history
+preserves validity.  While this is technically a hard-forking change, we could
+treat it as an optional update.
+An attacker could in theory split the network by creating an ultra-deep reorg
+that includes a pre-HF4 fee exceeding 40 bits. However, the split damage would
+utterly pale in comparison to having a many months deep reorg in the first
+place.  So in practice this change does not justify a header version bump and
+mandatory upgrade.
 
 ## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
@@ -49,7 +53,7 @@ There is no compelling reason for leaving a height dependency in the fee method.
 [unresolved-questions]: #unresolved-questions
 
 How many months should we wait after HF4 before rolling out this code simplification?
-I propose that 3 months is more than enough.
+I propose that 3 months is more than enough, making this RFC acceptable from mid April 2021 onwards.
 
 ## Future possibilities
 [future-possibilities]: #future-possibilities
