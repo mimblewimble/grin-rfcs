@@ -1,13 +1,13 @@
 
-- Title: `node-api-v2`
+- Title: node-api-v2
 - Authors: [Quentin Le Sceller](mailto:q.lesceller@gmail.com)
 - Start date: September 30th, 2019
-- RFC PR: [mimblewimble/grin-rfcs#28](https://github.com/mimblewimble/grin-rfcs/pull/28) 
+- RFC PR: [mimblewimble/grin-rfcs#28](https://github.com/mimblewimble/grin-rfcs/pull/28)
 - Tracking issue: [mimblewimble/grin#3158](https://github.com/mimblewimble/grin/issues/3158)
 
 ---
 
-# Table of Contents
+## Table of Contents
 
 - [Summary](#summary)
 - [Motivation](#motivation)
@@ -49,14 +49,12 @@
 - [Future possibilities](#future-possibilities)
 - [References](#references)
 
-# Summary
-
+## Summary
 [summary]: #summary
 
 Create a v2 JSON-RPC API for the Node API.
 
-# Motivation
-
+## Motivation
 [motivation]: #motivation
 
 The previous Node API (referred to here as v1) was a REST API. This API while simple had a few drawbacks:
@@ -73,17 +71,15 @@ This RFC provides a new v2 API with:
 - Automatic testing with doc tests.
 - Stronger basis for future improvements.
 
-# Community-level explanation
-
+## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
 This new API will be particularly useful for wallet developer and should ultimately simplify their work on Grin. Moreover, this RFC does not introduce any breaking changes as the v1 REST API will still be around until completely deprecated.
 
-# Reference-level explanation
-
+## Reference-level explanation
 [reference-level-explanation]: #reference-level-explanation
 
-## V1 Endpoints
+### V1 Endpoints
 
 While the endpoints are documented in details [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md), here is an overview of the REST API Endpoints of the v1 API.
 
@@ -123,7 +119,7 @@ These endpoints can be grouped into 5 categories:
 - `pool` endpoints
 - `txhashset` endpoints
 
-## V2 Endpoints
+### V2 Endpoints
 
 The following endpoints are kept and refactored:
 
@@ -188,9 +184,9 @@ When running `grin` with defaults, the V2 apis are available at
 - `localhost:3413/v2/owner` for the owner API.
 - `localhost:3413/v2/foreign` for the foreign API.
 
-### Owner API Endpoints
+#### Owner API Endpoints
 
-#### get_status
+##### get_status
 
 Returns various information about the node, the network and the current sync status.
 
@@ -225,7 +221,7 @@ Returns various information about the node, the network and the current sync sta
 }
 ```
 
-#### validate_chain
+##### validate_chain
 
 Trigger a validation of the chain state.
 
@@ -245,7 +241,7 @@ Trigger a validation of the chain state.
 }
 ```
 
-#### compact_chain
+##### compact_chain
 
 Trigger a compaction of the chain state to regain storage space.
 
@@ -265,7 +261,7 @@ Trigger a compaction of the chain state to regain storage space.
 }
 ```
 
-#### get_peers
+##### get_peers
 
 Retrieves information about peers. If `null` is provided, `get_peers` will list all stored peers.
 
@@ -297,7 +293,7 @@ Retrieves information about peers. If `null` is provided, `get_peers` will list 
 }
 ```
 
-#### get_connected_peers
+##### get_connected_peers
 
 Retrieves a list of all connected peers.
 
@@ -406,7 +402,7 @@ Retrieves a list of all connected peers.
 }
 ```
 
-#### ban_peer
+##### ban_peer
 
 Bans a specific peer.
 
@@ -426,7 +422,7 @@ Bans a specific peer.
 }
 ```
 
-#### unban_peer
+##### unban_peer
 
 Unbans a specific peer.
 
@@ -446,9 +442,9 @@ Unbans a specific peer.
 }
 ```
 
-### Foreign API Endpoints
+#### Foreign API Endpoints
 
-#### get_version
+##### get_version
 
 Returns the node version and block header version (used by grin-wallet).
 
@@ -471,7 +467,7 @@ Returns the node version and block header version (used by grin-wallet).
 }
 ```
 
-#### get_header
+##### get_header
 
 Gets block header given either a height, a hash or an unspent output commitment.
 Only one parameter is required. If multiple parameters are provided only the first one in the list is used.
@@ -551,7 +547,7 @@ Only one parameter is required. If multiple parameters are provided only the fir
 }
 ```
 
-#### get_block
+##### get_block
 
 Gets block details given either a height, a hash or an unspent output commitment.
 Only one parameter is required. If multiple parameters are provided only the first one in the list is used.
@@ -655,7 +651,7 @@ Only one parameter is required. If multiple parameters are provided only the fir
 }
 ```
 
-#### get_tip
+##### get_tip
 
 Returns details about the state of the current fork tip.
 
@@ -680,7 +676,7 @@ Returns details about the state of the current fork tip.
 }
 ```
 
-#### get_kernel
+##### get_kernel
 
 Returns a `LocatedTxKernel` based on the kernel excess. The `min_height` and `max_height` parameters are both optional. If not supplied, `min_height` will be set to 0 and `max_height` will be set to the head of the chain. The method will start at the block height `max_height` and traverse the kernel MMR backwards, until either the kernel is found or min_height is reached.
 
@@ -708,7 +704,7 @@ Returns a `LocatedTxKernel` based on the kernel excess. The `min_height` and `ma
 }
 ```
 
-#### get_outputs
+##### get_outputs
 
 Retrieves details about specifics outputs. Supports retrieval of multiple outputs in a single request. Support retrieval by both commitment string and block height. Last field are for whether or not the response will include rangeproof and merkle proof.
 
@@ -716,7 +712,7 @@ Retrieves details about specifics outputs. Supports retrieval of multiple output
 {
     "jsonrpc": "2.0",
     "method": "get_outputs",
-    "params": [["09bab2bdba2e6aed690b5eda11accc13c06723ca5965bb460c5f2383655989af3f","08ecd94ae293863286e99d37f4685f07369bc084ba74d5c59c7f15359a75c84c03"],376150, 376154, true, true],
+    "params": ["09bab2bdba2e6aed690b5eda11accc13c06723ca5965bb460c5f2383655989af3f","08ecd94ae293863286e99d37f4685f07369bc084ba74d5c59c7f15359a75c84c03"],376150, 376154, true, true],
     "id": 1
 }
 {
@@ -769,7 +765,7 @@ Retrieves details about specifics outputs. Supports retrieval of multiple output
 }
 ```
 
-#### get_unspent_outputs
+##### get_unspent_outputs
 
 UTXO traversal. Retrieves last utxos since a start index until a max. Last boolean is optional to whether or not return the rangeproof.
 
@@ -814,7 +810,7 @@ UTXO traversal. Retrieves last utxos since a start index until a max. Last boole
 }
 ```
 
-#### get_pmmr_indices
+##### get_pmmr_indices
 
 Retrieves the PMMR indices based on the provided block height(s).
 
@@ -838,7 +834,7 @@ Retrieves the PMMR indices based on the provided block height(s).
 }
 ```
 
-#### get_pool_size
+##### get_pool_size
 
 Returns the number of transactions in the transaction pool.
 
@@ -858,7 +854,7 @@ Returns the number of transactions in the transaction pool.
 }
 ```
 
-#### get_stempool_size
+##### get_stempool_size
 
 Returns the number of transactions in the stem transaction pool.
 
@@ -878,7 +874,7 @@ Returns the number of transactions in the stem transaction pool.
 }
 ```
 
-#### get_unconfirmed_transactions
+##### get_unconfirmed_transactions
 
 Returns the unconfirmed transactions in the transaction pool. Will not return transactions in the stempool.
 
@@ -941,7 +937,7 @@ Returns the unconfirmed transactions in the transaction pool. Will not return tr
 }
 ```
 
-#### push_transaction
+##### push_transaction
 
 Push new transaction to our local transaction pool. Optional fluff boolean to bypass Dandelion relay (false by default).
 
@@ -996,11 +992,11 @@ Push new transaction to our local transaction pool. Optional fluff boolean to by
 }
 ```
 
-## Errors
+### Errors
 
 There is two kind of errors that can appear when making a call on the API v2: basic JSON-RPC errors and API result errors
 
-### JSON-RPC Errors
+#### JSON-RPC Errors
 
 These errors are often due to a miscontructed JSON body.
 For example when there is not enough parameters:
@@ -1045,9 +1041,9 @@ or method not found:
 this list of errors is not exhaustive, for more information about the possible error objects see the [JSON RPC 2.0 specifications](https://www.jsonrpc.org/specification#error_object).
 
 
-### API Result Errors
+#### API Result Errors
 
-These type of errors are due to an API error during the query. This type of error is wrapped into the result. 
+These type of errors are due to an API error during the query. This type of error is wrapped into the result.
 The possible error objects are defined in the [`grin_api` crate](https://docs.rs/grin_api/2.0.0/grin_api/struct.Error.html)
 
 For example, trying to ban a peer that's already banned:
@@ -1076,37 +1072,35 @@ or a block that doesn't exist:
 }
 ```
 
-## Authentication
+### Authentication
 
 Like the v1 API, the v2 API uses basic auth. However, the foreign and owner API do not share the same secret.
 - The Owner API use the same token as the V1 Rest API, usually defined in `.grin/main/.api_secret`.
 - The Foreign API use its own token, usually defined in `.grin/main/.foreign_api_secret`.
 
-## Wallet support
+### Wallet support
 
 For full compatibility, grin-wallet will migrate to use the v2 Node API.
 
-## Legacy support
+### Legacy support
 
 The v1 API will remain active for a time the mode of operation for its REST API will be assumed to work as currently. This setup should allow existing wallets and apps to continue working as-is until a cutoff release for legacy mode is determined.
 
-## API only
+### API only
 
 Note that this RFC doe not make user-facing changes to the existing CLI (invoked by `grin client`) to invoke these functions. It's expected that the existing cli functionality will be modified to invoke the new API functions.
 
-## Node V1 Deprecation Timeline
+### Node V1 Deprecation Timeline
 
 - v3.0.0 (January 2020): Node API v1 is marked as deprecated and will be remove in next major version.
 - v4.0.0 (July 2020): Node API v1 is removed from the code.
 
-# Drawbacks
-
+## Drawbacks
 [drawbacks]: #drawbacks
 
 This RFC temporarily introduces some additional code complexity as v1 and v2 node API will need to coexist for the duration of the deprecation period of v1.
 
-# Prior art
-
+## Prior art
 [prior-art]: #prior-art
 
 This kind of JSON-RPC API is widely used for cryptocurrencies. For instance:
@@ -1116,14 +1110,12 @@ This kind of JSON-RPC API is widely used for cryptocurrencies. For instance:
 - [Monero](https://web.getmonero.org/resources/developer-guides/wallet-rpc.html)
 - [Tezos](https://tezos.gitlab.io/master/developer/rpc.html)
 
-# Future possibilities
-
+## Future possibilities
 [future-possibilities]: #future-possibilities
 
 This API simplifies the deployment of new methods and drastically simplifies the work of developers by providing a clear documentation directly on docs.rs.
 
-# References
-
+## References
 [references]: #references
 
 - [JSON-RPC 2.0 Specification](https://www.jsonrpc.org/specification)
