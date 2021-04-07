@@ -92,5 +92,5 @@ Note that having something written down in the future-possibilities section is n
 
 Include any references such as links to other documents or reference implementations.
 
-- [reference 1](link)
-- [reference 2](link)
+- [reference 1](#references)
+- [reference 2](#references)
