@@ -59,7 +59,7 @@ Create a v2 JSON-RPC API for the Node API.
 
 The previous Node API (referred to here as v1) was a REST API. This API while simple had a few drawbacks:
 
-- Manually documented (current documentation is available [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md).
+- Manually documented (current documentation is available [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api_v1.md).
 - Contains call with heterogenous args such as `?byid=xxx` and `commitment/xxx` which can be confusing and lack some uniformity.
 - Uses REST which is bound to HTTP while v2 wallet API uses JSON-RPC.
 - No difference between node management and simple information endpoints (i.e. exposing the node on the internet would allow anyone to query sensitive endpoints)
@@ -81,7 +81,7 @@ This new API will be particularly useful for wallet developer and should ultimat
 
 ### V1 Endpoints
 
-While the endpoints are documented in details [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api.md), here is an overview of the REST API Endpoints of the v1 API.
+While the endpoints are documented in details [here](https://github.com/mimblewimble/grin/blob/master/doc/api/node_api_v1.md), here is an overview of the REST API Endpoints of the v1 API.
 
 ```JSON
 [
@@ -1108,7 +1108,7 @@ This kind of JSON-RPC API is widely used for cryptocurrencies. For instance:
 - [Bitcoin](https://en.bitcoin.it/wiki/API_reference_\(JSON-RPC\))
 - [Ethereum](https://github.com/ethereum/wiki/wiki/JSON-RPC)
 - [Monero](https://web.getmonero.org/resources/developer-guides/wallet-rpc.html)
-- [Tezos](https://tezos.gitlab.io/master/developer/rpc.html)
+- [Tezos](https://tezos.gitlab.io/developer/rpc.html)
 
 ## Future possibilities
 [future-possibilities]: #future-possibilities
@@ -1122,4 +1122,4 @@ This API simplifies the deployment of new methods and drastically simplifies the
 - [Bitcoin JSON-RPC Doc](https://en.bitcoin.it/wiki/API_reference_\(JSON-RPC\))
 - [Ethereum JSON-RPC Doc](https://github.com/ethereum/wiki/wiki/JSON-RPC)
 - [Monero JSON-RPC Doc](https://web.getmonero.org/resources/developer-guides/wallet-rpc.html)
-- [Tezos JSON-RPC Doc](https://tezos.gitlab.io/master/developer/rpc.html)
+- [Tezos JSON-RPC Doc](https://tezos.gitlab.io/developer/rpc.html)

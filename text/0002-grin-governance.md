@@ -7,7 +7,7 @@
 ---
 
 ## RETIRED
-This RFC has been retired and has been superseded by [RFC#0016: simplify-governance](text/0016-simplify-governance.md).
+This RFC has been retired and has been superseded by [RFC#0016: simplify-governance](0016-simplify-governance.md).
 
 ---
 
@@ -183,7 +183,6 @@ Far too many to all be listed here, but here are some:
 **Rust's governance process**
 
 - [https://rust-lang.github.io/rfcs/1068-rust-governance.html](https://rust-lang.github.io/rfcs/1068-rust-governance.html)
-- [https://predictablynoisy.com/rust-governance](https://predictablynoisy.com/rust-governance)
 - [http://mgattozzi.com/oss-governance-and-sustainablility-i/](http://mgattozzi.com/oss-governance-and-sustainablility-i/)
 
 **Node.js governance**

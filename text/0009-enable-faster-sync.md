@@ -3,7 +3,6 @@
 - Authors: [Antioch Peverell](mailto:apeverell@protonmail.com), [John Tromp](mailto:john.tromp@gmail.com)
 - Start date: Oct 25, 2019
 - RFC PR: [mimblewimble/grin-rfcs#29](https://github.com/mimblewimble/grin-rfcs/pull/29)
-- Tracking issue: [mimblewimble/grin-wallet#3173](https://github.com/mimblewimble/grin-wallet/issues/3173)
 
 ---
 
