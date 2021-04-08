@@ -10,12 +10,12 @@
 [summary]: #summary
 
 Carry the restriction of fees, to 40 bits since HF4, back to all history.
-Do not change headerversion despite the hard-forking nature.
+Do not change `headerversion` despite the hard-forking nature.
 
 ## Motivation
 [motivation]: #motivation
 
-This makes the FeeFields methods fee() and fee\_shift() height independent,
+This makes the `FeeFields` methods `fee()` and `fee\_shift()` height independent,
 as well as several other functions which end up calling them.
 This results in nontrivial code and consensus model simplification,
 with no downsise, which is always a good thing.
@@ -61,4 +61,4 @@ I propose that 3 months is more than enough, making this RFC acceptable from mid
 ## References
 [references]: #references
 
-[1] [Grin github](https://github.com/mimblewimble/grin/blob/acba73bf40242f963d8ea1e7128dfdfde6fb8853/core/src/core/transaction.rs#L181-L188)
+[1] [transaction.rs](https://github.com/mimblewimble/grin/blob/acba73bf40242f963d8ea1e7128dfdfde6fb8853/core/src/core/transaction.rs#L181-L188)
