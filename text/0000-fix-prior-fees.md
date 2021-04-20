@@ -15,10 +15,10 @@ Do not change `headerversion` despite the hard-forking nature.
 ## Motivation
 [motivation]: #motivation
 
-This makes the `FeeFields` methods `fee()` and `fee\_shift()` height independent,
+This makes the `FeeFields` methods `fee()` and `fee_shift()` height independent,
 as well as several other functions which end up calling them.
 This results in nontrivial code and consensus model simplification,
-with no downsise, which is always a good thing.
+with no downside, which is always a good thing.
 
 ## Community-level explanation
 [community-level-explanation]: #community-level-explanation
