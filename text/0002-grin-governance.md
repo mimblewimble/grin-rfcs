@@ -183,6 +183,7 @@ Far too many to all be listed here, but here are some:
 **Rust's governance process**
 
 - [https://rust-lang.github.io/rfcs/1068-rust-governance.html](https://rust-lang.github.io/rfcs/1068-rust-governance.html)
+- [https://web.archive.org/web/2019*/https://predictablynoisy.com/rust-governance](https://web.archive.org/web/2019*/https://predictablynoisy.com/rust-governance)
 - [http://mgattozzi.com/oss-governance-and-sustainablility-i/](http://mgattozzi.com/oss-governance-and-sustainablility-i/)
 
 **Node.js governance**
