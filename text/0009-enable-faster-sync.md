@@ -4,6 +4,7 @@
 - Start date: Oct 25, 2019
 - RFC PR: [mimblewimble/grin-rfcs#29](https://github.com/mimblewimble/grin-rfcs/pull/29)
 - Tracking issue: [mimblewimble/grin#3173](https://github.com/mimblewimble/grin/issues/3173)
+
 ---
 
 ## Summary
