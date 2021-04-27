@@ -1,8 +1,8 @@
 - Title: fix-prior-fees
 - Authors: [John Tromp](mailto:john.tromp@gmail.com)
 - Start date: January 21, 2021
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
-- Tracking issue: [Edit if merged with link to tracking github issue]
+- RFC PR: [mimblewimble/grin-rfcs#0021](https://github.com/mimblewimble/grin-rfcs/pull/77)
+- Tracking issue: https://github.com/mimblewimble/grin/issues/3635
 
 ---
 
