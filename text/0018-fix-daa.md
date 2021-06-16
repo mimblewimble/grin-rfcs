@@ -137,6 +137,6 @@ Future improvements in network clock synchronization might make a reduction of F
 
 [1] [archive.org](https://web.archive.org/web/20181120082228if_/https://www.yours.org/content/the-wtema-difficulty-adjustment-algorithm-855a3405606a/)
 
-[2] [read.cash](https://read.cash/@jtoomim/bch-upgrade-proposal-use-asert-as-the-new-daa-1d875696)
+[2] [read.cash](https://web.archive.org/web/20210117193410/https://read.cash/@jtoomim/bch-upgrade-proposal-use-asert-as-the-new-daa-1d875696)
 
 [3] (tromp github)https://github.com/tromp/difficulty
