@@ -1,7 +1,7 @@
 - Title: manual-confirmation
 - Authors: [David Tavarez](mailto:david@punksec.com)
 - Start date: July 14, 2021
-- RFC PR: [mimblewimble/grin-rfcs#0021](https://github.com/mimblewimble/grin-rfcs/pull/)
+- RFC PR: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/)
 - Tracking issue: https://github.com/mimblewimble/grin/issues/
 
 ---
@@ -87,12 +87,11 @@ Users will be able of signing the transaction using the `sign` command. This com
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-None!
+None.
 
 ## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-There is no compelling reason for leaving a height dependency in the fee method.
 
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
