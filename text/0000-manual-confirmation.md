@@ -29,7 +29,7 @@ This helps users to understand Grin better, and it is a unique feature that Grin
 
 This is an opt-in feature, disabled by default, that can be enabled by setting to true a configuration flag named `manual_confirmation`.
 
-When a request to build a synchronous transaction is received, the wallet will check for the `manual_confirmation` flag to determine if the manual confirmation feature is on, if it is, the receiver's wallet will not add the Signature Data to the returned slatepack. After accepting the transaction, the wallet will add the receiver's Signature Data and then it will try to share the partial signed slate with the sender via the Tor network, if the sender wallet is not recheable, the wallet will display the slatepack to the receiver [2].
+When the grin wallet receive a request to build a transaction synchronously, the grin wallet will check for the `manual_confirmation` flag to determine if the manual confirmation feature is on, if it is, the receiver's wallet will not automatically add the `Signature Data` if the receiver to the returned slatepack. The receiver could now accept the incomming request and add the `Signature Data`. After manually accepting the transaction using the UI, the wallet will add the receiver's Signature Data and then it will try to share the partial signed slate with the sender via the Tor network, if the sender wallet is not recheable, the wallet will display the partially signed slatepack to the receiver [2].
 
 ### Singing the transaction offer
 
@@ -48,7 +48,7 @@ If the flag `-n` `--noshare` is present, the transaction will be signed but the 
 
 ### `manual_confirmation`
 
-A new boolean property should be added with the name of `manual_confirmation`, this property is optional and the default value is `false`. The grin wallet will look for this property in the configuration file, if the property is not found the value should set to `false`.
+A new boolean property should be added with the name of `manual_confirmation` in the configuration, this property is optional and the default value is `false`. If the property is not found the value should set to `false`.
 
 ### API changes
 
@@ -56,13 +56,13 @@ A new boolean property should be added with the name of `manual_confirmation`, t
 
 ### `receive_tx`
 
-The `receive_tx` endpoint will check the value of `manual_confirmation`, If `manual_confirmation` is `true` the receipient's signature data will no be added to the slate, neither the receipient payment proof. The status in this case will be `Receiving (Unsigned)`.
+The `receive_tx` endpoint will check the value of `manual_confirmation`, If `manual_confirmation` is `true` the receipient's signature data will no be added to the slate, neither the receipient payment proof. The status in this case will be `Receiving (Unsigned)` for the receiver point of view.
 
 ### Owner RPC API
 
 ### `init_send_tx`
 
-Currently, when a recipient address is provided, this endpoint tries to share the transaction offer with the recepient via Tor. Now, it will validate if the receipient's signature data is present in the received slate response. It will return a message notifying that the recepient did not sign the transaction if recepient's signature data is not found.
+Currently, if the recipient's address is provided, this endpoint tries to share the transaction offer with the recepient via Tor. Now, it will validate whether the recipient's signature data is present in the response received from the recipient's wallet. If the recepient's signature data is not found, it will return a message notifying that the recepient did not sign the transaction. Otherwise, the endpoint's behavior remains as it was before this RFC.
 
 ### API additions
 
@@ -76,7 +76,7 @@ The `receive_tx_sig` endpoint adds the a signature data to the corresponding tra
 
 ### `sign_tx`
 
-The `sign_tx` endpoint adds the receipient's signature data and the corresponding payment proof to a specified transaction. It starts a synchronous transaction with the sender, if the transaction can not be finalized by the sender, the transaction slatepack is returned.
+The `sign_tx` endpoint adds the user's signature data and the corresponding payment proof to a specified transaction. It starts a synchronous transaction with the sender, the transaction slatepack is returned if the sender is not reachable. It is recommendable to internally call the `init_send_tx` owner endpoint to unified the experience.
 
 ### Commands
 
