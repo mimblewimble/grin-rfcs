@@ -54,7 +54,7 @@ from the beginning to the community, vulnerability researchers, the core team
 and other neighboring projects that share threads in the same security blanket.
 
 An example of another project adopting the same standard can be found
-[here](https://github.com/zcash/zcash/blob/master/responsible_disclosure.md)
+[here](https://github.com/zcash/zcash/blob/76d3adc564a8cb87923ce5be1cc3aa8046f6d24e/SECURITY.md)
 in Zcash's vulnerability disclosure document.
 
 ## Reference-level explanation
@@ -66,7 +66,7 @@ in Zcash's vulnerability disclosure document.
 [SECURITY.md](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md) if the RFC is adopted.
 
 - Many of the changes proposed are modeled from
-[Zcash's security disclosure policy](https://github.com/zcash/zcash/blob/master/responsible_disclosure.md#security-disclosures)
+[Zcash's security disclosure policy](https://github.com/zcash/zcash/blob/76d3adc564a8cb87923ce5be1cc3aa8046f6d24e/SECURITY.md#security-disclosures)
 which adopts the same standard proposed here for Grin.
 
 _All links to the standard in the actual implementation of SECURITY.md must be
@@ -336,7 +336,7 @@ relevant to the security process for Grin.
 - [0] [https://dl.packetstormsecurity.net/papers/general/rfpolicy-2.0.txt](https://dl.packetstormsecurity.net/papers/general/rfpolicy-2.0.txt)
 - [1] [https://www.youtube.com/watch?v=h7W1u1K2VjQ](https://www.youtube.com/watch?v=h7W1u1K2VjQ)
 - [2] [https://github.com/RD-Crypto-Spec/Responsible-Disclosure](https://github.com/RD-Crypto-Spec/Responsible-Disclosure)
-- [3] [https://github.com/zcash/zcash/blob/master/responsible_disclosure.md](https://github.com/zcash/zcash/blob/master/responsible_disclosure.md)
+- [3] [https://github.com/zcash/zcash/blob/master/SECURITY.md](https://github.com/zcash/zcash/blob/76d3adc564a8cb87923ce5be1cc3aa8046f6d24e/SECURITY.md)
 - [4] [https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md](https://github.com/mimblewimble/grin/blob/09cf6de1d143ffbe007478372dc573213e06804d/SECURITY.md)
 - [5] [https://github.com/QubesOS/qubes-secpack/blob/master/canaries/canary-020-2019.txt](https://github.com/QubesOS/qubes-secpack/blob/master/canaries/canary-020-2019.txt)
 - [6] [https://riseup.net/about-us/canary/canary-statement-signed.txt](https://riseup.net/about-us/canary/canary-statement-signed.txt)

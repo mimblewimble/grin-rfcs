@@ -35,7 +35,7 @@ Although spending decisions will always be made on a case-by-case basis, it is u
 
 There is scope for interpretation as to what this actually means, but the following presents (non-exhaustive) guidelines as to the types of activities that would be considered appropriate to finance from the fund.
 
-* Activities related to the continuing development needs of the Grin code-base and related projects under the GitHub [mimblewimble](github.com/mimblewimble) organization. This can include:
+* Activities related to the continuing development needs of the Grin code-base and related projects under the GitHub [mimblewimble](https://github.com/mimblewimble) organization. This can include:
    * Fixed-term development or project-management contracts
    * Infrastructure and other incidental costs
    * Security audit costs

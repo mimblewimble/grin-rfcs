@@ -8,7 +8,7 @@
 ---
 
 ## RETIRED
-This RFC has been retired and has been superseded by [RFC#0015: slatepack](text/0015-slatepack.md).
+This RFC has been retired and has been superseded by [RFC#0015: slatepack](0015-slatepack.md).
 
 ---
 
