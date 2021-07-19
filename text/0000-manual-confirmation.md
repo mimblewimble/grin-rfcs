@@ -27,7 +27,7 @@ This helps users to understand Grin better, and it is a unique feature that Grin
 ## Community-level explanation
 [community-level-explanation]: #community-level-explanation
 
-This an opt-in feature, disabled by default, that can be enabled by setting to true a configuration flag named `manual_confirmation`.
+This is an opt-in feature, disabled by default, that can be enabled by setting to true a configuration flag named `manual_confirmation`.
 
 When a request to build a synchronous transaction is received, the wallet will check for the `manual_confirmation` flag to determine if the manual confirmation feature is on, if it is, the receiver's wallet will not add the Signature Data to the returned slatepack. After accepting the transaction, the wallet will add the receiver's Signature Data and then it will try to share the partial signed slate with the sender via the Tor network, if the sender wallet is not recheable, the wallet will display the slatepack to the receiver [2].
 
