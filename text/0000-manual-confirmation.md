@@ -101,10 +101,10 @@ None.
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-Should the use of this feature be encouraged?
-Could be `manual_confirmation = true` the default state?
+Should the use of this feature be encourage?
+Could it be `true` for the `manual_confirmation` configuration property?
 Will this work for more than 2 participants?
-Can the the `finalize` replaced?
+Can we replace the `finalize` command by `replaced`?
 
 ## Future possibilities
 [future-possibilities]: #future-possibilities
