@@ -14,9 +14,9 @@ This RFC defines the API changes and additions required to give users the abilit
 ## Motivation
 [motivation]: #motivation
 
-Mimblewimble transactions are interactive, this doesn't necessarily mean that parties have to be online, they just need to be able to communicate with each other at some point. This gives the recepient the opportunity to refuse being involved in a transaction, but currently when a slatepack address is provided, this is not possible. The `SlatepackAddress` is not only used to encrypt asynchronous transactions but also to route synchronous transactions. By default when a request is received, the grin wallet is automatically adding the receipient's signature data [1] and returning the slatepack including this signature data. While automatically adding the recipient's signature data is convenient, it takes away users' freedom to have full control over their own wallets, which is a key advantage of the Mimblewimble protocol. The ability of refusing incoming transactions is only possible when transactions are non interactive, like in Mimblewimble.
+Mimblewimble transactions are interactive, this doesn't necessarily mean that parties have to be online, they just need to be able to communicate with each other at some point. This gives the recepient the opportunity to refuse being involved in a transaction, but currently when a slatepack address is provided, this is not possible. The `SlatepackAddress` is not only used to encrypt asynchronous transactions but also to route synchronous transactions. By default when a request is received, the grin wallet is automatically adding the receipient's signature data [1] and returning the slatepack including this signature data. While automatically adding the recipient's signature data is convenient, it takes away users' freedom to have full control over their own wallets. The ability of refusing incoming transactions is only possible when noninteractive transactions are impossible, like in Mimblewimble.
 
-Manually acceptance of incoming transactions also adds:
+Manually accepting incoming transactions also adds:
 
 - Protection of an Output Injection (or Dust attact) in users' wallet.
 - Consistency between Sender-Reciver-Sender (SRS) flow and the Receiver-Sender-Receiver (RSR) one.
@@ -30,6 +30,8 @@ This helps users to understand Grin better, and it is a unique feature that Grin
 This is an opt-in feature, disabled by default, that can be enabled by setting to true a configuration flag named `manual_confirmation`.
 
 When the grin wallet receive a request to build a transaction synchronously, the grin wallet will check for the `manual_confirmation` flag to determine if the manual confirmation feature is on, if it is, the receiver's wallet will not automatically add the `Signature Data` if the receiver to the returned slatepack. The receiver could now accept the incomming request and add the `Signature Data`. After manually accepting the transaction using the UI, the wallet will add the receiver's Signature Data and then it will try to share the partial signed slate with the sender via the Tor network, if the sender wallet is not recheable, the wallet will display the partially signed slatepack to the receiver [2].
+
+Although this is an optional feature, its use should be encouraged.
 
 ### Singing the transaction offer
 
@@ -56,13 +58,14 @@ A new boolean property should be added with the name of `manual_confirmation` in
 
 ### `receive_tx`
 
-The `receive_tx` endpoint will check the value of `manual_confirmation`, If `manual_confirmation` is `true` the receipient's signature data will no be added to the slate, neither the receipient payment proof. The status in this case will be `Receiving (Unsigned)` for the receiver point of view.
+The `receive_tx` endpoint will check the value of `manual_confirmation`, If `manual_confirmation` is `true` the receipient's wallet will:
+- Avoid adding the participant data (`excess`, `signature` and `nonce` ).
+- Avoid adjusting the transaction offset.
+- Avoid adding the output(s) to the transaction.
 
-### Owner RPC API
+By doing the above it won't be possible to add the receipient payment proof. The endpoint will then return the same received slatepack.
 
-### `init_send_tx`
-
-Currently, if the recipient's address is provided, this endpoint tries to share the transaction offer with the recepient via Tor. Now, it will validate whether the recipient's signature data is present in the response received from the recipient's wallet. If the recepient's signature data is not found, it will return a message notifying that the recepient did not sign the transaction. Otherwise, the endpoint's behavior remains as it was before this RFC.
+The status of the transaction in this case will be set as `Receiving (Unsigned)` in the receiver's wallet database.
 
 ### API additions
 
@@ -74,9 +77,15 @@ The `receive_tx_sig` endpoint adds the a signature data to the corresponding tra
 
 ### Owner RPC API
 
-### `sign_tx`
+### `create_tx`
 
-The `sign_tx` endpoint adds the user's signature data and the corresponding payment proof to a specified transaction. It starts a synchronous transaction with the sender, the transaction slatepack is returned if the sender is not reachable. It is recommendable to internally call the `init_send_tx` owner endpoint to unified the experience.
+The `create_tx` endpoint will check the value of `manual_confirmation`, If `manual_confirmation` is `true` the wallet will:
+- Add the participant data (`excess`, `signature` and `nonce` ).
+- Adjust the transaction offset.
+- Add the output(s) to the transaction.
+- Add the payment proof to the specified transaction
+  
+It will automatically try to perform a synchronous transaction with the sender, the transaction slatepack is returned if the sender is not reachable. It is recommendable to internally call the `init_send_tx` owner endpoint to unified the experience.
 
 ### Commands
 
@@ -89,19 +98,18 @@ Users will be able of signing the transaction using the `sign` command. This com
 
 None.
 
-## Rationale and alternatives
-[rationale-and-alternatives]: #rationale-and-alternatives
-
-
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
 Should the use of this feature be encouraged?
 Could be `manual_confirmation = true` the default state?
 Will this work for more than 2 participants?
+Can the the `finalize` replaced?
 
 ## Future possibilities
 [future-possibilities]: #future-possibilities
+
+This also adds the ability for the receiver to manually include a payjoin input in a specific transaction but it should be implemented by the wallets developers.
 
 Manually confirmations could be useful if we implement at some point a `memo` field for the `payment proof`. Sender and receiver could agree on accepting a document/file attached to the transaction.
 
