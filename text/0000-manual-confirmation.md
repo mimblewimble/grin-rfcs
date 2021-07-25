@@ -59,6 +59,7 @@ A new boolean property should be added with the name of `manual_confirmation` in
 ### `receive_tx`
 
 The `receive_tx` endpoint will check the value of `manual_confirmation`, If `manual_confirmation` is `true` the receipient's wallet will:
+
 - Avoid adding the participant data (`excess`, `signature` and `nonce` ).
 - Avoid adjusting the transaction offset.
 - Avoid adding the output(s) to the transaction.
@@ -80,6 +81,7 @@ The `receive_tx_sig` endpoint adds the signature data to the corresponding trans
 ### `create_tx`
 
 The `create_tx` endpoint will receive a transaction as a parameter and it will:
+
 - Add the participant data (`excess`, `signature` and `nonce` ).
 - Adjust the transaction offset.
 - Add the output(s) to the transaction.
