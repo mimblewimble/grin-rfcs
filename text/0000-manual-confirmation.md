@@ -64,7 +64,7 @@ The `receive_tx` endpoint will check the value of `manual_confirmation`, If `man
 - Avoid adjusting the transaction offset.
 - Avoid adding the output(s) to the transaction.
 
-By doing the above it won't be possible to add the receipient payment proof. The endpoint will then return the same received slatepack.
+By doing the above it won't be possible to add the receipient payment proof[2]. The endpoint will then return the same received slatepack.
 
 The status of the transaction in this case will be set as `Receiving (Unsigned)` in the receiver's wallet database.
 
@@ -119,3 +119,4 @@ Manually confirmations could be useful if we implement at some point a `memo` fi
 
 
 [1] [Signature Data](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0012-compact-slates.md#signature-data)
+[1] [Payment Proof](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0006-payment-proofs.md)
