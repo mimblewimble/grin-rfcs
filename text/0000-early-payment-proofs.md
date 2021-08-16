@@ -139,6 +139,11 @@ Before signing, the sender verifies the receiver signature and checks the paymen
 ## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
+In the SenderNonce proof type, instead of requiring the sender nonce to
+commit to message m, we can require the kernel nonce to do so, which avoids
+the need for a proof verifier to subtract the receiver public nonce from the
+kernel nonce.
+
 ## Prior art
 [prior-art]: #prior-art
 
