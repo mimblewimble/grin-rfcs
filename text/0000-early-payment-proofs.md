@@ -93,8 +93,7 @@ For consistency with the old proof type, the amount is again limited to 7 bytes.
 The witness is a triple (s,i,C) where i is the MMR index of an on-chain kernel K with commitment C, satisfying s\*G = R + e\*X, where R is the `receiver_public_nonce`, X is the `receiver_public_excess`, and e is the hash challenge of kernel K.
 The reason for including the kernel index is that nodes don't maintain an index of all kernels, and looking for the index of a potentially very old kernel is rather expensive,
 and proof verification should not be a DoS vector.
-The reason for including the kernel commitment is so that the prover can recompute the index
-when necessitated by chain reorgs.
+The reason for including the kernel commitment is so that the prover can recompute the index when necessitated by chain reorgs.
 
 ### Proof type SenderNonce
 
@@ -113,13 +112,14 @@ sender to commit to remaining payment details in their following step.
 There is no need for this proof type in SRS flow, as the simpler Invoice type suffices.
 
 The witness is a quintuple (s,i,C,Rs',m) where i is the MMR index of an on-chain kernel K with commitment C, satisfying s\*G = R + e\*X, where R is the `receiver_public_nonce`, X is the `receiver_public_excess`, and e is the hash challenge of kernel K.
-and e is the hash challenge of kernel K.
 Additionally, the sender nonce Rs, computed as the difference between kernel nonce and receiver public nonce,
 must be of the form Rs' + H(Rs' | m) \* G, where message m contains the promise fields
   - proof type `0x02`
   - `amount`
   - `timestamp`
   - `memo`
+
+This is similar to the Sign-to-Contract notion discussed in the last reference.
 
 ### Wallet actions
 
@@ -139,6 +139,15 @@ Before signing, the sender verifies the receiver signature and checks the paymen
 ## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
+A possible alternative that more fully embraces Pay/Sign-to-Contract
+is to combine a promise and contract in the kernel commitment and/or nonce.
+For generality, let's explain the case of using both. In practice, using only one may make more sense or be more secure.
+
+Let P = P^A + P^B be the sum of the parties' public kernel contributions, let P' = P + H(P|PC) * G be the kernel public key that additionally commits to some data PC. 
+let R = R^A + R^B be the sum of the parties' nonce, let R' = R + H(R|RC) * G be the kernel public nonce that additionally commits to some data RC.
+Let e = H(P' | R' | m) be the kernel hash challenge, s^A = k^A + e * x^A and s^B = k^B + e * x^B be the parties' partial signatures made under agreement with PC and RC, then (s^A + s^B + H(R|RC) + e * H(P|PC), R') is a valid signature for kernel commitment P'.
+Now we have various choices of commiting to the receiver promise signature and contract in PC and/or RC. The construction can obviously be simplified when only using one of them.
+
 ## Prior art
 [prior-art]: #prior-art
 
@@ -156,3 +165,4 @@ Before signing, the sender verifies the receiver signature and checks the paymen
 * [Payment Proofs RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0006-payment-proofs.md)
 * Beam's payment proof model: https://github.com/BeamMW/beam/blob/c9beb0eae55fa6b7fb3084ebe9b5db2850cf83b9/wallet/wallet_db.cpp#L3231-L3236
 * [Eliminate Finalize Step RFC](https://github.com/DavidBurkett/grin-rfcs/blob/eliminate_finalize/text/0000-eliminate-finalize.md)
+* [Pay-to-contract and Sign-to-contract](https://www.reddit.com/r/Bitcoin/comments/d3lffo/technical_paytocontract_and_signtocontract/)
