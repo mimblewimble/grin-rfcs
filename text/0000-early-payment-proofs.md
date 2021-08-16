@@ -139,15 +139,6 @@ Before signing, the sender verifies the receiver signature and checks the paymen
 ## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
 
-A possible alternative that more fully embraces Pay/Sign-to-Contract
-is to combine a promise and contract in the kernel commitment and/or nonce.
-For generality, let's explain the case of using both. In practice, using only one may make more sense or be more secure.
-
-Let P = P^A + P^B be the sum of the parties' public kernel contributions, let P' = P + H(P|PC) * G be the kernel public key that additionally commits to some data PC. 
-let R = R^A + R^B be the sum of the parties' nonce, let R' = R + H(R|RC) * G be the kernel public nonce that additionally commits to some data RC.
-Let e = H(P' | R' | m) be the kernel hash challenge, s^A = k^A + e * x^A and s^B = k^B + e * x^B be the parties' partial signatures made under agreement with PC and RC, then (s^A + s^B + H(R|RC) + e * H(P|PC), R') is a valid signature for kernel commitment P'.
-Now we have various choices of commiting to the receiver promise signature and contract in PC and/or RC. The construction can obviously be simplified when only using one of them.
-
 ## Prior art
 [prior-art]: #prior-art
 
