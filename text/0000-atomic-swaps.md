@@ -14,6 +14,18 @@ Atomic swaps are a technique originally developed to atomically exchange funds b
 
 The techniques can be adapted to work for the Grin cryptocurrency following guides developed by Jasper van der Maarel [\[1\]](#references). A previous version of the protocol was implemented using Hash-based Time Locked Contracts in the [grinswap](https://github.com/GrinSwap/proof-of-concept) wallet project.
 
+To perform an atomic swap, each party commits to locking funds on their respective chains. The lock is setup to be opened in a way that immediately reveals the key to the other party for their lock.
+
+A trade either happens, or fails completely.
+
+Achieving atomicity is done through a series of cryptographically constructed contracts. The contracts use time-locks to allow for recovering from a failure condition (e.g. other party ceases communication).
+
+Multi-party outputs are generated to ensure that spending them requires the approval of both parties. The original multi-party output is considered the funding transaction, gets partially signed during the protocol, and fully signed after successful protocol setup. Each swap party constructs their own funding transaction.
+
+Dependent transactions, `Grin Refund` and `Grin Success`, commit to using the multi-party output as inputs, spending from the `Grin Fund` funding transaction.
+
+Once all the dependent transactions are properly constructed and signed, each party signs and publishes their funding transaction.
+
 # Motivation
 [motivation]: #motivation
 
@@ -31,6 +43,47 @@ The reference implementation uses Bitcoin as the other chain in the swap, but po
 
 Funds on the non-Grin chain need to be locked in a multisignature transaction that requires knowledge of both "atomic secrets" to be spent. A refund transaction is also needed to recover funds in case one of the parties becomes non-responsive, or the protocol needs to be aborted for another reason.
 
+The first step is to construct and pre-sign funding transactions for each party.
+
+Each funding transaction should have two spending conditions:
+
+- each party signs
+- one party signs after timelock
+
+Thanks to multisignature protocols like Musig2 and ECDSA2p, we can use key aggregation to construct multisignatures that look like normal signatures.
+
+If Alice wants to swap Grin for Bob's Bitcoin, Alice constructs a multisignature output [\[5\]](#references), and an absolute timelock to allow for recovery.
+
+Bob also constructs a multisignature output, and an absolute timelock (`OP_CHECKLOCKTIME`) to allow for recovery.
+
+`Grin Fund` requires knowledge of both Alice and Bob's private keys to spend, or just Alice's after a timelock expires.
+
+`Bitcoin Fund` requires knowledge of both Alice and Bob's adaptor secret keys to spend, or just Bob's private key after a timelock expires.
+
+Alice creates the `Grin Fund` funding transaction, and constructs `Grin Refund` and `Grin Success` transactions which spend from the funding transaction.
+
+`Grin Success` sends Grin to Bob, uses an adaptor signature to reveal Bob's secret, and allows Alice to retrieve the Bitcoin funds.
+
+`Grin Refund` refunds Grin to Alice, uses an adaptor signature to reveal Alice's secret, and allows Bob to retrieve Bitcoin funds using the multisignature spend path.
+
+Below is a diagram of a successful atomic swap protocol:
+
+| Alice | Direction | Bob |
+|-------|-----------|-----|
+| Create(GrinFund) | ---------> | |
+| | <--------- | Create(BitcoinFund) |
+| Create(GrinRefund) + AdaptSign(GrinRefund) | ---------> | |
+| | <--------- | PreSign(GrinRefund) |
+| Create(GrinSuccess) | ---------> | |
+| | <--------- | AdaptSign(GrinSuccess) |
+| PreSign(GrinSuccess) | ---------> | |
+| | <--------- | PreSign(GrinFund) |
+| Sign(GrinFund) + Publish(GrinFund) | | |
+| | | Sign(GrinSuccess) + Publish(GrinSuccess) |
+| RecoverAtomic(GrinSuccess) | | |
+| Sign(BitcoinFund) + Publish(BitcoinFund) | | |
+
+
 ## Atomic secrets
 [atomic-secrets]: #atomic-secrets
 
@@ -38,7 +91,7 @@ In the case of Grin, atomic secrets are just Secp256k1 private keys used to unlo
 
 In the refund transaction, Alice (with locked Grin funds) will reveal her secret `nA` to allow Bob to recover his locked funds on the other chain.
 
-In the main transaction, Bob and Alice create a multisignature Grin transaction which reveals Bob's secret `nB` to Alice. Alice can then recover the funds locked on the other chain.
+In the `Grin Success` transaction, Bob and Alice create a multisignature Grin transaction which reveals Bob's secret `nB` to Alice. Alice can then recover the funds locked on the other chain.
 
 Atomic IDs are identifiers used to derive atomic secrets using the keychain. Atomic IDs are formatted as follows:
 
@@ -74,7 +127,7 @@ Multisignature outputs are different from multisignature kernels. In a multisign
 
 Multisignature outputs require both (all) parties to collaboratively build both the Pedersen commitment to the output value, and the rangeproof. Once fully constructed, multisignature outputs function the same as normal, single-signature outputs. To an outside observer, multisignature outputs are the same as single-signature outputs.
 
-## Slate 5
+## Slate v5
 [slate]: #slate
 
 In addition to the slate changes in the multisignature specification, there are a number of changes needed specifically for atomic swaps. Atomic swaps depend on the changes in multisignature slate format, but multisignature outputs do not depend on the changes for atomic swaps.
@@ -161,6 +214,10 @@ It is up to atomic swap participants if the initiator (Alice) or receiver (Bob) 
 
 In the first round, Alice selects and verifies the multisignature output from the Grin Fund transaction, and sends her public random kernel nonce and blinding factor (`kA*G` and `rA*G`) to Bob.
 
+Alice's coin selection works similar to normal Grin coin selection, except that only valid multisignature outputs are considered for selection.
+
+Multisignature output validation includes checking for proper ID, and that the output is unspent.
+
 Alice also includes the multisignature output ID in the slate, so that Bob can select the same output.
 
 2. `receive_atomic_swap`
@@ -204,12 +261,12 @@ During a swap, a number of conditions can lead to a protocol abort. The `Grin Re
 
 `Grin Refund` reveals Alice's atomic secret (`nA`). Bob can then recover his funds on the other chain.
 
-The funding transaction on the other chain can also use a timelock, if timelocks exist on the other chain, to abort after a given period, returning the funds to its original owner.
+The funding transaction on the other chain can also use a timelock to abort the protocol, if timelocks exist on the other chain. Funds are returned to their original owners.
 
 ### Recovering funds on the other chain
 [recovering-funds]: #recovering-funds
 
-The `Bitcoin Fund` transaction in the diagram is a mutlisignature transaction, requiring a signature under both Alice's and Bob's atomic secrets (`nA` and `nB`). Since Alice or Bob will know both secrets when recovering the funds, they can simply add their keys, and sign using a normal single key signature.
+The `Bitcoin Fund` transaction in the diagram is a mutlisignature transaction, requiring a signature under both Alice's and Bob's atomic secrets (`nA` and `nB`). Since Alice or Bob will know both secrets when recovering the funds, they can simply aggregate their keys, and sign using a normal single key signature.
 
 So, the `Bitcoin Fund` transaction will use the aggregate public key `nA*G + nB*G`.
 
@@ -253,3 +310,4 @@ Somsen's original design uses relative timelocks, which could be implemented on 
 - \[2\] [Scriptless Scripts](https://download.wpsoftware.net/bitcoin/wizardry/mw-slides/2018-05-18-l2/slides.pdf)
 - \[3\] [Succinct Atomic Swaps](https://gist.github.com/RubenSomsen/8853a66a64825716f51b409be528355f)
 - \[4\] [NRD Kernels](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0013-nrd-kernels.md)
+- \[5\] [Multisignature Outputs](https://github.com/GeneFerneau/grin-rfcs/blob/multisig/text/0000-multisignature-outputs.md)
