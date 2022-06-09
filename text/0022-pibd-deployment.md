@@ -25,13 +25,13 @@ Previously, the fast-sync process for bringing new nodes onto the network involv
 * Downloads must be restarted if interrupted
 * Nodes responding to PIBD requests exhibit a noticable pause as a result of needing to mutex lock and zip the entire UTXO set when requested.
 
-PIBD is a new fast-sync method that leverages the unique structure of Grin's backend PMMRs to break off and transmit 'segments' of Grin's UTXO set independently of each other. This method ensures that
+PIBD is a new fast-sync method that leverages the unique structure of Grin's backend MMRs to break off and transmit 'segments' of Grin's UTXO set independently of each other. This method ensures that
 
 * The UTXO set is received from multiple peers in chunks, then validated and pieced together by the syncing node
 * The process can be stopped and resumed at will
 * The time to process and sync a new node should be more consistent. (Note this doesn't necessarly mean 'faster' in all cases)
 
-Details of the PIBD message protocol, segments and proof generation are defined within the [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md). This RFC will not repeat information found there, but will focus on implementation details that aren't covered therein.
+Details of the PIBD message protocol, segments and proof generation are defined within the [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md). This RFC will not repeat information found there, but will focus on implementation details that are outside of its scope.
 
 ## Reference-level explanation
 
@@ -45,7 +45,7 @@ Note that there is a previous flag in the core implementation `PIBD_HIST` denote
 
 #### Segment creation
 
-A node responds to a PIBD segment request by creating a segment of an underlying PMMR along with a merkle proof demonstrating inclusion in the complete PMMR up to a position represented by the current horizon header. Note that the responding node must always respond with segments corresponding to the consensus-agreed horizon header (and it is not possible for a nodes to explicitly request a segment for any other header).
+A node responds to a PIBD segment request by creating a segment of an underlying MMR along with a merkle proof demonstrating inclusion in the complete MMR up to a position represented by the current horizon header. Note that the responding node must always respond with segments corresponding to the consensus-agreed horizon header (and it is not possible for a nodes to explicitly request a segment for any other header).
 
 #### Horizon Header Height
 
@@ -70,9 +70,9 @@ THRESHOLD_HEIGHT = 1_000_000 - 2880 = 997120
 HORIZON_HEADER_HEIGHT = 997120 - (977120 % 720) = 99640
 ```
 
-#### PMMR Size Selection and Proof Generation
+#### MMR Size Selection and Proof Generation
 
-Nodes responding to PIBD message requests must only respond with with segments and proofs of inclusion for the PMMR of the size represented within the current horizon header. These sizes are defined within the header as:
+Nodes responding to PIBD message requests must only respond with with segments and proofs of inclusion for the MMR of the size represented within the current horizon header. These sizes are defined within the header as:
 
 ```
 output_mmr_size: Output and Rangeproof segment requests
@@ -80,12 +80,12 @@ output_mmr_size: Output and Rangeproof segment requests
 kernel_mmr_size: Kernel segment requests
 ```
 
-Merkle proofs within a segment must prove inclusion in a PMMR as follows:
+Merkle proofs within a segment must prove inclusion in a MMR as follows:
 
 ```
-Bitmap segment requests: The root of the bitmap PMMR at the given height hashed against the root of the output pmmr. When combined, this should give the value of `output_root` in the header.
+Bitmap segment requests: The root of the bitmap MMR at the given height hashed against the root of the output pmmr. When combined, this should give the value of `output_root` in the header.
 
-Output segment requests: The root of the output PMMR at the given height hashed with the root of the output pmmr. When combined, this should give the value of `output_root` in the header.
+Output segment requests: The root of the output MMR at the given height hashed with the root of the output pmmr. When combined, this should give the value of `output_root` in the header.
 
 Rangeproof Segment Requests: The root should correspond directly to the header field `range_proof_root`
 
@@ -94,40 +94,156 @@ Kernel Segment Requests: The root should correspond directly to the header field
 
 Note that it is not possible for a nodes to explicitly request a segment for a particular header; it's assumed that the request is always for the current horizon header.
 
-#### PMMR Rewinding
+#### MMR Rewinding
 
-Segments must be created against the UTXO set as it existed at the horizon header, which means that all prunable PMMRs (i.e. output and rangeproof) PMMRs must be rewound to ensure the leaf inclusion set is as it existed at that block. In practice, implementations only need to rewind the entire txhashset once (on initialisation of the segmenting code or when the horizon block changes), and maintain a representative bitmap set to use in for subsequent PIBD segment requests.
+Segments must be created against the UTXO set as it existed at the horizon header, which means that all prunable MMRs (i.e. output and rangeproof) MMRs must be rewound to ensure the leaf inclusion set is as it existed at that block. In practice, implementations only need to rewind the entire txhashset once (on initialisation of the segmenting code or when the horizon block changes), and maintain a representative bitmap set to use in for subsequent PIBD segment requests.
 
 ### Requesting Segments and Recreating the UTXO Set
 
-Intro... this must happen on the client side
-   * determine horizon block
-   * request current bitmap set
-   * Determine which segments to request
-   * determine what you have
+A nodes fast-syncing via the PIBD process will implement the following overall process:
 
-* Desegmentation
+1. [Determine the current horizon block](#determining-the-current-horizon-block)
+1. [Determine segment heights](#determining-segment-heights)
+1. [Determine peer-selection strategy](#peer-selection)
+1. [Request bitmap MMR segments from PIBD-supporting peers](#requesting-output-bitmap-segments)
+1. [Determine how much (if any) of each MMR has already been downloaded and applied to the local state](#determining-starting-position-for-each-mmr)
+1. [Derive a list of segments needed for each MMR, and request segments in as parallel a manner as possible](#requesting-segments)
+1. [Receive and validate each segment](#receiving-and-validating-segments)
+1. [Apply each segment to its respective MMR sequentially, essentially re-building the UTXO set](#applying-segments-to-mmrs)
+1. Once each MMR has been recreated to the specified height found in the horizon header, validate all MMR roots and UTXOs
+1. Move on to block sync, requesting the remaining blocks up to the header height explicitly
 
-* Segment sizes
+Note that this process should work for new nodes (with no MMR data), as well as nodes that were previously synced but have been offline for longer than the horizon window. 
 
-* When to give up
+A description of each of these stages as well as relevant implementation details follows.
 
+#### Determining the current horizon block
 
-* Order of validation/verification, explanation 
+A syncing node follows the same process outlined [above](#horizon-header-height) to determine the current horizon block. All calculations of required segments will begin with the MMR size values found in this header.
+
+Note that if the horizon header changes (i.e. the 12-hour horizon window 'rolls over') while the node is in the process of syncing, there should be no need to invalidate the partial MMRs that have already been downloaded. The node should:
+
+1. Invalidate all previous segment requests and re-calculate the list of required segments based on the new horizon block
+1. Re-request output bitmap segments and recreate a new output bitmap set
+1. Continue requesting segments based on the new data and the size of the partial MMRs that have already been downloaded.
+
+Note that if the horizon block changes, outputs in the output bitmap set that were previously unspent could potentially become spent. Before validating MMR roots and UTXOs, the node must compare the entire bitmap set against local MMR storage to ensure outputs have been properly marked as spent and/or pruned locally (see below TBD).
+
+#### Determining segment heights
+
+The [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md) specifies the range of valid segment heights for each MMR, and it is theoretically possible to dynamically adjust segment sizes (and therefore request size) based on network conditions or a host of other factors. However, for simplicity the core implementation currently selects default sizes for each type of segment, and uses them throughout for all calculations. These default values are:
+
+```
+BITMAP_SEGMENT_HEIGHT = 9
+OUTPUT_SEGMENT_HEIGHT = 11
+RANGEPROOF_SEGMENT_HEIGHT = 11
+KERNEL_SEGMENT_HEIGHT = 11
+```
+The processes outlined in later sections will assume constant segment heights, but implementations may choose to adjust these heights and/or perform segment size calculations dynamically.
+
+To determine the number of segments `n` of height `h` required for an MMR of a given size `s`, the following calculation can be used:
+
+```
+floor(n_leaves(s) / pow(h, 2))
+```
+
+where `n_leaves` is the function that calculates the number of leaves in a pmmr of a given size.
+
+Alternatively, a node can attempt to blindly request segments sequentually until one is returned that is not a 'full' segment, however this strategy may lead to unnecessary requests and difficulties determining how much of the PIBD process remains.
+
+#### Peer Selection
+
+The syncing node should select a different peer for each segment request according to the following strategy:
+
+1. Begin with a list of all known peers
+1. Filter this list to only include peers advertising the maximum known difficulty on the network 
+1. Further filter this list to only include peers advertising the [PIBD_HIST_1](#capabilities-flag) flag
+1. Select a peer at random from the remaining list of peers
+
+For the deployment period between [the initial rollout of PIBD and the retirement of the `txhashset.zip` sync method](#rollout-timing), nodes should abort the PIBD process and fall back to the `txhashset.zip` method of syncing if the following are true:
+
+* There are no peers advertising the maximum known difficulty on the network also advertising the `PIBD_HIST_1` capability
+* The node has not seen such a peer for 60 seconds
+
+#### Requesting output bitmap segments
+
+Before any other segments can be validated or applied to local MMR storage, the syncing node must first request and validate the complete output bitmap set corresponding to the output MMR size in the horizon header.
+
+The MMR size, number of leaves and therefore required number of bitmap segments can be pre-determined based on the size of the output mmr in the horizon header, as demonstrated in the following reference code snippet:
+
+```
+		/// Calculate number of leaves in the bitmap mmr
+		bitmap_mmr_leaf_count =
+			(pmmr::n_leaves(self.archive_header.output_mmr_size) + 1023) / 1024;
+		// Total size of Bitmap PMMR
+		bitmap_mmr_size =
+			1 + pmmr::peaks(pmmr::insertion_to_pmmr_index(self.bitmap_mmr_leaf_count))
+				.last()
+```
+
+The node should request bitmap segments from other peers according to the [Peer Selection Strategy](#peer-selection) above. (The process of re-creating an MMR from segments is described below TBD). Once the bitmap MMR is reconstructed, the node should keep a representation of the underlying bitmap cached in order to facilitate comparison against later incoming segments.
+
+The syncing node is not required to store the contents of the output set bitmap locally (in the core node implementation, the output bitmap set is derived and updated as needed as opposed to being stored locally). If the PIBD process is interrupted, the node may re-request all bitmap segments from peers as part of the normal process of starting/resuming PIBD.
+
+#### Determining starting position for each MMR
+
+Once the bitmap set has been recreated and the node is ready to start requesting segments from peers, the node should examine the contents of its local MMR storage to determine the on-disk sizes of each PMMR. Based on this, it should determine which segments it should request first for each MMR. This ensures that the PIBD process is the same regardless of whether the node is starting from the genesis block, resuming, or catching-up after an extended period of being offline.
+
+#### Requesting Segments
+
+Once the required list of segments has been derived, the node can then begin to request segments in parallel from peers according to the [peer selection strategy](#peer-selection) above. Exactly how the node does this is left as an implementation detail, but the following guidelines should be kept in mind:
+
+* MMRs are an append-only structure, and can only be reconstucted sequentially left-to-right. Therefore there is little point requesting too many segments for a given MMR in advance, particularly if memory is limited.
+* A reasonable effort should be made to spread requests across the 3 UTXO MMRs to allow their reconstruction to complete around the same time.
+
+If a requested segment is not received in a pre-determined amount of time, the node may re-request the segment from another peer.
+
+The core implementation uses these values to govern its requesting of segments. Note these are arbitrarily chosen with the aims of keeping memory cache requirements low and avoiding requesting too many segments in advance of what its desegmenter is ready for:
+
+```
+/// Maximum number of received segments to cache (across all MMRs) before we stop requesting others
+pub const MAX_CACHED_SEGMENTS: usize = 15;
+
+/// How long the state sync should wait after requesting a segment from a peer before
+/// deciding the segment isn't going to arrive. The syncer will then re-request the segment
+pub const SEGMENT_REQUEST_TIMEOUT_SECS: i64 = 60;
+
+/// Number of simultaneous requests for segments we should make. Note this is currently
+/// divisible by 3 to try and evenly spread requests amount the 3 main MMRs (Bitmap segments
+/// will always be requested first)
+pub const SEGMENT_REQUEST_COUNT: usize = 15;
+```
+
+#### Receiving and Validating Segments
+
+* Segment merkle proof validation
+* Cache segment locally, ready for insertion into MMRs when ready
+
+### Applying Segments to MMRs
+
+* List of MMR positions and values, these should be applied to the appropriate position at each MMR
+* Outputs that are spent should be marked as 'removed' locally.
+* If there is a mismatch or other error appling to the MMR, throw it all out (this is likely to be an internal or implementation error)
+
+#### Determining MMR Completion
+
+* Should keep track of representative heights, when all 3 heights match AND the bitmap matches
+
+#### Post PIBD validation
 
 * we check pruning of entire set is correct before validation, leaf set may have changed
+* Validate all UTXO objects
+* May keep track of state of UTXO object validation up to PMMR height, and mark locally.
 
-* What happens when horizon window rolls over (should be able to resume from given data, with new bitmap set, but bitmap set may have changed, we now need to check for and prune outputs that may have been spent since) (which we do before validation)
+### Error handling
 
-* Resumption after a period of inactivity.
+* Invalid segments
+* Invalid MMR state
+* Invalid MMR validation or UTXO
 
+### Configuration
 
-* Existing impls should have a flag in their config files via which it can be turned off
-
-* Segments can contain spent objects, must be pruned as tree is being built, optimisation for future updates.
-
-* May store the last verified rangeproof/kernel/etc for verification
-
+* Existing impls should have a flag in their config files via which PIBD can be turned off, to be removed after the txhashset sunset period
 
 ### Rollout Timing
 
@@ -136,70 +252,6 @@ Intro... this must happen on the client side
 * Release of 5.2.0, containing merged PIBD work on testnet only (and a few other features TBD) - Sept 1st 2022
 * Release of 5.2.1 - turning on PIBD sync for mainnet as well as testnet - Feb 1st 2023
 * Version as yet undetermined: remove support for earlier `txhashset.zip` method of syncing - Feb 1st 2024
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Community-level explanation
-[community-level-explanation]: #community-level-explanation
-
-Explain the proposal as if it were already introduced into the Grin ecosystem and you were teaching it to another community member. That generally means:
-
-- Introducing new named concepts.
-- Explaining the feature largely in terms of examples.
-- Explaining how Grin community members should *think* about the improvement, and how it should impact the way they interact with Grin. It should explain the impact as concretely as possible.
-- If applicable, provide sample error messages, deprecation warnings, or migration guidance.
-- If applicable, describe the differences between teaching this to existing Grin community members and new Grin community members.
-
-For implementation-oriented RFCs (e.g. for wallet), this section should focus on how wallet contributors should think about the change, and give examples of its concrete impact. For policy RFCs, this section should provide an example-driven introduction to the policy, and explain its impact in concrete terms.
-
-## Reference-level explanation
-[reference-level-explanation]: #reference-level-explanation
-
-This is the technical portion of the RFC. Explain the design in sufficient detail that:
-
-- Its interaction with other features is clear.
-- It is reasonably clear how the feature would be implemented.
-- Corner cases are dissected by example.
-
-The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
-
-## Drawbacks
-[drawbacks]: #drawbacks
-
-Why should we *not* do this?
-
-## Rationale and alternatives
-[rationale-and-alternatives]: #rationale-and-alternatives
-
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not choosing them?
-- What is the impact of not doing this?
-
-## Prior art
-[prior-art]: #prior-art
-
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- For core, node, wallet and infrastructure proposals: Does this feature exist in other projects and what experience have their community had?
-- For community, ecosystem and moderation proposals: Is this done by some other community and what were their experiences with it?
-- For other teams: What lessons can we learn from what other communities have done here?
-- Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
-
-This section is intended to encourage you as an author to think about the lessons from other languages, provide readers of your RFC with a fuller picture. If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other projects.
-
-Note that while precedent set by other projects is some motivation, it does not on its own motivate an RFC.
-Please also take into consideration that Grin sometimes intentionally diverges from common project features.
 
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
