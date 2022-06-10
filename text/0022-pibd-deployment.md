@@ -7,13 +7,49 @@
 
 ---
 
+## Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Summary](#summary)
+- [Motivation](#motivation)
+- [Reference-level explanation](#reference-level-explanation)
+  - [Segmentation, segment creation and responding to PIBD segment request messages](#segmentation-segment-creation-and-responding-to-pibd-segment-request-messages)
+    - [Capabilities Flag](#capabilities-flag)
+    - [Segment creation](#segment-creation)
+    - [Horizon Header Height](#horizon-header-height)
+    - [MMR Size Selection and Proof Generation](#mmr-size-selection-and-proof-generation)
+    - [MMR Rewinding](#mmr-rewinding)
+  - [Requesting Segments and Recreating the UTXO Set](#requesting-segments-and-recreating-the-utxo-set)
+    - [Determining the current horizon block](#determining-the-current-horizon-block)
+    - [Determining segment heights](#determining-segment-heights)
+    - [Peer Selection](#peer-selection)
+    - [Requesting output bitmap segments](#requesting-output-bitmap-segments)
+    - [Determining starting position for each MMR](#determining-starting-position-for-each-mmr)
+    - [Requesting Segments](#requesting-segments)
+    - [Receiving and Validating Segments](#receiving-and-validating-segments)
+  - [Applying Segments to MMRs](#applying-segments-to-mmrs)
+    - [Note about Output/Rangeproof leaf data](#note-about-outputrangeproof-leaf-data)
+    - [Appending Hashes and Leaf Data to MMRs](#appending-hashes-and-leaf-data-to-mmrs)
+    - [Determining MMR Completion](#determining-mmr-completion)
+    - [Post PIBD validation](#post-pibd-validation)
+    - [Stopping / Restarting the process](#stopping--restarting-the-process)
+    - [Catch Up](#catch-up)
+  - [Configuration](#configuration)
+  - [Rollout Timing](#rollout-timing)
+- [Unresolved questions](#unresolved-questions)
+- [Future possibilities](#future-possibilities)
+- [References](#references)
+
 ## Summary
 [summary]: #summary
 
-This RFC describes the rollout of Parallel Independent Block Download (PIBD) functionality on the Grin network. The aim of this RFC is to:
+This RFC describes the rollout of Parallel Independent Block Download (PIBD) functionality on the Grin network. 
 
-1) Formalize the timing of phased releases that enable PIBD on the network and retire the earlier `txhashset.zip` method of fast-syncing new nodes.
-2) Provide implementation details and background technical descriptions that are not provided in the original [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md)
+The aim of this RFC is to:
+
+1) Provide implementation details and background technical descriptions that are not provided in the original [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md)
+
+2) Formalize the timing of phased releases that enable PIBD on the network and retire the earlier `txhashset.zip` method of fast-syncing new nodes.
 
 ## Motivation
 [motivation]: #motivation
