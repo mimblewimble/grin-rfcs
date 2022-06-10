@@ -54,16 +54,16 @@ The aim of this RFC is to:
 ## Motivation
 [motivation]: #motivation
 
-Previously, the fast-sync process for bringing new nodes onto the network involved downloading and requesting the entire UTXO set up to a 'horizon' block, below which re-orgs are deemed to be no longer be a concern. This is transmitted by a single randomly-chosen peer in a single `.zip` file (known as the `txhashset.zip` file). Problems with this approach include (but are not limited to):
+Previously, the fast-sync process for bringing new nodes onto the network involved downloading and requesting the entire UTXO set up to a 'horizon' block, (i.e. the block below which re-orgs are deemed to be no longer be a concern.) This was transmitted by a single randomly-chosen peer in a single `.zip` file (known as the `txhashset.zip` file). Problems with this approach include (but are not limited to):
 
-* The UTXO set is retrieved from a single peer as opposed to many peers on the network
-* The download speed of the txhashset is limited to the speed of the randomly chosen peer, leading to wildly different node sync times in practice.
+* The TXO set is retrieved from a single peer as opposed to many peers on the network
+* The download speed of the TXO set is limited to the speed of the randomly chosen peer, leading to wildly different node sync times in practice.
 * Downloads must be restarted if interrupted
 * Nodes responding to PIBD requests exhibit a noticable pause as a result of needing to mutex lock and zip the entire UTXO set when requested.
 
-PIBD is a new fast-sync method that leverages the unique structure of Grin's backend MMRs to break off and transmit 'segments' of Grin's UTXO set independently of each other. This method ensures that
+PIBD is a new fast-sync method that leverages the unique structure of Grin's backend MMRs to break off and transmit 'segments' of Grin's TXO set independently of each other. This method ensures that
 
-* The UTXO set is received from multiple peers in chunks, then validated and pieced together by the syncing node
+* The TXO set is received from multiple peers in chunks, then validated and pieced together by the syncing node
 * The process can be stopped and resumed at will
 * The time to process and sync a new node should be more consistent. (Note this doesn't necessarly mean 'faster' in all cases)
 
@@ -77,15 +77,17 @@ Details of the PIBD message protocol, segments and proof generation are defined 
 
 Nodes capable of responding to PIBD segment request messages advertise the flag `PIBD_HIST_1` denoted by hex `0x40` (binary `0b0100_0000`) in their capabilities field.
 
-Note that there is a previous flag in the core implementation `PIBD_HIST` denoted by hex `0x10` (binary `0b0001_0000`). While this flag was rolled out along with segmentation capabilities in grin-core 5.0 in anticipation of a full PIBD implementation, a bug in the original segmentation code unfortunately means this flag is unusable. See https://github.com/mimblewimble/grin/pull/3705 for further details.
+Note that there is a previous flag in the core implementation `PIBD_HIST` denoted by hex `0x10` (binary `0b0001_0000`). This flag was rolled out along with segmentation capabilities in Grin 5.0.0 in anticipation of a full PIBD implementation. However, a bug in the original segmentation code unfortunately means this flag is unusable. See https://github.com/mimblewimble/grin/pull/3705 for further details.
 
 #### Segment creation
 
-A node responds to a PIBD segment request by creating a segment of an underlying MMR along with a merkle proof demonstrating inclusion in the complete MMR up to a position represented by the current horizon header. Note that the responding node must always respond with segments corresponding to the consensus-agreed horizon header (and it is not possible for a nodes to explicitly request a segment for any other header).
+A node responds to a PIBD segment request by creating a segment of an underlying MMR along with a merkle proof demonstrating inclusion in the complete MMR up to a position represented by the current horizon header. 
+
+Note that the responding node must always respond with segments corresponding to the consensus-agreed horizon header and it is not possible for a node to explicitly request a segment for any other header.
 
 #### Horizon Header Height
 
-The horizon header height is a consensus-derived agreed header below which the UTXO set is deemed to be outside of the possiblity of re-org. (This is the header on which the original `txhashset.zip` method is based). This can simply be thought of as 'the UTXO set as it stood as of a certain block'.
+The horizon header height is a consensus-derived agreed header below which the UTXO set is deemed to be outside of the possiblity of re-org. (This is the header on which the original `txhashset.zip` method is based.) This can simply be thought of as 'the TXO set as it stood as of a certain block'.
 
 The current horizon header height is determined by subtracting a state sync threshold (2 'days' worth of grin blocks) from the current header height. This height is then 'rounded down' to a height representing the start of a 12 'grin-block-hour' window, which remains the horizon header for that 12 hour window. The exact calculation of this height is:
 
@@ -116,17 +118,21 @@ output_mmr_size: Output and Rangeproof segment requests
 kernel_mmr_size: Kernel segment requests
 ```
 
-Merkle proofs within a segment must prove inclusion in a MMR as follows:
+Merkle proofs within a segment must prove inclusion in the complete MMR as follows:
 
-```
-Bitmap segment requests: The root of the bitmap MMR at the given height hashed against the root of the output pmmr. When combined, this should give the value of `output_root` in the header.
+* Bitmap segment requests
+  * The root of the bitmap MMR at the given height hashed with the root of the output pmmr. 
+  * This should give the value of `output_root` in the header.
 
-Output segment requests: The root of the output MMR at the given height hashed with the root of the output pmmr. When combined, this should give the value of `output_root` in the header.
+* Output segment requests
+  * The root of the output MMR at the given height hashed with the root of the output pmmr. 
+  * This should give the value of `output_root` in the header.
 
-Rangeproof Segment Requests: The root should correspond directly to the header field `range_proof_root`
+* Rangeproof Segment Requests
+  * The root should have the same value as the header field `range_proof_root`
 
-Kernel Segment Requests: The root should correspond directly to the header field `kernel_root`
-```
+* Kernel Segment Requests 
+  * The root should have the same value as the header field `kernel_root`
 
 Note that it is not possible for a nodes to explicitly request a segment for a particular header; it's assumed that the request is always for the current horizon header.
 
@@ -146,7 +152,7 @@ A nodes fast-syncing via the PIBD process will implement the following overall p
 1. [Derive a list of segments needed for each MMR, and request segments in as parallel a manner as possible](#requesting-segments)
 1. [Receive and validate each segment](#receiving-and-validating-segments)
 1. [Apply each segment to its respective MMR sequentially, essentially re-building the UTXO set](#applying-segments-to-mmrs)
-1. Once each MMR has been recreated to the specified height found in the horizon header, validate all MMR roots and UTXOs
+1. [Once each MMR has been recreated to the specified height found in the horizon header, validate all MMR roots and UTXOs](#post-pibd-validation)
 1. Move on to block sync, requesting the remaining blocks up to the header height explicitly
 
 Note that this process should work for new nodes (with no MMR data), as well as nodes that were previously synced but have been offline for longer than the horizon window. 
@@ -435,3 +441,4 @@ Include any references such as links to other documents or reference implementat
 
 - [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md)
 - [Core Implementation Tracking Issue](https://github.com/mimblewimble/grin/pull/3695)
+- [PIBD_HIST Segmentation Bug](https://github.com/mimblewimble/grin/pull/3705)
