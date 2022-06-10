@@ -138,11 +138,11 @@ Note that it is not possible for a nodes to explicitly request a segment for a p
 
 #### MMR Rewinding
 
-Segments must be created against the UTXO set as it existed at the horizon header, which means that all prunable MMRs (i.e. output and rangeproof) MMRs must be rewound to ensure the leaf inclusion set is as it existed at that block. In practice, implementations only need to rewind the entire txhashset once (on initialisation of the segmenting code or when the horizon block changes), and maintain a representative bitmap set to use in for subsequent PIBD segment requests.
+Segments must be created against the TXO set as it existed at the horizon header, which means that all prunable MMRs (i.e. output and rangeproof) must be rewound to ensure the leaf inclusion set is as it existed at that block. In practice, implementations only need to rewind the entire txhashset once (on initialisation of the segmenting code or when the horizon block changes), and maintain a representative bitmap set to use in subsequent PIBD segment requests.
 
-### Requesting Segments and Recreating the UTXO Set
+### Requesting Segments and Recreating the TXO Set
 
-A nodes fast-syncing via the PIBD process will implement the following overall process:
+The PIBD portion of a the fast-sync process is outlined as follows:
 
 1. [Determine the current horizon block](#determining-the-current-horizon-block)
 1. [Determine segment heights](#determining-segment-heights)
@@ -161,7 +161,7 @@ A description of each of these stages as well as relevant implementation details
 
 #### Determining the current horizon block
 
-A syncing node follows the same process outlined [above](#horizon-header-height) to determine the current horizon block. All calculations of required segments will begin with the MMR size values found in this header.
+A syncing node follows the same process outlined [above](#horizon-header-height) to determine the current horizon block. All segment request calculations begin with the MMR size values found in this header.
 
 Note that if the horizon header changes (i.e. the 12-hour horizon window 'rolls over') while the node is in the process of syncing, there should be no need to invalidate the partial MMRs that have already been downloaded. The node should:
 
@@ -169,11 +169,11 @@ Note that if the horizon header changes (i.e. the 12-hour horizon window 'rolls 
 1. Re-request output bitmap segments and recreate a new output bitmap set
 1. Continue requesting segments based on the new data and the size of the partial MMRs that have already been downloaded.
 
-Note that if the horizon block changes, outputs in the output bitmap set that were previously unspent could potentially become spent. Before validating MMR roots and UTXOs, the node must compare the entire bitmap set against local MMR storage to ensure outputs have been properly marked as spent and/or pruned locally (see below TBD).
+Note that if the horizon header changes, outputs in the output bitmap set that were previously unspent could potentially become spent. Before validating MMR roots and UTXOs, the node must compare the entire bitmap set against local MMR storage to ensure outputs have been properly marked as spent and/or pruned locally see [Post-PIBD Validation](#post-pibd-validation).
 
 #### Determining segment heights
 
-The [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md) specifies the range of valid segment heights for each MMR, and it is theoretically possible to dynamically adjust segment sizes (and therefore request size) based on network conditions or a host of other factors. However, for simplicity the core implementation currently selects default sizes for each type of segment, and uses them throughout for all calculations. These default values are:
+The [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md) specifies the range of valid segment heights for each MMR, and it is theoretically possible to dynamically adjust segment sizes (and therefore request size) based on network conditions or a host of other factors. However, for simplicity the core implementation currently selects default sizes for each type of segment and uses them throughout for all calculations. These default values are:
 
 ```
 BITMAP_SEGMENT_HEIGHT = 9
@@ -209,9 +209,9 @@ For the deployment period between [the initial rollout of PIBD and the retiremen
 
 #### Requesting output bitmap segments
 
-Before any other segments can be validated or applied to local MMR storage, the syncing node must first request and validate the complete output bitmap set corresponding to the output MMR size in the horizon header.
+Before any other segments can be validated or applied to local MMR storage, the syncing node must first request and validate the complete output bitmap set up to the MMR size represented in the horizon header.
 
-The MMR size, number of leaves and therefore required number of bitmap segments can be pre-determined based on the size of the output mmr in the horizon header, as demonstrated in the following reference code snippet:
+The MMR size, number of leaves and required number of bitmap segments can be pre-determined based on the size of the output MMR in the horizon header as demonstrated by the following reference code snippet:
 
 ```
 // Calculate number of leaves in the bitmap mmr
@@ -221,9 +221,9 @@ bitmap_mmr_leaf_count = (pmmr::n_leaves(self.archive_header.output_mmr_size) + 1
 bitmap_mmr_size = 1 + pmmr::peaks(pmmr::insertion_to_pmmr_index(self.bitmap_mmr_leaf_count)).last()
 ```
 
-The node should request bitmap segments from other peers according to the [Peer Selection Strategy](#peer-selection) above. (The process of re-creating an MMR from segments is described below TBD). Once the bitmap MMR is reconstructed, the node should keep a representation of the underlying bitmap cached in order to facilitate comparison against later incoming segments.
+The node should request bitmap segments from other peers according to the [Peer Selection Strategy](#peer-selection) above. (The process of re-creating an MMR from segments is described below TBD). Once the bitmap MMR is reconstructed ([process described below](#applying-segments-to-mmrs),) the node should keep a representation of the underlying bitmap cached in order to facilitate comparison against later incoming segments.
 
-The syncing node is not required to store the contents of the output set bitmap locally (in the core node implementation, the output bitmap set is derived and updated as needed as opposed to being stored locally). If the PIBD process is interrupted, the node may re-request all bitmap segments from peers as part of the normal process of starting/resuming PIBD.
+The syncing node is not required to store the contents of the output set bitmap locally. If the PIBD process is interrupted, the node may re-request all bitmap segments from peers as part of the normal process of starting/resuming PIBD.
 
 #### Determining starting position for each MMR
 
@@ -238,7 +238,7 @@ Once the required list of segments has been derived, the node can then begin to 
 
 If a requested segment is not received in a pre-determined amount of time, the node may re-request the segment from another peer.
 
-The core implementation uses these values to govern its requesting of segments. Note these are arbitrarily chosen with the aims of keeping memory cache requirements low and avoiding requesting too many segments in advance of what its desegmenter is ready for:
+The core implementation uses these values to govern its requesting of segments. Note these are arbitrarily chosen with the aims of keeping memory cache requirements low and avoiding requesting too many segments in advance of what the 'desegmenter' is ready for:
 
 ```
 /// Maximum number of received segments to cache (across all MMRs) before we stop requesting others
@@ -264,7 +264,7 @@ Nodes should cache received and validated segments until their contents are read
 
 ### Applying Segments to MMRs
 
-As described in the [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md), segment messages contain lists of hashes, leaves and their positions that should be sequentially applied to their respective MMRs in order to rebuild them.
+As described in the [PIBD Messages RFC](https://github.com/mimblewimble/grin-rfcs/blob/master/text/0020-pibd-messages.md), segment messages contain lists of hashes and leaves as well as their MMR positions. Hashes and leaves should be sequentially applied to their respective MMRs in order to rebuild them.
 
 #### Note about Output/Rangeproof leaf data
 
@@ -273,21 +273,21 @@ Note that leaf data in a segment is always provided alongside a sibling, even if
 * If both a leaf and its siblings are pruned, a hash (i.e. pruned subtree) will be provided.
 * If a leaf is pruned but its sibling has not been pruned, both leaves will be provided, and the node should mark the pruned sibling (as indicted by the output bitmap set) as pruned within local storage.
 
-Although the reasoning behind this is outside the scope of this document, a discussion of why this is the case can be found here https://github.com/mimblewimble/grin/pull/3695#issuecomment-1048770398, (see future possibilities below) TBD
+Although the reasoning behind this detail is outside the scope of this document, a discussion of it can be found here https://github.com/mimblewimble/grin/pull/3695#issuecomment-1048770398.
 
 #### Appending Hashes and Leaf Data to MMRs
 
-A high-level description of applying segment data is as follows:
+Segment data is applied to MMRs according to this high-level algorithm:
 
-* Sort hash and leaf positions (along with data elements) into their insertion order
-* Iterate through all elements. 
-	* Skip any hash at a position that has already been applied to the tree (but validate it matches what's been calculated)
-	* If the next element is a leaf, append to the MMR as usual
-		* If it is a left sibling, append as usual (the next element will be the corresponding right sibling regardless of pruned status)
-		* If it is a right sibling, calculate and append hashes up to the next leaf insertion index
-	* If the next element to be inserted is a pruned subtree (i.e. a hash value,) add the subtree to the MMR then calculate and append hashes up to the position of the next leaf insertion index. (These hash values that should also be supplied within the segments's list of hashes, so the node should ensure the calculated hashes match the segment's data).
+* Sort all provided hash and leaf positions (along with data elements) into their insertion order
+* Iterate through all elements:
+	* Skip any hash at a position that has already been applied to the tree (but validate hashes match whatever hash the node may have already calculated as belonging at that position)
+	* If the next element is a leaf, append it to the MMR as usual, then
+		* If it is a left sibling, the next element will be the corresponding right sibling, so no further action is needed.
+		* If it is a right sibling, calculate and append hashes into the MMR up to the next leaf insertion index
+	* If the next element to be inserted is a pruned subtree (i.e. a hash value,) add the subtree to the MMR then calculate and append hashes up to the position of the next leaf insertion index. These hash values that should also be supplied within the segments's list of hashes, so the node should ensure the calculated hashes match the segment's data.
 
-Example:
+#### Example of appending segment data to an MMR
 
 Assume the current state of the MMR is as follows:
 
@@ -364,7 +364,7 @@ Last Position: 9
 ```
 Height
 3                     14 
-	             /           \
+                /             \
                /               \
 2             6                 13   
            /     \          /        \
@@ -378,7 +378,7 @@ Last Position: 13
 
 This process continues until all hash and leaf values in the segment have been exhausted.
 
-If there is a mismatch anywhere or an error resulting from applying an element to an MMR, the node should wipe all data and restart the PIBD process. (Note this would most likely be the result of an internal or implementation error)
+If there is a mismatch anywhere or an error resulting from applying an element to an MMR, the node should wipe all data and restart the PIBD process. (Note this would most likely be the result of an internal or implementation error.)
 
 #### Determining MMR Completion
 
@@ -394,9 +394,9 @@ After validating and applying all segments, the node must verify all transaction
 * Validating Kernels
 * Validating Rangeproofs
 
-Note that perform performing validation, the node must perform a full pass through the local leaf data of the output and rangeproof MMRs, and ensure any outputs that may have been newly-spent are marked as such (or MMR root validation is likely to fail). This is required particularly when catching-up after a long period of the node being offline, or as a the result of the horizion header changing during the PIBD process.
+Note that before validating transaction objects, the node must perform a full pass through the local leaf data of the output and rangeproof MMRs to ensure any outputs that may have been newly-spent are marked as such (or MMR root validation is likely to fail). This is required particularly when catching-up after a long period of the node being offline, or as a the result of the horizon header changing during the PIBD process.
 
-Note that once a node has validated all TXOs up to the horizon header, it may keep track locally of which objects have already been validated and begin future validations from that point (such as after a long period of being offline).
+Note that once a node has validated all TXOs up to the horizon header, it may keep track locally of which objects have already been validated and begin future validations from that point.
 
 #### Stopping / Restarting the process
 
@@ -421,9 +421,7 @@ No explict configuration values need to be exposed for PIBD. However, for the du
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the RFC process before this gets merged?
-- What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
+- TBD
 
 ## Future possibilities
 [future-possibilities]: #future-possibilities
@@ -432,7 +430,7 @@ No explict configuration values need to be exposed for PIBD. However, for the du
    * The transmission of data for pruned siblings is redundant and unnecessary (particularly for Rangeproofs), however this is based on an underlying implementation assumption that must be fully addressed before they can be removed from segment messages. (See https://github.com/mimblewimble/grin/pull/3695#issuecomment-1048770398)
 	* The list of output positions for a segment could be considered redundant, as all position data can be derived from the output bitmap.
 
-* The header portion of the overall sync process would greatly benefit from a PIBD-based approach (headers are also stored internally within an MMR)
+* The header portion of the overall sync process would greatly benefit from a PIBD-based approach (headers are also stored internally within an MMR.)
 
 ## References
 [references]: #references
