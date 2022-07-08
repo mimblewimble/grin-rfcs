@@ -2,7 +2,7 @@
 - Title: auth-slates
 - Authors: [Marek Narozniak](https://mareknarozniak.com/)
 - Start date: July 7, 2022
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
+- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#90](https://github.com/mimblewimble/grin-rfcs/pull/90)
 - Tracking issue: [Edit if merged with link to tracking github issue]
 
 ---
