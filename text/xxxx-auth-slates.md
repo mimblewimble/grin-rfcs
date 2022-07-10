@@ -69,10 +69,10 @@ Ursula wishes to create the account. She fills in the web form and clicks `next`
 Ursula copies the slatepack, runs `grin-wallet register` and pastes it in as the input. Ursula's wallet will generate a new ED25519 private key of the following form
 
 ```
-key = H(seed || username || url)
+key = H(H(seed || username || url) || username || url)
 ```
 
-where `username` and `url` come from the registration slatepack and `seed` is the wallet decrypted seed key. From that it follows that only Ursula, as the party capable of decrypting the wallet seed is capable of creating this authentication key.
+where `username` and `url` come from the registration slatepack and `seed` is the wallet decrypted seed key. From that it follows that only Ursula, as the party capable of decrypting the wallet seed is capable of creating this authentication key. The double hashing prevents someone from getting a wallet seed using []preimage attack](https://en.wikipedia.org/wiki/Preimage_attack).
 
 Once key is generated, Ursula's wallet will generate following slatepack
 
@@ -149,9 +149,15 @@ Alternatively one could login by signing the login information using the slatepa
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
 
+General review of the idea:
+
 1. We should consider other forms of login. For instance, instead of deriving a key and providing a signature using this derived key we could use a zero-knowledge proof that owner of some wallet wishes to register to this particular service. This way no additional key is required as the zero-knowledge proof would prove there exists a signature without revealing the actual signature.
 2. We should consider other way of deriving the authentication keys.
 3. We should consider some common attack scenarios to evaluate the security aspects of this proposal.
+
+Low-level:
+
+1. Is double hashing sufficient to prevent getting someone else's wallet seed using the [preimage attack](https://en.wikipedia.org/wiki/Preimage_attack)?
 
 ## Future possibilities
 [future-possibilities]: #future-possibilities
