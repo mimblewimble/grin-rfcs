@@ -143,7 +143,7 @@ The minimal implementation of this feature would not require any database at all
 ## Drawbacks
 [drawbacks]: #drawbacks
 
-[TODO]
+1. In order to be able to recover the data user needs to remember own username and login of the service. This is a minor disadvantage as compared to a traditional authentication method user is required to recall an additional piece of information - password.
 
 ## Rationale and alternatives
 [rationale-and-alternatives]: #rationale-and-alternatives
