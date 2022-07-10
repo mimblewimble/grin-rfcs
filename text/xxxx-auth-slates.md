@@ -102,7 +102,19 @@ Ursula submits this slatepack into the web form and clicks `sign-up`. The online
 
 Now Ursula wishes to login to Steven's online service. She starts by opening the website and sees the login form composed of the slatepack input textarea and `sign-in` button.
 
-Ursula runs `grin-wallet login`, picks the account the wishes to use and approves. The exact way of achieving this depends on the implementation and is not relevant here. It could be an interactive UI or could be command line options. Once approved, wallet will display a slatepack representing following encoded slate.
+Ursula runs `grin-wallet login`, picks the account the wishes to use and approves. The exact way of achieving this depends on the implementation and is not relevant here. It could be an interactive UI or could be command line options. Once approved, wallet will generate a symmetric encryption key
+
+```
+symmkey = H(pubkey || username)
+```
+
+where `pubkey` is the ED25519 public key associated to `key`. Then a message
+
+```
+msg = picked-username || timestamp || url-of-the-service || random-data
+```
+
+is padded to fixed length and encrypted using `symmkey` resulting with `encrypted-message`. We also sign it using the `key`. With that following slatepack is constructed and displayed to Ursula
 
 ```json
 {
@@ -110,20 +122,17 @@ Ursula runs `grin-wallet login`, picks the account the wishes to use and approve
         "version": 1
     },
     "authentication": "login",
-    "data": {
-        "username": "picked-username",
-        "url": "url-of-the-service",
-        "timestamp": 1657270059,
-        "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-    }
+    "data": "{content of encrypted-message}",
+    "signature": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 }
 ```
 
 The slatepack contains current timestamp as a measure of preventing repetition attacks. Ursula proceeds by pasting it in the web form. Steven's website will
 
-1. Extract the key from the signature, check if it figures in the database.
-2. If the key does not figure in the database the authentication will fail. If it does figure associated to provided username it will check if signature matches.
-3. If the signature does not match the authentication will fail. Otherwise it will succed and create a server-side session for Ursula's account.
+1. Extract the `pubkey` from the signature, check if it figures in the database. If the key does not figure in the database the authentication will fail.
+2. Find the `username` associated to this `pubkey` in the database.
+3. Derive the `symmkey` and decrypt `encrypted-message` to recover `msg`.
+4. From `msg` the fields `username` and `url-of-the-service` will be validated if match request and database records. Also `timestamp` will be checked if it is recent enough. I all this succeeds login will succeed and a server-side session will be created for Ursula's account.
 
 ### Account recovery protocol
 
@@ -154,6 +163,7 @@ General review of the idea:
 1. We should consider other forms of login. For instance, instead of deriving a key and providing a signature using this derived key we could use a zero-knowledge proof that owner of some wallet wishes to register to this particular service. This way no additional key is required as the zero-knowledge proof would prove there exists a signature without revealing the actual signature.
 2. We should consider other way of deriving the authentication keys.
 3. We should consider some common attack scenarios to evaluate the security aspects of this proposal.
+4. We should consider if slatepacks should be shielded or not. For transactions slatepacks are potentially exchanged via third party service, but for the login use-case we might be able to assume exchange is direct.
 
 Low-level:
 
