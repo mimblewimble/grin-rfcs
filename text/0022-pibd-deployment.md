@@ -94,7 +94,7 @@ The current horizon header height is determined by subtracting a state sync thre
 
 ```
 DAY_HEIGHT: 1440
-STATE_SYNC_THRESHOLD = @ 2 * DAY_HEIGHT = 2880
+STATE_SYNC_THRESHOLD = 2 * DAY_HEIGHT = 2880
 ARCHIVE_INTERVAL = 12*60 = 720
 
 THRESHOLD_HEIGHT = CURRENT_HEADER_HEIGHT - STATE_SYNC_THRESHOLD
@@ -111,7 +111,7 @@ HORIZON_HEADER_HEIGHT = 997120 - (977120 % 720) = 99640
 
 #### MMR Size Selection and Proof Generation
 
-Nodes responding to PIBD message requests must only respond with with segments and proofs of inclusion for the MMR of the size represented within the current horizon header. These sizes are defined within the header as:
+Nodes responding to PIBD message requests must only respond with segments and proofs of inclusion for the MMR of the size represented within the current horizon header. These sizes are defined within the header as:
 
 ```
 output_mmr_size: Output and Rangeproof segment requests
@@ -126,7 +126,7 @@ Merkle proofs within a segment must prove inclusion in the complete MMR as follo
   * This should give the value of `output_root` in the header.
 
 * Output segment requests
-  * The root of the output MMR at the given height hashed with the root of the output pmmr. 
+  * The root of the output MMR at the given height hashed with the root of the bitmap pmmr. 
   * This should give the value of `output_root` in the header.
 
 * Rangeproof Segment Requests
@@ -143,7 +143,7 @@ Segments must be created against the TXO set as it existed at the horizon header
 
 ### Requesting Segments and Recreating the TXO Set
 
-The PIBD portion of a the fast-sync process is outlined as follows:
+The PIBD portion of the fast-sync process is outlined as follows:
 
 1. [Determine the current horizon block](#determining-the-current-horizon-block)
 1. [Determine segment heights](#determining-segment-heights)
@@ -166,7 +166,7 @@ A syncing node follows the same process outlined [above](#horizon-header-height)
 
 Note that if the horizon header changes (i.e. the 12-hour horizon window 'rolls over') while the node is in the process of syncing, there should be no need to invalidate the partial MMRs that have already been downloaded. The node should:
 
-1. Invalidate all previous segment requests and re-calculate the list of required segments based on the new horizon block
+1. Invalidate all previous segment responses whose inclusion proofs don't target the newly computed horizon and re-calculate the list of required segments based on the new horizon
 1. Re-request output bitmap segments and recreate a new output bitmap set
 1. Continue requesting segments based on the new data and the size of the partial MMRs that have already been downloaded.
 
@@ -414,10 +414,10 @@ No explict configuration values need to be exposed for PIBD. However, for the du
 ### Rollout Timing
 
 * Alpha released containing full PIBD implementation for testing (testnet only) - Apr 20th, 2022
-* Target date for reviewing and merging work performed in `pibd_impl` into master, enabling PIBD on current master for testnet only - July 5th, 2022
-* Release of 5.2.0, containing merged PIBD work on testnet only (and a few other features TBD) - Sept 1st 2022
-* Release of 5.2.1 - turning on PIBD sync for mainnet as well as testnet - Feb 1st 2023
-* Version as yet undetermined: remove support for earlier `txhashset.zip` method of syncing - Feb 1st 2024
+* Target date for reviewing and merging work performed in `pibd_impl` into master, enabling PIBD on current master for testnet only - Sept 5th, 2022
+* Release of 5.2.0, containing merged PIBD work on testnet only (and a few other features TBD) - Dec 1st 2022
+* Release of 5.2.1 - turning on PIBD sync for mainnet as well as testnet - Jun 1st 2023
+* Version as yet undetermined: remove support for earlier `txhashset.zip` method of syncing - Jun 1st 2024
 
 ## Unresolved questions
 [unresolved-questions]: #unresolved-questions
