@@ -184,10 +184,10 @@ KERNEL_SEGMENT_HEIGHT = 11
 ```
 The processes outlined in later sections will assume constant segment heights, but implementations may choose to adjust these heights and/or perform segment size calculations dynamically.
 
-To determine the number of segments `n` of height `h` required for an MMR of a given size `s`, the following calculation can be used:
+To determine the number of segments `n` of height `h` required for an MMR of a given size `s`, including a possible incomplete last segment, the following calculation can be used:
 
 ```
-floor(n_leaves(s) / pow(h, 2))
+ceiling(n_leaves(s) / pow(2, h))
 ```
 
 where `n_leaves` is the function that calculates the number of leaves in a pmmr of a given size.
@@ -201,6 +201,7 @@ The syncing node should select a different peer for each segment request accordi
 1. Begin with a list of all known peers
 1. Filter this list to only include peers advertising the maximum known difficulty on the network 
 1. Further filter this list to only include peers advertising the [PIBD_HIST_1](#capabilities-flag) flag
+1. Filter this list to exclude peers that have not responded to segment requests recently
 1. Select a peer at random from the remaining list of peers
 
 For the deployment period between [the initial rollout of PIBD and the retirement of the `txhashset.zip` sync method](#rollout-timing), nodes should abort the PIBD process and fall back to the `txhashset.zip` method of syncing if the following are true:
