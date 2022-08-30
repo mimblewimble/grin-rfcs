@@ -198,9 +198,8 @@ Alternatively, a node can attempt to blindly request segments sequentually until
 
 The syncing node should select a different peer for each segment request according to the following strategy:
 
-1. Begin with a list of all known peers
+1. Begin with a list of all peer advertising the [PIBD_HIST_1](#capabilities-flag) capabilities flag
 1. Filter this list to only include peers advertising the maximum known difficulty on the network 
-1. Further filter this list to only include peers advertising the [PIBD_HIST_1](#capabilities-flag) flag
 1. Filter this list to exclude peers that have not responded to segment requests recently
 1. Select a peer at random from the remaining list of peers
 
@@ -220,7 +219,7 @@ The MMR size, number of leaves and required number of bitmap segments can be pre
 bitmap_mmr_leaf_count = (pmmr::n_leaves(self.archive_header.output_mmr_size) + 1023) / 1024;
 
 // Total size of Bitmap PMMR
-bitmap_mmr_size = 1 + pmmr::peaks(pmmr::insertion_to_pmmr_index(self.bitmap_mmr_leaf_count)).last()
+bitmap_mmr_size = pmmr::insertion_to_pmmr_index(self.bitmap_mmr_leaf_count)
 ```
 
 The node should request bitmap segments from other peers according to the [Peer Selection Strategy](#peer-selection) above. (The process of re-creating an MMR from segments is described below TBD). Once the bitmap MMR is reconstructed ([process described below](#applying-segments-to-mmrs),) the node should keep a representation of the underlying bitmap cached in order to facilitate comparison against later incoming segments.
