@@ -395,7 +395,7 @@ After validating and applying all segments, the node must verify all transaction
 * Validating Kernels
 * Validating Rangeproofs
 
-Note that before validating transaction objects, the node must perform a full pass through the local leaf data of the output and rangeproof MMRs to ensure any outputs that may have been newly-spent are marked as such (or MMR root validation is likely to fail). This is required particularly when catching-up after a long period of the node being offline, or as a the result of the horizon header changing during the PIBD process.
+Note that before validating transaction objects, (i.e. MMR Roots, Rangeproof and Kernel validation before applying post-horizon blocks) the node must perform a full pass through the local leaf data of the output and rangeproof MMRs to ensure any outputs that may have been newly-spent are marked as such (or MMR root validation is likely to fail). This is required particularly when catching-up after a long period of the node being offline, or as a the result of the horizon header changing during the PIBD process.
 
 Note that once a node has validated all TXOs up to the horizon header, it may keep track locally of which objects have already been validated and begin future validations from that point.
 
