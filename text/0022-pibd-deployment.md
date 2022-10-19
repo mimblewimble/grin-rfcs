@@ -379,7 +379,7 @@ Last Position: 13
 
 This process continues until all hash and leaf values in the segment have been exhausted.
 
-If there is a mismatch anywhere or an error resulting from applying an element to an MMR, the node should wipe all data and restart the PIBD process. (Note this would most likely be the result of an internal or implementation error.)
+If there is a mismatch anywhere or an error resulting from applying an element to an MMR, the node should log the cause of the issue, wipe all data and restart the PIBD process. (Note this would most likely be the result of an internal or implementation error.)
 
 #### Determining MMR Completion
 
@@ -432,6 +432,8 @@ No explict configuration values need to be exposed for PIBD. However, for the du
 	* The list of output positions for a segment could be considered redundant, as all position data can be derived from the output bitmap.
 
 * The header portion of the overall sync process would greatly benefit from a PIBD-based approach (headers are also stored internally within an MMR.)
+
+* Any hashes not at the root of maximal spent subtrees could be optimized away.
 
 ## References
 [references]: #references
