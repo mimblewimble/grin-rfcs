@@ -2,8 +2,8 @@
 - Title: pibd-deployment
 - Authors: [Michael Cordner (Yeastplume)](mailto:mc@revcore.net)
 - Start date: June 6, 2022
-- RFC PR: Edit if merged: [mimblewimble/grin-rfcs#0000](https://github.com/mimblewimble/grin-rfcs/pull/0000)
-- Tracking issue: [mimblewimble/grin#3695]
+- RFC PR: [mimblewimble/grin-rfcs#0022](https://github.com/mimblewimble/grin-rfcs/pull/89)
+- Tracking issue: [mimblewimble/grin#3695](https://github.com/mimblewimble/grin/pull/3695)
 
 ---
 
