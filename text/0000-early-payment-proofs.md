@@ -55,8 +55,9 @@ To accomodate the various proof types, the slate will include the following rela
 
 * `receiver_address` - An ed25519 public key for the receiver, typically the public key of the user's v3 onion address.
 * `timestamp` - The time at which the receiver generates the payment promise
-* `memo` - A string of size at most 32 bytes that may contain additional payment details,
-  or the hash of an arbitrary invoice document
+* `memo` - A string of size at most 1024 bytes that contains payment details,
+  such as a description of the good(s) or service(s) being bought.
+  `memohash` denotes the 32 byte blake2b hash of this field.
 * `promise_signature` - A signature that validates against the `receiver_address`
    over a promise message consisting of 1 byte of proof type, followed by type specific data
 
@@ -85,7 +86,7 @@ This will be the type for regular invoices, where receiver specifies the time, a
   - `receiver_public_excess`
   - `sender_address`
   - `timestamp`
-  - `memo`
+  - `memohash`
 
 The receiver will sign this data either in the first round of RSR flow, or the second round of SRS flow. In the latter case, the sender can use the slate fields `amount` and `memo` to set suggested values for the receiver to use. The `timestamp` should correspond to the time of signature generation.
 
@@ -94,6 +95,26 @@ The witness is a triple (s,i,C) where i is the MMR index of an on-chain kernel K
 The reason for including the kernel index is that nodes don't maintain an index of all kernels, and looking for the index of a potentially very old kernel is rather expensive,
 and proof verification should not be a DoS vector.
 The reason for including the kernel commitment is so that the prover can recompute the index when necessitated by chain reorgs.
+
+The specific steps in RSR flow are
+
+Receiver fills in memo field and computes memohash. Receiver computes ed25519 signature over the message
+  0x01 | amount | `receiver_public_nonce` | `receiver_public_excess` | `sender_address` | `timestamp` | `memohash`
+and sets this as slate field `promise_signature`.
+
+Upon receiving the slate, the Sender composes the same message from the various
+slate fields and check the signature against the Receiver public ed25519 key.
+The Sender inspects all payment details including the memo and presumably
+agrees to proceed with payment. They save the partial signature sS of the
+kernel they sign along with the kernel commitment and promise signature, and
+send back the slate to the reciever for countersigning.
+
+When the Sender wants to prove payment, they find the kernel with commitment C
+on chain and compute sR = s - sS to recover the receiver partial signature sR
+that will satisfy the payment proof condition.
+
+Sender can convince any 3rd party of the payment to Receiver by providing both
+the promise signature (including the memo and all message fields) and the witness.
 
 ### Proof type SenderNonce
 
@@ -117,7 +138,7 @@ must be of the form Rs' + H(Rs' | m) \* G, where message m contains the promise 
   - proof type `0x02`
   - `amount`
   - `timestamp`
-  - `memo`
+  - `memohash`
 
 This is similar to the Sign-to-Contract notion discussed in the last reference.
 
