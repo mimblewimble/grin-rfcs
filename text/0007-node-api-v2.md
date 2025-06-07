@@ -1106,7 +1106,7 @@ This RFC temporarily introduces some additional code complexity as v1 and v2 nod
 This kind of JSON-RPC API is widely used for cryptocurrencies. For instance:
 
 - [Bitcoin](https://en.bitcoin.it/wiki/API_reference_\(JSON-RPC\))
-- [Ethereum](https://github.com/ethereum/wiki/wiki/JSON-RPC)
+- [Ethereum](https://ethereum.org/en/developers/docs/apis/json-rpc/)
 - [Monero](https://web.getmonero.org/resources/developer-guides/wallet-rpc.html)
 - [Tezos](https://tezos.gitlab.io/developer/rpc.html)
 
