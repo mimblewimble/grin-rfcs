@@ -83,8 +83,8 @@ Find below an example of ouptput and key derivation.
 
 |Account|OutputKeys |SlatepackAddress key(s)|
 |-------|------------|----------------------|
-|m/0    | m/0/1/x    |m/0/1/x               |
-|m/1    | m/1/1/x    |m/1/1/x               |
+|m/0    | m/0/0/x    |m/0/1/x               |
+|m/1    | m/1/0/x    |m/1/1/x               |
 
 In _grin-wallet_ the x for slatepack address generation is currently fixed (`x=0`) per account. `SlatepackAddress` keys may be derived in parallel to the blinding factor derivation path such that a unique `SlatepackAddress` is derived each time a new blinding factor is derived for a transaction to satisfy the requirement for a unique `SlatepackAddress` to be used for each transaction by default. 
 
